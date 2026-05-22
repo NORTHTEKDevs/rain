@@ -186,8 +186,18 @@ class MultiSignalEFEDecoder:
         top_p: float = 0.9,
         rng: np.random.Generator | None = None,
     ) -> DecodeResult:
+        """Decode the next token from the multi-signal candidate fusion.
+
+        Args:
+            state: current hypervector state (D-dim).
+            vocab: candidate token strings.
+            recent_context: recent token history for bigram + KB + anti-rep.
+            top_p: nucleus sampling mass threshold.
+            rng: optional. If None, a fresh wall-clock-seeded generator is used
+                (non-deterministic). Pass an explicit Generator for reproducibility.
+        """
         if rng is None:
-            rng = np.random.default_rng(0)
+            rng = np.random.default_rng()
         recent_context = recent_context or []
 
         raw = {

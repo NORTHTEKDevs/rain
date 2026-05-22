@@ -64,6 +64,9 @@ class TsetlinMachine:
         relevant = state[inclusion_row.astype(bool)]
         return bool(np.all(relevant == 1))
 
+    # TODO v0.5 (co-file with task #24 HYMN SIMD/BLAS): vectorize clause
+    # voting via boolean matrix indexing (inclusion * state).all(axis=2)
+    # pattern. Current O(C*K*F) Python loop is fine at toy scale.
     def vote(self, state: np.ndarray) -> np.ndarray:
         """Return per-class scores. Shape: (num_classes,)."""
         if state.shape != (self.num_features,):

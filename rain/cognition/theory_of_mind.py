@@ -13,6 +13,7 @@ addressing.
 """
 
 from __future__ import annotations
+import hashlib
 from rain.core.knowledge_base import ShardedKB
 
 
@@ -26,10 +27,12 @@ class TheoryOfMind:
 
     def _kb_for(self, believers: tuple[str, ...]) -> ShardedKB:
         if believers not in self._kbs:
-            # Different seed per believer-chain to avoid HV cross-talk
-            chain_seed = self.seed
-            for b in believers:
-                chain_seed = (chain_seed * 31 + hash(b)) & 0xFFFFFFFF
+            # Derive a chain seed deterministically across Python processes via blake2b.
+            # python hash() is NOT deterministic across processes (PYTHONHASHSEED varies).
+            h = hashlib.blake2b(
+                ("|".join(believers) + f":{self.seed}").encode(), digest_size=8
+            ).digest()
+            chain_seed = int.from_bytes(h, "big") & 0xFFFFFFFF
             self._kbs[believers] = ShardedKB(num_shards=self.num_shards, dim=self.dim, seed=chain_seed)
         return self._kbs[believers]
 

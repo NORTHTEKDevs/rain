@@ -49,6 +49,8 @@ class _Shard:
         bundle_hv = np.sign(self._acc + (self._acc == 0)).astype(np.int16)
         probe = unbind(bundle_hv, sr)
         # nearest-neighbour cleanup over known object vocab
+        # TODO v0.5 (task #18-adjacent): replace linear scan with approx NN
+        # (random projection LSH) when V per shard > 1K. O(VD) per query at scale.
         best_sym: Optional[str] = None
         best_sim: float = -1.0
         for sym, hv in self._obj_vocab.items():

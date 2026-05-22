@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- H1: Created `rain-rs/src/ffi_wasm.rs` stub (was declared in `lib.rs` but file was missing).
+- H2: Added `rain/__main__.py` entry point; removed undeclared `rain-cli` script from `pyproject.toml`.
+- H3: Moved `warm_start_from_vectors` and `seed_from_jsonl` into the `rain` package
+  (`rain/train/warm_start.py`, `rain/data/kb_seed.py`); `scripts/` become thin re-export shims.
+- H4: Renamed `val_loss` -> `hv_mse_loss` in L1 benchmark; replaced `L1_PASS_THRESHOLD`
+  with `L1_PASS_THRESHOLD_HV_MSE = 0.5`; added `metric_type` and `nll_threshold_applicable`
+  fields to clarify the MSE-vs-NLL distinction until Phase 2.3.
+- M1: Fixed tempfile leak in `BPETokenizer.train` (try/finally + `os.unlink`).
+- M2: `EFE.decode` with `rng=None` now uses wall-clock-seeded generator instead of fixed seed 0.
+- M3: Added v0.5 TODO comment above linear scan in `ShardedKB._Shard.query`.
+- M4: Replaced full `tobytes()` + blake2b in `RoutingMapper._hash_source` with a lightweight
+  corner-sample fingerprint (shape + 16 samples + sum/std aggregate).
+- M5: Replaced `assert` guards in `BPETokenizer` with `RuntimeError` (survives `python -O`).
+- L1: Removed `|| true` masking from ruff, black, and pytest CI steps.
+- L2: Added v0.5 vectorization TODO comment above `TsetlinMachine.vote`.
+- L3: `TheoryOfMind._kb_for` now derives chain seed via `hashlib.blake2b` instead of
+  Python `hash()` (deterministic across processes).
+- L4: `rain/__init__.py` now re-exports `ConsciousAgent`, `Answer`, `Codebook`, `ShardedKB`.
+
 ### Added
 - Initial repository scaffold under NORTHTEKDevs/rain.
 - Master design document at `docs/plans/2026-05-22-rain-design.md`.

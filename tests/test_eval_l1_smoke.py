@@ -9,7 +9,7 @@ import json
 import numpy as np
 from pathlib import Path
 from rain.train.checkpoint import HymnCheckpointMetadata, save_checkpoint
-from evals.tier2_llm_parity.tiny_shakespeare import evaluate, L1_PASS_THRESHOLD
+from evals.tier2_llm_parity.tiny_shakespeare import evaluate, L1_PASS_THRESHOLD_HV_MSE
 
 
 def test_l1_runs_end_to_end_on_random_init(tmp_path):
@@ -31,8 +31,10 @@ def test_l1_runs_end_to_end_on_random_init(tmp_path):
     # Run eval
     result = evaluate(str(tmp_path / "random_ckpt"), str(corpus_path), n_eval_chars=50)
     assert result["benchmark"] == "L1_tiny_shakespeare"
-    assert result["threshold"] == L1_PASS_THRESHOLD
-    assert isinstance(result["val_loss"], float)
+    assert result["metric_type"] == "hv_mse"
+    assert result["threshold"] == L1_PASS_THRESHOLD_HV_MSE
+    assert result["nll_threshold_applicable"] is False
+    assert isinstance(result["hv_mse_loss"], float)
     assert "pass" in result
     assert result["checkpoint_metadata"]["in_dim"] == 64
     # Random init should NOT pass the threshold -- that's correct scaffold behavior.

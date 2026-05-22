@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 import io
+import os
 import tempfile
 from pathlib import Path
 import sentencepiece as spm
@@ -19,27 +20,33 @@ class BPETokenizer:
             for t in texts:
                 f.write(t + "\n")
             path = f.name
-        model_buf = io.BytesIO()
-        spm.SentencePieceTrainer.train(
-            input=path,
-            model_writer=model_buf,
-            vocab_size=self.vocab_size,
-            model_type="bpe",
-            pad_id=0, unk_id=1, bos_id=2, eos_id=3,
-            hard_vocab_limit=False,
-        )
-        self._sp = spm.SentencePieceProcessor(model_proto=model_buf.getvalue())
+        try:
+            model_buf = io.BytesIO()
+            spm.SentencePieceTrainer.train(
+                input=path,
+                model_writer=model_buf,
+                vocab_size=self.vocab_size,
+                model_type="bpe",
+                pad_id=0, unk_id=1, bos_id=2, eos_id=3,
+                hard_vocab_limit=False,
+            )
+            self._sp = spm.SentencePieceProcessor(model_proto=model_buf.getvalue())
+        finally:
+            os.unlink(path)
 
     def encode(self, text: str) -> list[int]:
-        assert self._sp is not None, "tokenizer not trained"
+        if self._sp is None:
+            raise RuntimeError("tokenizer not trained -- call .train() or .load() first")
         return self._sp.encode(text, out_type=int)
 
     def decode(self, ids: list[int]) -> str:
-        assert self._sp is not None, "tokenizer not trained"
+        if self._sp is None:
+            raise RuntimeError("tokenizer not trained -- call .train() or .load() first")
         return self._sp.decode(ids)
 
     def save(self, path: str | Path) -> None:
-        assert self._sp is not None
+        if self._sp is None:
+            raise RuntimeError("tokenizer not trained -- call .train() or .load() first")
         Path(path).write_bytes(self._sp.serialized_model_proto())
 
     def load(self, path: str | Path) -> None:

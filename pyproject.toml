@@ -64,7 +64,6 @@ eval = [
 
 [project.scripts]
 rain = "rain.__main__:main"
-rain-cli = "rain_cli.__main__:main"
 
 [project.urls]
 homepage = "https://github.com/NORTHTEKDevs/rain"

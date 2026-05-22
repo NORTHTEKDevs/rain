@@ -40,8 +40,20 @@ class RoutingDirections:
 
 
 def _hash_source(stacked: np.ndarray) -> bytes:
-    """Hash the stacked source matrix for cache-invalidation."""
-    h = hashlib.blake2b(stacked.tobytes(), digest_size=16)
+    """Lightweight fingerprint for cache invalidation. NOT cryptographic.
+    Detects shape changes + content changes through corner samples + sum."""
+    h = hashlib.blake2b(digest_size=16)
+    h.update(str(stacked.shape).encode())
+    # Sample 16 corners/edges
+    flat = stacked.flatten()
+    n = flat.shape[0]
+    if n >= 16:
+        samples = flat[np.linspace(0, n - 1, 16, dtype=int)]
+    else:
+        samples = flat
+    h.update(samples.tobytes())
+    # Plus aggregate sum (catches changes that miss the samples)
+    h.update(np.array([stacked.sum(), stacked.std()], dtype=np.float32).tobytes())
     return h.digest()
 
 

@@ -39,11 +39,11 @@ jobs:
           pip install -e ".[dev]"
         continue-on-error: true
       - name: Lint (ruff)
-        run: ruff check rain/ tests/ || true
+        run: ruff check rain/ tests/
       - name: Format check (black)
-        run: black --check rain/ tests/ || true
+        run: black --check rain/ tests/
       - name: Run tests
-        run: pytest -q || echo "no tests yet — scaffold phase"
+        run: pytest -q -m "not slow"
 
   rust-test:
     name: Rust on ${{ matrix.os }}

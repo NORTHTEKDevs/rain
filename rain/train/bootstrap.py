@@ -34,8 +34,8 @@ from rain.core.fep import LowRankA
 from rain.routing.mapper import RoutingMapper
 from rain.routing.beam import BeamSteeringAdapter
 from rain.tokenize.bpe import BPETokenizer
-from scripts.bootstrap_warm_start import warm_start_from_vectors
-from scripts.seed_kb import seed_from_jsonl
+from rain.train.warm_start import warm_start_from_vectors
+from rain.data.kb_seed import seed_from_jsonl
 
 
 @dataclass
