@@ -1,0 +1,52 @@
+# CONFIDENTIAL - PATENT PENDING
+# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
+
+[package]
+name = "rain-rs"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+readme = "../README.md"
+description = "RAIN — Rust hot kernels for VSA, HYMN, Tsetlin, SOFAR routing, NSGA-II (CONFIDENTIAL)"
+publish = false
+
+[lib]
+name = "rain_rs"
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = []
+python = ["pyo3", "numpy"]
+wasm = ["wasm-bindgen", "js-sys", "serde-wasm-bindgen"]
+
+[dependencies]
+pyo3 = { workspace = true, optional = true }
+numpy = { workspace = true, optional = true }
+wasm-bindgen = { workspace = true, optional = true }
+js-sys = { workspace = true, optional = true }
+serde-wasm-bindgen = { workspace = true, optional = true }
+
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+uuid.workspace = true
+blake3.workspace = true
+bytemuck.workspace = true
+
+ndarray.workspace = true
+nalgebra.workspace = true
+rand.workspace = true
+rand_chacha.workspace = true
+
+[dev-dependencies]
+proptest.workspace = true
+criterion.workspace = true
+
+[[bench]]
+name = "vsa_bench"
+harness = false
+required-features = []

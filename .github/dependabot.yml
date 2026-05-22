@@ -1,0 +1,40 @@
+# CONFIDENTIAL - PATENT PENDING
+# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
+
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "NORTHTEKDevs"
+    labels:
+      - "dependencies"
+      - "python"
+
+  - package-ecosystem: "cargo"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "NORTHTEKDevs"
+    labels:
+      - "dependencies"
+      - "rust"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "NORTHTEKDevs"
+    labels:
+      - "dependencies"
+      - "github-actions"

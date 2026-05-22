@@ -1,0 +1,66 @@
+RAIN — Resonant Active Inference Network
+PROPRIETARY LICENSE
+SPDX-License-Identifier: NOASSERTION
+
+Copyright (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
+All rights reserved.
+
+This software and associated documentation files (the "Software"), including
+without limitation the architecture, source code, design documents, model
+weights, training procedures, evaluation suites, benchmark configurations,
+component compositions, and any derivative or compiled artifacts, are the
+confidential and proprietary intellectual property of Kristian Baer and
+NORTHTEKDevs.
+
+NO LICENSE GRANTED
+No license, express or implied, is granted under this file or by mere
+distribution of the Software. Possession, viewing, or temporary access to
+the Software does not constitute a license to use, modify, distribute,
+disclose, reverse-engineer, or create derivative works.
+
+PATENT NOTICE
+The architecture, methods, and component compositions described or
+implemented in this Software are the subject of one or more pending patent
+applications held by Kristian Baer / NORTHTEKDevs. See PATENT_NOTES.md for
+the current scope of patent-pending claims. No patent license is granted
+under this file.
+
+PERMITTED USES
+The only permitted uses of this Software are:
+  (a) review by the copyright holder and authorized agents under explicit
+      written authorization;
+  (b) review by attorneys, patent agents, regulatory bodies, or auditors
+      operating under enforceable confidentiality;
+  (c) use by parties with whom the copyright holder has executed a separate
+      written license agreement that explicitly grants rights to the
+      Software.
+
+PROHIBITED USES
+Without prior written consent of the copyright holder, you may not:
+  - copy, redistribute, sublicense, publish, or display the Software;
+  - use the Software for any commercial or production purpose;
+  - train, fine-tune, distill, or otherwise extract derivative models;
+  - publish benchmark results, evaluations, or comparisons of the Software;
+  - incorporate any portion of the Software into another work;
+  - remove, alter, or obscure any copyright, patent, or proprietary notice.
+
+NO WARRANTY
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, NONINFRINGEMENT, OR THAT THE SOFTWARE
+WILL OPERATE UNINTERRUPTED OR ERROR-FREE.
+
+LIMITATION OF LIABILITY
+IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES, OR
+OTHER LIABILITY ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR
+THE USE OR OTHER DEALINGS IN THE SOFTWARE, WHETHER IN AN ACTION OF CONTRACT,
+TORT, OR OTHERWISE.
+
+TERMINATION
+Any unauthorized possession, use, or disclosure of the Software immediately
+terminates any rights you may have to the Software and entitles the
+copyright holder to all remedies at law and equity, including injunctive
+relief and statutory damages where applicable.
+
+CONTACT
+For licensing inquiries: info@northtek.io
