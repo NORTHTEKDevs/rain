@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - M-NEW-1: Removed `continue-on-error: true` from CI install-deps step; maturin/Rust build failures now hard-fail the job.
 - M-NEW-2: Renamed `compute_val_loss` -> `compute_hv_mse_loss` in `evals/tier2_llm_parity/tiny_shakespeare.py`; updated module docstring to reflect MSE-on-HV semantics and Phase 2.3 NLL handoff.
-- L-NEW-1: Header-audit CI step now exits 1 on missing patent-pending header (was warning-only, exits 0).
+- L-NEW-1: Header-audit CI step now exits 1 on missing confidential header (was warning-only, exits 0).
 - L-NEW-2: Documented why wasm-build step stays soft-failing (`ffi_wasm.rs` stub; known gap until Phase 2.3+).
 - L-NEW-3: Added Tier-2 benchmark driver line to `rain/__main__.py` help output.
 - H1: Created `rain-rs/src/ffi_wasm.rs` stub (was declared in `lib.rs` but file was missing).
@@ -38,8 +38,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Funding waypoints appendix at `docs/plans/2026-05-22-rain-funding-waypoints.md`.
 - Architecture docs: FEP unified objective, component map, benchmark suite.
 - Design docs: SOFAR-on-VSA transplant, multi-signal EFE decoder.
-- Repository skeleton matching SOFAR lockdown pattern: LICENSE, PATENT_NOTES,
-  SECURITY, CONTRIBUTING, CHANGELOG, CRYSTAL.
+- Repository skeleton matching SOFAR lockdown pattern: LICENSE, SECURITY,
+  CONTRIBUTING, CHANGELOG, CRYSTAL.
 - Initial CI workflow.
 
 ## [0.0.0-scaffold] — 2026-05-22

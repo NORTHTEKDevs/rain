@@ -22,8 +22,6 @@
   Free Energy objective.
 - `docs/architecture/benchmark-suite.md` — Tier 1 (5 novelty), Tier 2 (8 LLM
   parity), Tier 3 (5 architectural soundness) — the v0 acceptance contract.
-- `PATENT_NOTES.md` — six patent-pending claims. Every source file must keep
-  the header.
 
 ## Patterns
 - **FEP-unified objective.** Every component computes a slice of Free Energy
@@ -37,9 +35,9 @@
 - **Sourced-over-built.** Before writing new code, check the component map
   to confirm the function isn't already in RCK, Hyperion, SOFAR, polyglot, or
   Evolve.
-- **Patent-pending header on every source file.** Audit script in `scripts/`.
+- **Confidential header on every source file.** Audit script in `scripts/`.
 - **No public commits, no benchmarks posted, no marketing material disclosing
-  internals.** See PATENT_NOTES.md disclosure rules.
+  internals.**
 
 ## Decisions
 - **Binding convention:** Kanerva bipolar 10K-dim (Hyperion). NOT Plate HRR

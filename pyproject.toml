@@ -1,4 +1,4 @@
-# CONFIDENTIAL - PATENT PENDING
+# CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 
 [build-system]
@@ -15,7 +15,7 @@ license = { file = "LICENSE" }
 authors = [
     { name = "Kristian Baer", email = "info@northtek.io" },
 ]
-keywords = ["proprietary", "patent-pending"]
+keywords = ["proprietary", "confidential"]
 classifiers = [
     "Development Status :: 1 - Planning",
     "Intended Audience :: Other Audience",

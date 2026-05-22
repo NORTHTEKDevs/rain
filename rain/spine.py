@@ -1,4 +1,4 @@
-# CONFIDENTIAL - PATENT PENDING
+# CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """HYMN sequence engine — Python wrapper over the rain-rs Rust hot path.
 

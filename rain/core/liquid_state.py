@@ -1,4 +1,4 @@
-# CONFIDENTIAL - PATENT PENDING
+# CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 # Original-source: third_party/rck/lsm.py -- adapted from 4K FHRR to bipolar
 # 10K-dim, simplified for v0 RAIN.

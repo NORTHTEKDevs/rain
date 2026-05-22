@@ -1,4 +1,4 @@
-# CONFIDENTIAL - PATENT PENDING
+# CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 # Original-source: third_party/rck/inference.py — adapted from RCK FHRR.
 """Multi-hop chain inference over a ShardedKB.

@@ -1,4 +1,4 @@
-# CONFIDENTIAL - PATENT PENDING
+# CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 # Original-source: third_party/rck/introspect.py -- adapted from RCK FHRR.
 """Global-workspace introspection: ring buffer of recent broadcast events.

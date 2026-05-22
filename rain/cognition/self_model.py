@@ -1,4 +1,4 @@
-# CONFIDENTIAL - PATENT PENDING
+# CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 # Original-source: third_party/rck/self_model.py -- adapted from RCK 4K FHRR to bipolar 10K.
 """Structural self-model: a small KB of facts about RAIN itself."""
@@ -18,7 +18,6 @@ DEFAULT_SELF_FACTS: list[tuple[str, str, str]] = [
     ("rain", "models_other_minds", "yes"),
     ("rain", "creator", "kristian_baer"),
     ("rain", "organization", "northtek"),
-    ("rain", "patent_status", "pending"),
 ]
 
 

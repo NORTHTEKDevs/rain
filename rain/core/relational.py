@@ -1,4 +1,4 @@
-# CONFIDENTIAL - PATENT PENDING
+# CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 # Original-source: third_party/rck/relational.py — adapted from 4K FHRR to 10K bipolar
 """Bipolar 10K-dim VSA primitives. Bind = element-wise product. Bundle = sum + sign."""

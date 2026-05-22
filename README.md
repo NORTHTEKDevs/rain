@@ -5,7 +5,7 @@
 > substrate, with no global backprop in steady state, no attention, no pretrained
 > LM in the loop, and capabilities transformers structurally cannot have.
 
-**CONFIDENTIAL — PATENT PENDING**
+**CONFIDENTIAL**
 **(c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io**
 
 ---
@@ -101,4 +101,4 @@ minds explicitly, and ships on a workstation: read on.
 
 ## License
 
-Proprietary. SPDX NOASSERTION. See `LICENSE` and `PATENT_NOTES.md`.
+Proprietary. SPDX NOASSERTION. See `LICENSE`.

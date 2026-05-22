@@ -1,4 +1,4 @@
-# CONFIDENTIAL - PATENT PENDING
+# CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 # Original-source: third_party/rck/theory_of_mind.py — adapted from RCK FHRR.
 """Theory of Mind: per-agent belief stores separate from ground truth.

@@ -4,7 +4,7 @@
 **Author:** Kristian Baer / NORTHTEKDevs
 **Date:** 2026-05-22
 **Status:** Draft, brainstorm-approved, pre-implementation
-**Classification:** CONFIDENTIAL — PATENT PENDING
+**Classification:** CONFIDENTIAL
 
 ---
 
@@ -320,8 +320,8 @@ Match or beat RWKV-7-mini + LFM2-small + Mamba-3-small + Pythia-160M on Tier 2 a
 
 - Name: `rain` (working codename)
 - Org: NORTHTEKDevs, PRIVATE
-- License: Proprietary, SPDX NOASSERTION, `PATENT_NOTES.md`
-- Headers: `CONFIDENTIAL - PATENT PENDING\n(c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io` on every source file
+- License: Proprietary, SPDX NOASSERTION
+- Headers: `CONFIDENTIAL\n(c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io` on every source file
 - Branch protection, squash-only, Dependabot, secret scanning (matches SOFAR config)
 
 ### Tech stack
@@ -342,7 +342,7 @@ Match or beat RWKV-7-mini + LFM2-small + Mamba-3-small + Pythia-160M on Tier 2 a
 
 1. Create directory tree under `~/projects/active/rain/`
 2. Vendor source map in `VENDORED.md` (no eager copying)
-3. Write design docs, README, LICENSE, PATENT_NOTES, SECURITY, CHANGELOG, CONTRIBUTING, CRYSTAL
+3. Write design docs, README, LICENSE, SECURITY, CHANGELOG, CONTRIBUTING, CRYSTAL
 4. Generate copyright headers on stub files
 5. `git init`, first commit "scaffold + design docs"
 6. `gh repo create NORTHTEKDevs/rain --private`

@@ -10,8 +10,7 @@ the canonical reference for code, commit, and review standards.
    tightly coupled; partial reads cause incoherent contributions.
 2. Read `docs/architecture/component-map.md` to see which existing module is
    being adapted vs which is new.
-3. Read `PATENT_NOTES.md`. Every source file you touch must keep the
-   `CONFIDENTIAL - PATENT PENDING` header.
+3. Every source file you touch must keep the `CONFIDENTIAL` header.
 4. Confirm you have signed a confidentiality agreement and have been added to
    the NORTHTEKDevs/rain repository explicitly.
 
@@ -22,7 +21,7 @@ the canonical reference for code, commit, and review standards.
 - **Rust:** clippy + rustfmt clean, MSRV 1.85, no `unsafe` outside the FFI
   layer, every public symbol documented.
 - **TypeScript:** prettier + eslint, strict mode, no `any` in non-test code.
-- **Headers:** every source file starts with the copyright + patent-pending
+- **Headers:** every source file starts with the copyright + confidential
   notice. See `scripts/check_headers.py` (added later).
 
 ## Branching

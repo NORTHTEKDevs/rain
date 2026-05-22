@@ -1,6 +1,6 @@
 # RAIN -- Getting Started
 
-> **CONFIDENTIAL -- PATENT PENDING.** This repo is private. Do not share
+> **CONFIDENTIAL -- CONFIDENTIAL.** This repo is private. Do not share
 > snippets externally without coordination.
 
 ## What RAIN is in one paragraph
@@ -184,7 +184,6 @@ Read in order:
 
 ## Disclosure rules
 
-See `PATENT_NOTES.md`. No public commits, no external benchmark posts, no
-code in pitch decks until provisional patent applications are filed. Demo
-videos + benchmark numbers + the one-sentence claim are the acceptable
+No public commits, no external benchmark posts, no code in pitch decks.
+Demo videos + benchmark numbers + the one-sentence claim are the acceptable
 externalizable artifacts.

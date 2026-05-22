@@ -1,4 +1,4 @@
-# CONFIDENTIAL - PATENT PENDING
+# CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 # Original-source: third_party/rck/explain.py — adapted from RCK FHRR.
 """Hallucination-free explanation: every claim cites the KB fact it came from."""

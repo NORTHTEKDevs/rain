@@ -119,7 +119,7 @@ Example entry format (one block per vendored file):
 
 ## Adapter responsibilities
 
-1. **Update header on every vendored file.** The patent-pending header is
+1. **Update header on every vendored file.** The confidential header is
    re-stamped with current date and the RAIN copyright line. Original-source
    copyright is preserved if the original repo had a different attribution.
 2. **Adapt bind-space.** RCK files using 4K complex FHRR must be ported to

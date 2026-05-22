@@ -1,4 +1,4 @@
-// CONFIDENTIAL - PATENT PENDING
+// CONFIDENTIAL
 // (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};

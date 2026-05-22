@@ -1,4 +1,4 @@
-# CONFIDENTIAL - PATENT PENDING
+# CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 import pytest
 from rain.cognition.metacog import CalibrationTally, classify_epistemic, Thresholds

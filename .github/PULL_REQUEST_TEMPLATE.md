@@ -19,7 +19,7 @@
 - [ ] `cargo test --workspace` passes locally (if Rust touched)
 - [ ] `ruff check` + `black --check` pass (if Python touched)
 - [ ] `cargo fmt --check` + `cargo clippy -- -D warnings` pass (if Rust touched)
-- [ ] Patent-pending header on every new file
+- [ ] Confidential header on every new file
 - [ ] No `.env`, secrets, credentials, or unrelated personal tooling
 - [ ] CHANGELOG entry under `[Unreleased]`
 - [ ] No new `Any` in public Python APIs; no `any` in non-test TypeScript;

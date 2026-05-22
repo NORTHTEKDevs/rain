@@ -1,5 +1,5 @@
 # tests/integration/test_phase1_setup.py
-# CONFIDENTIAL - PATENT PENDING
+# CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 
 import numpy as np

@@ -18,13 +18,6 @@ distribution of the Software. Possession, viewing, or temporary access to
 the Software does not constitute a license to use, modify, distribute,
 disclose, reverse-engineer, or create derivative works.
 
-PATENT NOTICE
-The architecture, methods, and component compositions described or
-implemented in this Software are the subject of one or more pending patent
-applications held by Kristian Baer / NORTHTEKDevs. See PATENT_NOTES.md for
-the current scope of patent-pending claims. No patent license is granted
-under this file.
-
 PERMITTED USES
 The only permitted uses of this Software are:
   (a) review by the copyright holder and authorized agents under explicit
@@ -42,7 +35,7 @@ Without prior written consent of the copyright holder, you may not:
   - train, fine-tune, distill, or otherwise extract derivative models;
   - publish benchmark results, evaluations, or comparisons of the Software;
   - incorporate any portion of the Software into another work;
-  - remove, alter, or obscure any copyright, patent, or proprietary notice.
+  - remove, alter, or obscure any copyright or proprietary notice.
 
 NO WARRANTY
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR

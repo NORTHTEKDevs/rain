@@ -1,4 +1,4 @@
-# CONFIDENTIAL - PATENT PENDING
+# CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 
 # Default owners for everything in the repo
@@ -11,6 +11,5 @@
 /rain/spine.py       @NORTHTEKDevs
 /rain/bridge.py      @NORTHTEKDevs
 /rain-rs/            @NORTHTEKDevs
-/PATENT_NOTES.md     @NORTHTEKDevs
 /LICENSE             @NORTHTEKDevs
 /SECURITY.md         @NORTHTEKDevs

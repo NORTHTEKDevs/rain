@@ -1,4 +1,4 @@
-# CONFIDENTIAL - PATENT PENDING
+# CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 # Original-source: third_party/sofar/mapper.py -- transplanted from transformer
 # residual-stream matrices to VSA codebook + role + HYMN-input matrices.

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# CONFIDENTIAL - PATENT PENDING
+# CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 #
 # Provenance check for vendored Hyperion source.
