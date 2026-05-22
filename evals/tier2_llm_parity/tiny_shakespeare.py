@@ -2,7 +2,7 @@
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Tier 2 L1 benchmark -- Tiny Shakespeare val-loss.
 
-Acceptance: val_loss <= 1.55 nats/char (matches nanoGPT-char at matched FLOPs).
+Acceptance (v0 proxy): hv_mse_loss <= 0.5 (MSE on hypervector predictions). Real NLL threshold of 1.55 nats/char applies when actual cross-entropy is wired in Phase 2.3.
 
 Usage:
     python evals/tier2_llm_parity/tiny_shakespeare.py \
@@ -32,7 +32,7 @@ from rain.train.checkpoint import load_checkpoint
 L1_PASS_THRESHOLD_HV_MSE = 0.5  # calibrated MSE threshold for HV outputs
 
 
-def compute_val_loss(W1: np.ndarray, W2: np.ndarray, codebook: Codebook,
+def compute_hv_mse_loss(W1: np.ndarray, W2: np.ndarray, codebook: Codebook,
                      corpus_text: str, n_eval_chars: int) -> float:
     """Compute mean-squared-error on next-char prediction over n_eval_chars random positions.
 
@@ -66,7 +66,7 @@ def evaluate(checkpoint_path: str, corpus_path: str, n_eval_chars: int = 1000) -
     W1, W2, meta = load_checkpoint(checkpoint_path)
     corpus = Path(corpus_path).read_text()
     cb = Codebook(vocab_size=256, dim=meta.in_dim, seed=meta.seed)
-    hv_mse_loss = compute_val_loss(W1, W2, cb, corpus, n_eval_chars=n_eval_chars)
+    hv_mse_loss = compute_hv_mse_loss(W1, W2, cb, corpus, n_eval_chars=n_eval_chars)
     return {
         "benchmark": "L1_tiny_shakespeare",
         "metric_type": "hv_mse",

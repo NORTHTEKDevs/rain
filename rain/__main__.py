@@ -20,6 +20,7 @@ def main() -> int:
     print("  python evals/tier1_novelty/tom.py --out <path>")
     print("  python evals/tier1_novelty/transparency.py --out <path>")
     print("  python evals/tier1_novelty/calibration.py --n 1000 --out <path>")
+    print("  python evals/tier2_llm_parity/tiny_shakespeare.py --checkpoint <path> --corpus <path> --out <path>")
     print("  python evals/tier3_soundness/efe_source_mix.py --out <path>")
     print("  python evals/tier3_soundness/nsga2_promotion.py --out <path>")
     print("  python evals/tier3_soundness/continual_stability.py --out <path>")

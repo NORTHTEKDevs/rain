@@ -37,7 +37,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
-        continue-on-error: true
       - name: Lint (ruff)
         run: ruff check rain/ tests/
       - name: Format check (black)
@@ -79,7 +78,10 @@ jobs:
       - name: Build WASM
         run: |
           cd rain-rs
-          wasm-pack build --target nodejs --release --features wasm || echo "wasm build scaffold — implementation phase"
+          # TODO: ffi_wasm.rs is a stub. When wasm bindings land for real,
+          # this step will need a corresponding test pass; keep soft for now
+          # but tracked as a known gap until Phase 2.3+.
+          wasm-pack build --target nodejs --release --features wasm || echo "wasm build scaffold -- known gap until Phase 2.3+"
 
   header-audit:
     name: Patent-pending header audit
@@ -97,5 +99,6 @@ jobs:
             fi
           done
           if [ "$MISSING" -gt 0 ]; then
-            echo "::warning::$MISSING source files missing the patent-pending header"
+            echo "::error::$MISSING source files missing the patent-pending header"
+            exit 1
           fi
