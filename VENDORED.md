@@ -191,3 +191,40 @@ Example entry format (one block per vendored file):
   - third_party/hyperion/train_nanogpt_baseline.py -- baseline (Phase 2.5)
 - Adapter notes: Unmodified copies. Rust port + adaptation happens in Task 2.2.
 - Per-file SHA-256 hashes recorded in scripts/check_hyperion_provenance.sh.
+
+### SOFAR mapper.py, encoder.py, attention.py, benchmarks/fidelity.py -- vendored 2026-05-22
+
+- Source: ~/projects/active/sofar/sofar/
+- Source git SHA: e7c1cb8afd00e2e28978325b94fa61b81305d06f
+- Destination: third_party/sofar/
+- Files:
+  - third_party/sofar/mapper.py -- SVD residual-stream projection (port target: rain/routing/mapper.py)
+  - third_party/sofar/encoder.py -- FrequencyLayeredEncoder (port target: rain/routing/encoder.py)
+  - third_party/sofar/attention.py -- LoRA + beam-steering envelopes (port target: rain/routing/beam.py)
+  - third_party/sofar/benchmarks/fidelity.py -- SVD-fidelity metric (port target: evals/tier3_soundness/sofar_fidelity.py)
+- Per-file SHA-256:
+  - third_party/sofar/__init__.py -- c38300d171cc714d3907c8e2977af9acdd2622ec1138d56b495a719f7778fd63
+  - third_party/sofar/mapper.py -- a1a034128b26ea7b0a8fbd6158a761068e43f196097845fb6ca2d2fad21eb8c7
+  - third_party/sofar/encoder.py -- 4d777d83c0c6f8bf87a17a82d29b80281785c4cf276952aa123cedf7bf3fe8df
+  - third_party/sofar/attention.py -- ef3f4fcdebac7aaf646faa0a532c4437edaa6d98e1d06c3f79ec8e0e99214f72
+  - third_party/sofar/benchmarks/__init__.py -- e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 (empty)
+  - third_party/sofar/benchmarks/fidelity.py -- 7f33576b4d943ef16a25c85cb493aa762ecbd099474616cbff26ac1f8543de16
+- Adapter notes: Unmodified copies. Tasks 3.1-3.3 transplant from transformer residual stream onto VSA state.
+
+### tsetlin.py -- vendored 2026-05-22
+
+- Source: ~/projects/active/rck/rck/tsetlin.py
+- Source git SHA: d1e7a68dd003c4bddda2cccd5cd41cda2762493e
+- File SHA-256: a865f732d8de3f8747a145c073753cb73b81f1e9c99ea3c4d7857d563da9296c
+- Destination: third_party/rck/tsetlin.py
+- Adapter notes: Unmodified copy. Vectorised TM port to bipolar 10K happens in Task 3.4 (rain/core/tsetlin.py).
+- Original-source attribution preserved in file header.
+
+### lsm.py -- vendored 2026-05-22
+
+- Source: ~/projects/active/rck/rck/lsm.py
+- Source git SHA: d1e7a68dd003c4bddda2cccd5cd41cda2762493e
+- File SHA-256: 18563d274c0f0bd1ecc4df310656107ed80a2051f6f49eefcbe332feccad7316
+- Destination: third_party/rck/lsm.py
+- Adapter notes: Unmodified copy. LSM + RLS port to bipolar 10K happens in Task 3.5 (rain/core/liquid_state.py).
+- Original-source attribution preserved in file header.
