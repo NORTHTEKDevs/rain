@@ -70,7 +70,6 @@ rain-cli = "rain_cli.__main__:main"
 homepage = "https://github.com/NORTHTEKDevs/rain"
 
 [tool.maturin]
-python-source = "rain"
 module-name = "rain._rust"
 manifest-path = "rain-rs/Cargo.toml"
 features = ["pyo3/extension-module"]
