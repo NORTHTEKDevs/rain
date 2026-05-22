@@ -13,10 +13,10 @@ to the Rust model via Task 2.4's checkpoint format.
 
 from __future__ import annotations
 import argparse
-import json
 import numpy as np
 from pathlib import Path
 from rain.core.relational import Codebook
+from rain.train.checkpoint import HymnCheckpointMetadata, save_checkpoint, freeze_checkpoint
 
 
 class HymnSurrogate:
@@ -106,6 +106,8 @@ def main():
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--out", type=str, default="hymn_checkpoint.npz",
                         help="output checkpoint path (Task 2.4 format)")
+    parser.add_argument("--save-frozen", action="store_true",
+                        help="Set frozen=True after saving (post-Phase-1 default).")
     args = parser.parse_args()
 
     corpus = Path(args.corpus).read_text()
@@ -114,22 +116,26 @@ def main():
 
     losses = train_steps(model, cb, corpus, n_steps=args.steps, lr=args.lr, seed=args.seed)
 
-    # Persist (Task 2.4 will formalize this checkpoint format)
-    np.savez(args.out, W1=model.W1, W2=model.W2, losses=np.array(losses))
-    metadata = {
-        "in_dim": args.in_dim,
-        "hidden_dim": args.hidden_dim,
-        "out_dim": args.out_dim,
-        "steps": args.steps,
-        "lr": args.lr,
-        "seed": args.seed,
-        "final_loss": losses[-1] if losses else None,
-        "initial_loss": losses[0] if losses else None,
-    }
-    sidecar = Path(args.out).with_suffix(".json")
-    sidecar.write_text(json.dumps(metadata, indent=2))
-    print(f"Saved checkpoint to {args.out} + {sidecar}")
-    print(f"Initial loss: {metadata['initial_loss']:.6f}, Final loss: {metadata['final_loss']:.6f}")
+    metadata = HymnCheckpointMetadata(
+        in_dim=args.in_dim,
+        hidden_dim=args.hidden_dim,
+        out_dim=args.out_dim,
+        steps=args.steps,
+        lr=args.lr,
+        seed=args.seed,
+        final_loss=losses[-1] if losses else None,
+        initial_loss=losses[0] if losses else None,
+    )
+    npz_path, json_path = save_checkpoint(
+        args.out, model.W1, model.W2, metadata,
+        losses=np.array(losses) if losses else None,
+    )
+    if args.save_frozen:
+        metadata = freeze_checkpoint(args.out)
+
+    print(f"Saved checkpoint to {npz_path} + {json_path}")
+    print(f"Frozen: {metadata.frozen}")
+    print(f"Initial loss: {metadata.initial_loss}, Final loss: {metadata.final_loss}")
 
 
 if __name__ == "__main__":
