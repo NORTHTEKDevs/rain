@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+# CONFIDENTIAL - PATENT PENDING
+# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
+#
+# Provenance check for vendored Hyperion source.
+# Run from repo root: bash scripts/check_hyperion_provenance.sh
+# Compares vendored copies to expected SHA-256 hashes recorded at vendoring time.
+
+set -e
+cd "$(dirname "$0")/.."
+
+# Recorded at vendoring (2026-05-22):
+EXPECTED="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 *third_party/hyperion/__init__.py
+af7891f63b71d928b911b3ec28718682bb40a1332796b8dec8b99427685c45fb *third_party/hyperion/eval_scan.py
+9e99e3f4d07adbf244c063a035eb6c0a6f138c5e4adaf0a88ba31fa220eb68a8 *third_party/hyperion/hymn/__init__.py
+8390a6abb06bd3287396ca5f3b7b17aef47b47b40ab589bd57b03201ad15d557 *third_party/hyperion/hymn/deq.py
+e9549c4453f5802e40eb99a15831b3d18ae2bc684c3d00faf5215f4e421fe9d3 *third_party/hyperion/hymn/field.py
+cebb0bfdd1f48b79ec22bdede9ff39ea8be70a0b47572e2e049524e759d3abbf *third_party/hyperion/hymn/model.py
+4e6373252c8c724fe4ddf1b1d72055a845eb9d44d73df6fac66964e8dab855b5 *third_party/hyperion/hymn/readout.py
+b230f36822a0c7f68b37a283b92bca9ee170b63c3d6d102dfd2c884d354d8bca *third_party/hyperion/hymn/seq.py
+dcf9d24535ba30435b7eca4edf74b0fe2850838feab6bd4d97a1ac089f626df4 *third_party/hyperion/hymn/update.py
+4682959743db7d7cd91bc2c2eebd9fb179fda292891f180887fe8d1bae06014b *third_party/hyperion/pure_vsa/__init__.py
+bbe50d9b2be7f7c7ea6102c43fc208b71e7ffdfad7c82a4bc85e7a1a80c02831 *third_party/hyperion/pure_vsa/arc1d_solver.py
+38cc3db524a03ae9792c5c5664b6d037574b82ff952ecc44d9a086f369e879f6 *third_party/hyperion/pure_vsa/baselines/__init__.py
+03a5c65d67f6e9c5d6228cd346a810fab4b2953cd22e88515b1fad3b6f2e8019 *third_party/hyperion/pure_vsa/baselines/transformer_tinyscan.py
+9106a9422bad4fc3ffccfbccf30feb1cce9e770dc48ad9e00097caf3cfe64b32 *third_party/hyperion/pure_vsa/capacity_study.py
+1c9b72cb858d9ae65f46febe8fcedb63a60dc21231f09ede55dab24e32afcf3b *third_party/hyperion/pure_vsa/capacity_study_v2.py
+161f6be52bd9e0c95bb8aba2d291baf47d40e85a79e956c1e9f491cad802886c *third_party/hyperion/pure_vsa/capacity_study_v3.py
+8a60ac8d12aa35bde4d3ea6ba6aa3c55c2bfc2aea9682bb1990ae1fa9840374b *third_party/hyperion/pure_vsa/cogs_hyperion.py
+7f9ff149e9531121c2e674b895b69efe7a1868fa33828e6970039e7cb23e452d *third_party/hyperion/pure_vsa/cogs_recursive.py
+59306c3e36aa3f32aa916703b0e3e741181b7c12871b846c8ad16a0aa710a4b0 *third_party/hyperion/pure_vsa/cogs_template_learner.py
+a3133c25f95bc1cabcc47b095aa23fe1d7922169b0d38f468dbfa8cffcb0d7b6 *third_party/hyperion/pure_vsa/composer.py
+d7f92e218631ecff3a6056fa65baa659e5a1fc0612f78d5ed15ab949ca52f335 *third_party/hyperion/pure_vsa/demo.py
+187a8e839ff557cc083056b81760bed6994bb867a489f29b33b34c29950c7d39 *third_party/hyperion/pure_vsa/discovery.py
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 *third_party/hyperion/pure_vsa/examples/__init__.py
+699e0c646e325a80c1b79178de2ef0d271ad56b37ddada7af718b52503912a54 *third_party/hyperion/pure_vsa/examples/minimal_example.py
+e8b55543038eb8796f82967b4271e2b66666f9d258f68ef3f419f41462dc6115 *third_party/hyperion/pure_vsa/hyperion.py
+ddda247ff237750af11f4ff96904281d7228144b43c4b69f8499fef127113353 *third_party/hyperion/pure_vsa/llm_parser.py
+aa0342d222746c7d9eaca7db9b7a54ed958b8b02ced27290577a333725ad73d2 *third_party/hyperion/pure_vsa/memory.py
+ab77f328ba20f2ba5b7cc8b3e5913e93cdb2b4050a03fb67961f566c32a7df8c *third_party/hyperion/pure_vsa/pcfg_hyperion.py
+adcc41a1f3d11b5d43886991af25a58ec8ba84d5c84c4c32e0ace7bbad58889f *third_party/hyperion/pure_vsa/reasoner.py
+b17cb01ff7ca1295d0f24addc0508cd5575ef1a5044fadeabca0e71885f7cfd4 *third_party/hyperion/pure_vsa/scan_grammar_discovery.py
+3e818333b858c6add694a811c380c09825e5a12efe9582bac33501551a5e5836 *third_party/hyperion/pure_vsa/scan_hyperion.py
+25f948e364cef8191e76e32bc0e1368068c7493fe80ba8eb83aabf55c7ee0773 *third_party/hyperion/pure_vsa/scan_hyperion_parserless.py
+72c274eabfb2d310a7d47c9feefa03f162ab186e7ee6916623edeb8764fc058b *third_party/hyperion/pure_vsa/scan_runner.py
+892f2f4e3769a44e1bed9c5ee9e6ed32a060c3ec934c937fde7b937de45d301a *third_party/hyperion/pure_vsa/tinyscan.py
+905ec2f39b3447ad0365c4b3fae57d9de683fc5833ee184947810dec78e37ef8 *third_party/hyperion/pure_vsa/tinyscan_v2.py
+2e9dc56f3212648e14bc2826146a1b703be542f84ff4721b5d149728b7335d5d *third_party/hyperion/pure_vsa/tinyscan_v3.py
+85d7a56011fa33618ab6fc75112a531b12b94e4c40aeb94d5e0527d7e08deaeb *third_party/hyperion/train_hymn_mini.py
+595a284de124fc0b0a1422eefe1d72e8f63e8957d0dd0f60faba069581796153 *third_party/hyperion/train_hymn_scan.py
+fa84aa341b34a6fcb60f642846136a3c26dbca4bbf39f8da253187ec0a89c8f5 *third_party/hyperion/train_nanogpt_baseline.py
+b10f4e23c6f268a4f80628d75263a61d491115b39f82fe2592731624f5700bf8 *third_party/hyperion/vsa_core/__init__.py
+76aa04cb502a3e76d3221f56c16f472d00365bdc11e0f1354ce655952fe56294 *third_party/hyperion/vsa_core/cleanup.py
+97c3d64e277e46094660f27c97e03d27c354f7d772ea870bcf5fd5ce66d0a789 *third_party/hyperion/vsa_core/codebook.py
+6e170dca592ece4b865db1d53d28b5d593bec5814f9cd7b95dbb6d9b4a5422d9 *third_party/hyperion/vsa_core/ops.py
+f39f00e5d95e36678f2346c27a4c1266aeb7531b266a9233ad3b9bda209cf465 *third_party/hyperion/vsa_core/ste.py"
+
+CURRENT=$(find third_party/hyperion -type f -name "*.py" | sort | xargs sha256sum)
+
+if [ "$EXPECTED" = "$CURRENT" ]; then
+    echo "OK: Hyperion vendored sources match recorded provenance"
+    exit 0
+else
+    echo "MISMATCH between recorded and current Hyperion vendored sources:"
+    diff <(echo "$EXPECTED") <(echo "$CURRENT") || true
+    exit 1
+fi

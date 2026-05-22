@@ -175,3 +175,19 @@ Example entry format (one block per vendored file):
   fep.py to match actual RCK file (verified absent: rck/efe.py; verified
   present: rck/fep.py).
 - Original-source attribution preserved in file header.
+
+### Hyperion vsa_core/, hymn/, pure_vsa/, training scripts -- vendored 2026-05-22
+
+- Source: ~/projects/active/hyperion/
+- Source git SHA: not-a-git-repo-as-of-2026-05-22
+- Destination: third_party/hyperion/
+- Files:
+  - third_party/hyperion/vsa_core/ -- bipolar 10K-dim primitives (Rust port target for rain-rs/src/vsa.rs)
+  - third_party/hyperion/hymn/ -- MLP update rule (Rust port target for rain-rs/src/hymn.rs)
+  - third_party/hyperion/pure_vsa/ -- Python ref + ablation baseline (rain/core/vsa_primitives.py)
+  - third_party/hyperion/train_hymn_mini.py -- training driver (adapted in Task 2.3)
+  - third_party/hyperion/train_hymn_scan.py -- SCAN training driver
+  - third_party/hyperion/eval_scan.py -- SCAN benchmark runner (Phase 5)
+  - third_party/hyperion/train_nanogpt_baseline.py -- baseline (Phase 2.5)
+- Adapter notes: Unmodified copies. Rust port + adaptation happens in Task 2.2.
+- Per-file SHA-256 hashes recorded in scripts/check_hyperion_provenance.sh.
