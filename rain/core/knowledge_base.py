@@ -75,6 +75,8 @@ class ShardedKB:
         self.seed = seed
         self._codebook = Codebook(vocab_size=0, dim=dim, seed=seed)
         self._shards: list[_Shard] = [_Shard(dim) for _ in range(num_shards)]
+        # exact last-write index for overwrite semantics: (subject, relation) -> obj
+        self._exact: dict[tuple[str, str], str] = {}
 
     def write(self, subject: str, relation: str, obj: str) -> None:
         idx = _shard_index(subject, relation, self.num_shards)
@@ -82,8 +84,13 @@ class ShardedKB:
         r_hv = self._codebook.vector(f"R:{relation}")
         o_hv = self._codebook.vector(f"O:{obj}")
         self._shards[idx].write(s_hv, r_hv, obj, o_hv)
+        self._exact[(subject, relation)] = obj
 
     def query(self, subject: str, relation: str) -> Optional[str]:
+        # Exact index takes precedence: returns the last-written value
+        key = (subject, relation)
+        if key in self._exact:
+            return self._exact[key]
         idx = _shard_index(subject, relation, self.num_shards)
         shard = self._shards[idx]
         if shard._count == 0:
