@@ -72,7 +72,7 @@ homepage = "https://github.com/NORTHTEKDevs/rain"
 [tool.maturin]
 module-name = "rain._rust"
 manifest-path = "rain-rs/Cargo.toml"
-features = ["pyo3/extension-module"]
+features = ["python", "pyo3/extension-module"]
 
 [tool.ruff]
 target-version = "py311"

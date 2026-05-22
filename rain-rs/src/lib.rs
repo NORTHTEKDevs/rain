@@ -13,7 +13,7 @@
 // Stubs only at scaffold time. Implementation lands during the writing-plans
 // implementation phase. See VENDORED.md for source-of-truth porting plan.
 
-#![forbid(unsafe_code)]
+#![warn(unsafe_code)]
 #![warn(missing_docs)]
 
 //! RAIN Rust hot-kernels crate.
