@@ -135,3 +135,43 @@ Example entry format (one block per vendored file):
 ## Provenance log
 
 (Empty until first vendoring during implementation.)
+
+### relational.py -- vendored 2026-05-22
+
+- Source: ~/projects/active/rck/rck/relational.py
+- Source git SHA: d1e7a68dd003c4bddda2cccd5cd41cda2762493e
+- File SHA-256: 9af31ad5150e3bbc294f96c9b427b89c27df580a608dc32cde81a677e65bbbd7
+- Destination: third_party/rck/relational.py
+- Adapter notes: Unmodified copy. Adaptation to bipolar 10K-dim happens in Task 1.3 (rain/core/relational.py).
+- Original-source attribution preserved in file header.
+
+### knowledge_base.py -- vendored 2026-05-22
+
+- Source: ~/projects/active/rck/rck/knowledge_base.py
+- Source git SHA: d1e7a68dd003c4bddda2cccd5cd41cda2762493e
+- File SHA-256: d370fc9cb471591650291c07a01e930c94aaf06893dccbb5d66d5ca66a1a0731
+- Destination: third_party/rck/knowledge_base.py
+- Adapter notes: Unmodified copy. Adaptation to bipolar 10K-dim happens in Task 1.3 (rain/core/knowledge_base.py).
+- Original-source attribution preserved in file header.
+
+### pcn.py -- vendored 2026-05-22
+
+- Source: ~/projects/active/rck/rck/pcn.py
+- Source git SHA: d1e7a68dd003c4bddda2cccd5cd41cda2762493e
+- File SHA-256: 71f316d2a028d029d26c1ff7fba8a171e11207c1db6c236989ddf793c6d7ab61
+- Destination: third_party/rck/pcn.py
+- Adapter notes: Unmodified copy. Adaptation to bipolar 10K-dim happens in Task 1.3 (rain/core/pcn.py).
+- Original-source attribution preserved in file header.
+
+### fep.py -- vendored 2026-05-22
+
+- Source: ~/projects/active/rck/rck/fep.py
+- Source git SHA: d1e7a68dd003c4bddda2cccd5cd41cda2762493e
+- File SHA-256: 35cec6b3b4623bc338c4b52252047ed2ecb804a3240dda2b8b43bcfd302ccbf5
+- Destination: third_party/rck/fep.py
+- Adapter notes: Unmodified copy. Source for both rain/core/fep.py (rank-1 A
+  generative-model update) and rain/core/efe.py (Expected Free Energy
+  decoder). Original plan listed source filename as efe.py -- corrected to
+  fep.py to match actual RCK file (verified absent: rck/efe.py; verified
+  present: rck/fep.py).
+- Original-source attribution preserved in file header.
