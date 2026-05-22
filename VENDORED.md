@@ -228,3 +228,37 @@ Example entry format (one block per vendored file):
 - Destination: third_party/rck/lsm.py
 - Adapter notes: Unmodified copy. LSM + RLS port to bipolar 10K happens in Task 3.5 (rain/core/liquid_state.py).
 - Original-source attribution preserved in file header.
+
+### RCK cognitive modules (22 files) -- vendored 2026-05-22
+
+- Source: ~/projects/active/rck/rck/
+- Source git SHA: d1e7a68dd003c4bddda2cccd5cd41cda2762493e
+- Destination: third_party/rck/
+- Files copied: 22
+- Files missing (logged for follow-up): none
+- Per-file SHA-256 hashes preserved in scripts/check_rck_cognitive_provenance.sh
+- Adapter notes: Unmodified copies. Tasks 5.1-5.5 port these to bipolar 10K
+  under rain/cognition/ and rain/core/.
+- Modules mapped to RAIN destinations (per docs/architecture/component-map.md):
+  - self_model.py -> rain/cognition/self_model.py (Task 5.1)
+  - theory_of_mind.py -> rain/cognition/theory_of_mind.py (Task 5.2)
+  - metacog.py -> rain/cognition/metacog.py (Task 5.1)
+  - introspect.py -> rain/cognition/introspect.py (Task 5.1)
+  - dialogue.py -> rain/cognition/dialogue.py (Task 5.3)
+  - inference.py -> rain/cognition/inference.py (Task 5.3)
+  - compose.py -> rain/cognition/compose.py (Task 5.4)
+  - explain.py -> rain/cognition/explain.py (Task 5.4)
+  - think_aloud.py -> rain/cognition/think_aloud.py (Task 5.4)
+  - compose_answer.py -> rain/cognition/compose_answer.py (Task 5.4)
+  - nlg.py -> rain/cognition/nlg.py (Task 5.4)
+  - conscious_agent.py -> rain/agent.py (Task 5.5)
+  - bigram.py -> rain/core/bigram.py (Task 5.3)
+  - bulk_ingest.py -> rain/data/bulk_ingest.py (likely already in scope but verify)
+  - synonyms.py -> rain/data/synonyms.py (likely already in scope but verify)
+  - self_verify.py -> rain/additions/self_verify.py (Phase 7 capability addition)
+  - federated_merge.py -> rain/additions/federated.py (Phase 7 capability addition)
+  - dreaming.py -> rain/additions/sleep_replay.py (Phase 7 capability addition)
+  - personality.py -> rain/additions/identity.py (Phase 7 capability addition)
+  - idk_detection.py -> rain/cognition/metacog.py merge (Task 5.1)
+  - provenance.py -> rain/cognition/explain.py merge (Task 5.4)
+  - episodic_consolidate.py -> rain/additions/sleep_replay.py merge (Phase 7)
