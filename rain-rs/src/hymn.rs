@@ -102,4 +102,12 @@ impl HymnModel {
     pub fn config(&self) -> &HymnConfig {
         &self.config
     }
+
+    pub fn weights_w1(&self) -> &[f32] {
+        &self.w1
+    }
+
+    pub fn weights_w2(&self) -> &[f32] {
+        &self.w2
+    }
 }

@@ -3,7 +3,7 @@
 
 //! PyO3 bindings for the rain-rs hot kernels.
 
-use numpy::{IntoPyArray, PyArray1, PyReadonlyArray1};
+use numpy::{IntoPyArray, PyArray1, PyArray2, PyReadonlyArray1};
 use pyo3::prelude::*;
 
 use crate::hymn::{HymnConfig, HymnModel};
@@ -34,6 +34,22 @@ impl PyHymnModel {
         PyHymnModel {
             inner: HymnModel::new(config),
         }
+    }
+
+    fn weights_w1<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyArray2<f32>>> {
+        let cfg = self.inner.config();
+        let data = self.inner.weights_w1().to_vec();
+        let arr = numpy::ndarray::Array2::from_shape_vec((cfg.in_dim, cfg.hidden_dim), data)
+            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
+        Ok(arr.into_pyarray(py))
+    }
+
+    fn weights_w2<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyArray2<f32>>> {
+        let cfg = self.inner.config();
+        let data = self.inner.weights_w2().to_vec();
+        let arr = numpy::ndarray::Array2::from_shape_vec((cfg.hidden_dim, cfg.out_dim), data)
+            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
+        Ok(arr.into_pyarray(py))
     }
 
     fn forward<'py>(

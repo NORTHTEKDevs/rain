@@ -47,3 +47,36 @@ class HymnModel:
         if input_.dtype != np.int16:
             input_ = input_.astype(np.int16)
         return self._inner.forward(state, input_)
+
+    def weights(self) -> tuple:
+        """Return (W1, W2) as numpy float32 arrays.
+
+        W1 shape (in_dim, hidden_dim), W2 shape (hidden_dim, out_dim).
+        """
+        if not _RUST_AVAILABLE:
+            raise RuntimeError("rain._rust not available")
+        return self._inner.weights_w1(), self._inner.weights_w2()
+
+
+def _python_reference_forward(
+    W1: np.ndarray, W2: np.ndarray, state: np.ndarray, input_: np.ndarray
+) -> np.ndarray:
+    """Bit-identical Python reference of rain-rs/src/hymn.rs forward.
+
+    W1: (in_dim, hidden_dim) float32 row-major (same layout as Rust).
+    W2: (hidden_dim, out_dim) float32 row-major.
+    state, input_: bipolar int16, shape (in_dim,).
+    Returns bipolar int16, shape (out_dim,).
+    """
+    state = state.astype(np.int16)
+    input_ = input_.astype(np.int16)
+    # Step 1: combined[d] = sign(state[d] + input_[d])
+    combined = np.where((state.astype(np.int32) + input_.astype(np.int32)) >= 0, 1, -1).astype(np.int16)
+    # Step 2: hidden_pre[h] = sum_d W1[d,h] * combined[d]  (= combined @ W1)
+    hidden_pre = combined.astype(np.float32) @ W1  # shape (hidden_dim,)
+    # Step 3: hidden_signed[h] = sign(hidden_pre[h])
+    hidden_signed = np.where(hidden_pre >= 0.0, 1, -1).astype(np.int16)
+    # Step 4: out_pre[d] = sum_h W2[h,d] * hidden_signed[h]  (= hidden_signed @ W2)
+    out_pre = hidden_signed.astype(np.float32) @ W2  # shape (out_dim,)
+    # Step 5: out[d] = sign(out_pre[d])
+    return np.where(out_pre >= 0.0, 1, -1).astype(np.int16)
