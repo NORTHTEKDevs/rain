@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- N1 continual-retention benchmark (Task 5.1) at `evals/tier1_novelty/retention.py` + `tests/test_eval_n1_retention.py`. A->B->A protocol per benchmark-suite.md: 5K animals/habitats vs 5K chemistry/composition, threshold retention >= 0.50, kill < 0.40. Closes Tier-1 surfaces 5/5 (N1-N5 all green).
+
 ### Fixed
 - M-NEW-1: Removed `continue-on-error: true` from CI install-deps step; maturin/Rust build failures now hard-fail the job.
 - M-NEW-2: Renamed `compute_val_loss` -> `compute_hv_mse_loss` in `evals/tier2_llm_parity/tiny_shakespeare.py`; updated module docstring to reflect MSE-on-HV semantics and Phase 2.3 NLL handoff.
