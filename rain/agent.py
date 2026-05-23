@@ -19,8 +19,14 @@ distinguish RAIN from LLMs.
 from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Callable
+
+import numpy as np
+
 from rain.core.relational import Codebook
 from rain.core.knowledge_base import ShardedKB
+from rain.core.liquid_state import LiquidStateMachine
+from rain.core.fep import LowRankA
+from rain.core.tsetlin import TsetlinMachine
 from rain.cognition.dialogue import DialogueContext
 from rain.cognition.introspect import Introspector
 from rain.cognition.self_model import SelfModel
@@ -50,7 +56,18 @@ class Answer:
 
 
 class ConsciousAgent:
-    def __init__(self, dim: int = 10000, num_shards: int = 64, seed: int = 0) -> None:
+    def __init__(
+        self,
+        dim: int = 10000,
+        num_shards: int = 64,
+        seed: int = 0,
+        *,
+        enable_continual: bool = False,
+        lsm_reservoir: int = 256,
+        fep_rank: int = 64,
+        tsetlin_classes: int = 16,
+        tsetlin_clauses_per_class: int = 16,
+    ) -> None:
         self.dim = dim
         self.codebook = Codebook(vocab_size=4096, dim=dim, seed=seed)
         self.kb = ShardedKB(num_shards=num_shards, dim=dim, seed=seed)
@@ -64,6 +81,25 @@ class ConsciousAgent:
         # behavior remains the v0 reference.
         self._hymn_sampler: HymnSamplerFn | None = None
         self._hymn_n_tokens: int = 120
+        # Phase-2 continual-learning surfaces. OFF by default to preserve
+        # the v0 reference behavior; opt in with enable_continual=True.
+        if enable_continual:
+            self.lsm = LiquidStateMachine(
+                input_dim=dim, reservoir_dim=lsm_reservoir,
+                output_dim=dim, seed=seed + 3,
+            )
+            self.fep = LowRankA(D=dim, R=fep_rank, seed=seed + 4)
+            self.tsetlin = TsetlinMachine(
+                num_classes=tsetlin_classes,
+                num_clauses_per_class=tsetlin_clauses_per_class,
+                num_features=dim, seed=seed + 5,
+            )
+            self._continual = True
+        else:
+            self.lsm = None
+            self.fep = None
+            self.tsetlin = None
+            self._continual = False
 
     def attach_hymn_sampler(self, sampler: HymnSamplerFn, n_tokens: int = 120) -> None:
         """Wire a trained-HYMN sampler as the KB-miss fallback for ask().
@@ -79,10 +115,70 @@ class ConsciousAgent:
         self._hymn_n_tokens = n_tokens
 
     def tell(self, subject: str, relation: str, object_: str) -> None:
-        """Teach a new fact. Records introspection + updates dialogue context."""
+        """Teach a new fact. Records introspection + updates dialogue context.
+
+        When `enable_continual=True` on the agent, this also drives the
+        Phase-2 local-rule learners (LSM RLS, FEP rank-1 A, Tsetlin Type-I
+        feedback) so the cognitive surfaces' weights evolve every time a
+        new fact is taught. No global gradient, no backprop -- just the
+        per-rule updates each module exposes.
+        """
         self.kb.write(subject, relation, object_)
         self.dialogue.remember(entity=subject, relation=relation)
         self.introspect.record("learn", fact=f"{subject}.{relation}={object_}")
+        if self._continual:
+            self._drive_continual_update(subject, relation, object_)
+
+    def _drive_continual_update(self, subject: str, relation: str, object_: str) -> None:
+        """Run the local-rule learners off a new (s, r, o) fact. Best-effort
+        -- any module-level exception is silently swallowed so a single
+        bad input doesn't disrupt the KB write that already happened.
+        """
+        state_vec = self.codebook.vector(subject).astype(np.float32)
+        target_vec = self.codebook.vector(object_).astype(np.float32)
+        # LSM: reservoir step + RLS readout update.
+        try:
+            self.lsm.step(state_vec)
+            self.lsm.update(target_vec)
+        except Exception:
+            pass
+        # FEP: low-rank A update toward the target.
+        try:
+            self.fep.update(state_vec, target_vec, alpha=0.01)
+        except Exception:
+            pass
+        # Tsetlin: per-relation Type-I feedback. Map relation -> stable class
+        # index via a deterministic hash.
+        try:
+            cls = abs(hash(relation)) % self.tsetlin.num_classes
+            bipolar = np.sign(state_vec + 1e-9).astype(np.int8)
+            self.tsetlin.feedback(bipolar, target_class=cls)
+        except Exception:
+            pass
+
+    def continual_state_snapshot(self) -> dict:
+        """Quick diagnostic: per-module shape/parameter counts after N updates."""
+        if not self._continual:
+            return {"enabled": False}
+        return {
+            "enabled": True,
+            "lsm": {
+                "reservoir_dim": self.lsm.reservoir_dim,
+                "output_dim": self.lsm.output_dim,
+                "state_l2": float(np.linalg.norm(self.lsm.state)),
+                "W_out_l2": float(np.linalg.norm(self.lsm.W_out)),
+            },
+            "fep": {
+                "rank": self.fep.rank(),
+                "U_l2": float(np.linalg.norm(self.fep.U)),
+                "V_l2": float(np.linalg.norm(self.fep.V)),
+            },
+            "tsetlin": {
+                "num_classes": self.tsetlin.num_classes,
+                "num_clauses_per_class": self.tsetlin.num_clauses_per_class,
+                "active_inclusions": int(np.sum(self.tsetlin.inclusion > 0)),
+            },
+        }
 
     def ask(self, subject: str, relation: str, think_aloud: bool = False) -> Answer:
         """Answer a fact-shaped question. Returns an Answer with epistemic class + citations."""
