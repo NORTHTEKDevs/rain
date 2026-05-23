@@ -13,7 +13,7 @@ def main() -> int:
     print()
     print("Quick demos:")
     print("  python examples/01_chat_e2e.py    -- end-to-end Tier-1 surfaces")
-    print("  pytest -q -m 'not slow'            -- full 137-test acceptance suite")
+    print("  pytest -q -m 'not slow'            -- full 140-test acceptance suite")
     print()
     print("Benchmark drivers:")
     print("  python evals/tier1_novelty/retention.py --out <path>")
@@ -26,6 +26,7 @@ def main() -> int:
     print("  python evals/tier3_soundness/nsga2_promotion.py --out <path>")
     print("  python evals/tier3_soundness/continual_stability.py --out <path>")
     print("  python evals/tier3_soundness/dispatch_correctness.py --out <path>")
+    print("  python evals/tier3_soundness/sofar_ablation.py --out <path>")
     return 0
 
 

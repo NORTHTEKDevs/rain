@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - N1 continual-retention benchmark (Task 5.1) at `evals/tier1_novelty/retention.py` + `tests/test_eval_n1_retention.py`. A->B->A protocol per benchmark-suite.md: 5K animals/habitats vs 5K chemistry/composition, threshold retention >= 0.50, kill < 0.40. Closes Tier-1 surfaces 5/5 (N1-N5 all green).
+- A2 SOFAR-on-VSA ablation benchmark (Task 4.2) at `evals/tier3_soundness/sofar_ablation.py` + `tests/test_eval_a2_sofar_ablation.py`. Routing-on vs routing-off MSE-on-HV val loss. Architectural-soundness invariant verified: identity-at-init is bit-identical to routing-off. v0 strict 3%-improvement bar reports `kill_triggered=true` (improvement ~= 0.08% with untrained LoRA); kill is **deferred**, not honored, pending re-run with trained routing weights post-Phase-2.3. Closes Tier-3 surfaces 5/5 (A1-A5 all wired).
 
 ### Fixed
 - M-NEW-1: Removed `continue-on-error: true` from CI install-deps step; maturin/Rust build failures now hard-fail the job.
