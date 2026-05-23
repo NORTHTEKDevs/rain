@@ -324,8 +324,15 @@ def save_torch_checkpoint(
     initial_loss: float | None,
     final_loss: float | None,
     losses: list[float] | None = None,
+    loss_type: str = LOSS_MSE,
+    context_len: int = 0,
+    batch_size: int = 1,
 ) -> tuple[Path, Path]:
-    """Detach weights + write the numpy checkpoint format."""
+    """Detach weights + write the numpy checkpoint format.
+
+    Carries loss_type + context_len + batch_size into the sidecar so consumers
+    (L1 benchmark, future scripts) can auto-pick the right eval metric.
+    """
     W1, W2 = model.to_numpy_weights()
     meta = HymnCheckpointMetadata(
         in_dim=model.in_dim,
@@ -336,6 +343,10 @@ def save_torch_checkpoint(
         seed=seed,
         final_loss=final_loss,
         initial_loss=initial_loss,
+        schema_version=2,
+        loss_type=loss_type,
+        context_len=context_len,
+        batch_size=batch_size,
     )
     return save_checkpoint(
         path, W1, W2, meta,

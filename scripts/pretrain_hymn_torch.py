@@ -93,6 +93,7 @@ def main() -> None:
         n_steps=args.steps, lr=args.lr, seed=args.seed,
         initial_loss=result.initial_loss, final_loss=result.final_loss,
         losses=result.losses,
+        loss_type=args.loss, context_len=args.context_len, batch_size=args.batch_size,
     )
     print(f"saved {npz_path} + {json_path}")
     print(

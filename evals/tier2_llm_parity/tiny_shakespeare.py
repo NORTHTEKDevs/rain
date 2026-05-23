@@ -155,17 +155,34 @@ def evaluate(
     return base
 
 
+def _auto_metric_from_checkpoint(checkpoint_path: str) -> str:
+    """Read the checkpoint sidecar and infer the metric to use.
+
+    If the sidecar carries `loss_type` (schema_version >= 2), match it:
+    nll-trained checkpoints get nll eval, mse-trained get hv_mse eval.
+    Older sidecars default to hv_mse for backward compat.
+    """
+    _, _, meta = load_checkpoint(checkpoint_path)
+    return "nll" if meta.loss_type == "nll" else "hv_mse"
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Tier 2 L1 -- Tiny Shakespeare val-loss")
     parser.add_argument("--checkpoint", required=True, help="path to HYMN .npz checkpoint")
     parser.add_argument("--corpus", required=True, help="path to Tiny Shakespeare .txt")
     parser.add_argument("--n-eval-chars", type=int, default=1000)
-    parser.add_argument("--metric", choices=["hv_mse", "nll"], default="hv_mse",
-                        help="hv_mse = v0 reference; nll = real cross-entropy (1.55 nats/char target)")
+    parser.add_argument("--metric", choices=["hv_mse", "nll", "auto"], default="auto",
+                        help="auto = pick based on the checkpoint's loss_type sidecar field "
+                             "(default; matches how the checkpoint was trained). "
+                             "hv_mse / nll force a specific metric.")
     parser.add_argument("--out", required=True, help="output JSON path")
     args = parser.parse_args()
+    metric = (
+        _auto_metric_from_checkpoint(args.checkpoint)
+        if args.metric == "auto" else args.metric
+    )
     result = evaluate(args.checkpoint, args.corpus,
-                      n_eval_chars=args.n_eval_chars, metric=args.metric)
+                      n_eval_chars=args.n_eval_chars, metric=metric)
     out_path = Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(result, indent=2))

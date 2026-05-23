@@ -30,6 +30,10 @@ class HymnCheckpointMetadata:
     initial_loss: float | None
     frozen: bool = False
     schema_version: int = 1
+    # New in schema_version >= 2. Optional so older checkpoint sidecars still load.
+    loss_type: str = "mse"        # "mse" or "nll" -- which loss the trainer minimized
+    context_len: int = 0          # sequence-context size used during training
+    batch_size: int = 1           # per-step batch size used during training
 
 
 def save_checkpoint(
@@ -52,12 +56,19 @@ def save_checkpoint(
 
 def load_checkpoint(path: str | Path) -> tuple[np.ndarray, np.ndarray, HymnCheckpointMetadata]:
     """Load and return (W1, W2, metadata). Frozen-flag is NOT enforced at load
-    time -- that's the responsibility of any code that wants to MUTATE the weights."""
+    time -- that's the responsibility of any code that wants to MUTATE the weights.
+
+    Older sidecars that predate schema_version=2 (no loss_type / context_len /
+    batch_size fields) still load -- the new fields take their dataclass defaults.
+    """
     npz_path = Path(path).with_suffix(".npz")
     json_path = npz_path.with_suffix(".json")
     data = np.load(npz_path)
     meta_dict = json.loads(json_path.read_text())
-    metadata = HymnCheckpointMetadata(**meta_dict)
+    # Forward-compat: drop any unknown keys so future loaders don't crash here.
+    known = {f.name for f in HymnCheckpointMetadata.__dataclass_fields__.values()}
+    filtered = {k: v for k, v in meta_dict.items() if k in known}
+    metadata = HymnCheckpointMetadata(**filtered)
     return data["W1"], data["W2"], metadata
 
 
