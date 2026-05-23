@@ -1,7 +1,7 @@
 # Security Policy
 
 **RAIN — Resonant Active Inference Network**
-**CONFIDENTIAL — PATENT PENDING**
+**CONFIDENTIAL**
 
 ## Vulnerability reporting
 

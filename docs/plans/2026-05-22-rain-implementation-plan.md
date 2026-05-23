@@ -59,7 +59,7 @@ Goal: codebook + KB + tokenizer ready to feed HYMN pre-training.
 
 ```python
 # tests/test_smoke.py
-# CONFIDENTIAL - PATENT PENDING
+# CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Smoke test — imports work and version is exposed."""
 
@@ -140,7 +140,7 @@ bundle, unbind, codebook).
 
 ```python
 # tests/core/test_relational.py
-# CONFIDENTIAL - PATENT PENDING
+# CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Tests for bipolar 10K-dim VSA primitives."""
 
@@ -192,7 +192,7 @@ Expected: FAIL with `ModuleNotFoundError: No module named 'rain.core.relational'
 
 ```python
 # rain/core/relational.py
-# CONFIDENTIAL - PATENT PENDING
+# CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 # Original-source: third_party/rck/relational.py — adapted from 4K FHRR to 10K bipolar
 """Bipolar 10K-dim VSA primitives. Bind = element-wise product. Bundle = sum + sign."""
@@ -272,7 +272,7 @@ Refs: docs/plans/2026-05-22-rain-design.md §2 (binding convention locked)"
 
 ```python
 # tests/core/test_knowledge_base.py
-# CONFIDENTIAL - PATENT PENDING
+# CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Tests for sharded HRR knowledge base."""
 
@@ -322,7 +322,7 @@ git commit -m "feat(core): sharded HRR knowledge base over bipolar primitives"
 
 ```python
 # tests/tokenize/test_bpe.py
-# CONFIDENTIAL - PATENT PENDING
+# CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 
 import pytest
@@ -349,7 +349,7 @@ def test_round_trip():
 
 ```python
 # rain/tokenize/bpe.py
-# CONFIDENTIAL - PATENT PENDING
+# CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """BPE tokenizer via SentencePiece. Default vocab 32K, configurable."""
 
@@ -415,7 +415,7 @@ git commit -m "feat(tokenize): BPE tokenizer wrapper (SentencePiece, 32K default
 
 ```python
 # tests/test_bootstrap_warm_start.py
-# CONFIDENTIAL - PATENT PENDING
+# CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 
 import numpy as np
@@ -440,7 +440,7 @@ def test_warm_start_overrides_random():
 
 ```python
 # scripts/bootstrap_warm_start.py
-# CONFIDENTIAL - PATENT PENDING
+# CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Warm-start the codebook from pretrained embeddings via sign projection.
 
@@ -493,7 +493,7 @@ git commit -m "feat(bootstrap): warm-start codebook from pretrained embeddings v
 
 ```python
 # tests/test_seed_kb.py
-# CONFIDENTIAL - PATENT PENDING
+# CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 
 from rain.core.knowledge_base import ShardedKB
@@ -512,7 +512,7 @@ def test_seed_loads_facts(tmp_path):
 
 ```python
 # scripts/seed_kb.py
-# CONFIDENTIAL - PATENT PENDING
+# CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 
 from __future__ import annotations
@@ -548,7 +548,7 @@ tiny corpus.
 
 ```python
 # tests/integration/test_phase1_setup.py
-# CONFIDENTIAL - PATENT PENDING
+# CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 
 import numpy as np
@@ -829,8 +829,7 @@ git push origin v0.1.0
 ```
 
 Update CHANGELOG with the v0 release notes. Cross-commit a copy of the
-master design doc + final benchmark results to a private internal archive
-(in case of patent priority disputes).
+master design doc + final benchmark results to a private internal archive.
 
 ---
 
@@ -847,12 +846,12 @@ master design doc + final benchmark results to a private internal archive
   - `generalization-probe` after each Tier-1 surface passes — stress-test
     with adversarial inputs.
 - **No public commits.** Repo is private. No benchmarks posted anywhere
-  external until patent filings are in.
+  external.
 - **Run header audit before every commit:**
 
   ```bash
   for f in $(git diff --cached --name-only | grep -E '\.(py|rs|ts)$'); do
-      head -3 "$f" | grep -q "CONFIDENTIAL - PATENT PENDING" || echo "MISSING: $f"
+      head -3 "$f" | grep -q "CONFIDENTIAL" || echo "MISSING: $f"
   done
   ```
 
@@ -872,5 +871,4 @@ Repository tagged `v0.1.0` with:
 - `code-reviewer` final pass clean.
 - `production-certifier` ≥ 9/10.
 - CHANGELOG complete.
-- Patent provisional applications filed (or filing scheduled within 30 days).
 - Internal stakeholder demo conducted.

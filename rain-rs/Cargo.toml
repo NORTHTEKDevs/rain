@@ -1,4 +1,4 @@
-# CONFIDENTIAL - PATENT PENDING
+# CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 
 [package]
@@ -41,6 +41,7 @@ ndarray.workspace = true
 nalgebra.workspace = true
 rand.workspace = true
 rand_chacha.workspace = true
+rand_distr.workspace = true
 
 [dev-dependencies]
 proptest.workspace = true
@@ -48,5 +49,10 @@ criterion.workspace = true
 
 [[bench]]
 name = "vsa_bench"
+harness = false
+required-features = []
+
+[[bench]]
+name = "hymn_bench"
 harness = false
 required-features = []

@@ -1,4 +1,4 @@
-// CONFIDENTIAL - PATENT PENDING
+// CONFIDENTIAL
 // (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 
 //! nsga2 — scaffold stub. Implementation lands during the writing-plans

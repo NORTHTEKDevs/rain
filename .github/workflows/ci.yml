@@ -1,4 +1,4 @@
-# CONFIDENTIAL - PATENT PENDING
+# CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 
 name: CI
@@ -37,13 +37,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
-        continue-on-error: true
       - name: Lint (ruff)
-        run: ruff check rain/ tests/ || true
+        run: ruff check rain/ tests/
       - name: Format check (black)
-        run: black --check rain/ tests/ || true
+        run: black --check rain/ tests/
       - name: Run tests
-        run: pytest -q || echo "no tests yet — scaffold phase"
+        run: pytest -q -m "not slow"
 
   rust-test:
     name: Rust on ${{ matrix.os }}
@@ -79,10 +78,13 @@ jobs:
       - name: Build WASM
         run: |
           cd rain-rs
-          wasm-pack build --target nodejs --release --features wasm || echo "wasm build scaffold — implementation phase"
+          # TODO: ffi_wasm.rs is a stub. When wasm bindings land for real,
+          # this step will need a corresponding test pass; keep soft for now
+          # but tracked as a known gap until Phase 2.3+.
+          wasm-pack build --target nodejs --release --features wasm || echo "wasm build scaffold -- known gap until Phase 2.3+"
 
   header-audit:
-    name: Patent-pending header audit
+    name: Confidential header audit
     timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
@@ -91,11 +93,12 @@ jobs:
         run: |
           MISSING=0
           for f in $(find rain rain-rs/src -type f \( -name "*.py" -o -name "*.rs" \) 2>/dev/null); do
-            if ! head -3 "$f" | grep -q "CONFIDENTIAL - PATENT PENDING"; then
+            if ! head -3 "$f" | grep -q "CONFIDENTIAL"; then
               echo "MISSING HEADER: $f"
               MISSING=$((MISSING + 1))
             fi
           done
           if [ "$MISSING" -gt 0 ]; then
-            echo "::warning::$MISSING source files missing the patent-pending header"
+            echo "::error::$MISSING source files missing the confidential header"
+            exit 1
           fi

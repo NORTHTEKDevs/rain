@@ -119,7 +119,7 @@ Example entry format (one block per vendored file):
 
 ## Adapter responsibilities
 
-1. **Update header on every vendored file.** The patent-pending header is
+1. **Update header on every vendored file.** The confidential header is
    re-stamped with current date and the RAIN copyright line. Original-source
    copyright is preserved if the original repo had a different attribution.
 2. **Adapt bind-space.** RCK files using 4K complex FHRR must be ported to
@@ -135,3 +135,130 @@ Example entry format (one block per vendored file):
 ## Provenance log
 
 (Empty until first vendoring during implementation.)
+
+### relational.py -- vendored 2026-05-22
+
+- Source: ~/projects/active/rck/rck/relational.py
+- Source git SHA: d1e7a68dd003c4bddda2cccd5cd41cda2762493e
+- File SHA-256: 9af31ad5150e3bbc294f96c9b427b89c27df580a608dc32cde81a677e65bbbd7
+- Destination: third_party/rck/relational.py
+- Adapter notes: Unmodified copy. Adaptation to bipolar 10K-dim happens in Task 1.3 (rain/core/relational.py).
+- Original-source attribution preserved in file header.
+
+### knowledge_base.py -- vendored 2026-05-22
+
+- Source: ~/projects/active/rck/rck/knowledge_base.py
+- Source git SHA: d1e7a68dd003c4bddda2cccd5cd41cda2762493e
+- File SHA-256: d370fc9cb471591650291c07a01e930c94aaf06893dccbb5d66d5ca66a1a0731
+- Destination: third_party/rck/knowledge_base.py
+- Adapter notes: Unmodified copy. Adaptation to bipolar 10K-dim happens in Task 1.3 (rain/core/knowledge_base.py).
+- Original-source attribution preserved in file header.
+
+### pcn.py -- vendored 2026-05-22
+
+- Source: ~/projects/active/rck/rck/pcn.py
+- Source git SHA: d1e7a68dd003c4bddda2cccd5cd41cda2762493e
+- File SHA-256: 71f316d2a028d029d26c1ff7fba8a171e11207c1db6c236989ddf793c6d7ab61
+- Destination: third_party/rck/pcn.py
+- Adapter notes: Unmodified copy. Adaptation to bipolar 10K-dim happens in Task 1.3 (rain/core/pcn.py).
+- Original-source attribution preserved in file header.
+
+### fep.py -- vendored 2026-05-22
+
+- Source: ~/projects/active/rck/rck/fep.py
+- Source git SHA: d1e7a68dd003c4bddda2cccd5cd41cda2762493e
+- File SHA-256: 35cec6b3b4623bc338c4b52252047ed2ecb804a3240dda2b8b43bcfd302ccbf5
+- Destination: third_party/rck/fep.py
+- Adapter notes: Unmodified copy. Source for both rain/core/fep.py (rank-1 A
+  generative-model update) and rain/core/efe.py (Expected Free Energy
+  decoder). Original plan listed source filename as efe.py -- corrected to
+  fep.py to match actual RCK file (verified absent: rck/efe.py; verified
+  present: rck/fep.py).
+- Original-source attribution preserved in file header.
+
+### Hyperion vsa_core/, hymn/, pure_vsa/, training scripts -- vendored 2026-05-22
+
+- Source: ~/projects/active/hyperion/
+- Source git SHA: not-a-git-repo-as-of-2026-05-22
+- Destination: third_party/hyperion/
+- Files:
+  - third_party/hyperion/vsa_core/ -- bipolar 10K-dim primitives (Rust port target for rain-rs/src/vsa.rs)
+  - third_party/hyperion/hymn/ -- MLP update rule (Rust port target for rain-rs/src/hymn.rs)
+  - third_party/hyperion/pure_vsa/ -- Python ref + ablation baseline (rain/core/vsa_primitives.py)
+  - third_party/hyperion/train_hymn_mini.py -- training driver (adapted in Task 2.3)
+  - third_party/hyperion/train_hymn_scan.py -- SCAN training driver
+  - third_party/hyperion/eval_scan.py -- SCAN benchmark runner (Phase 5)
+  - third_party/hyperion/train_nanogpt_baseline.py -- baseline (Phase 2.5)
+- Adapter notes: Unmodified copies. Rust port + adaptation happens in Task 2.2.
+- Per-file SHA-256 hashes recorded in scripts/check_hyperion_provenance.sh.
+
+### SOFAR mapper.py, encoder.py, attention.py, benchmarks/fidelity.py -- vendored 2026-05-22
+
+- Source: ~/projects/active/sofar/sofar/
+- Source git SHA: e7c1cb8afd00e2e28978325b94fa61b81305d06f
+- Destination: third_party/sofar/
+- Files:
+  - third_party/sofar/mapper.py -- SVD residual-stream projection (port target: rain/routing/mapper.py)
+  - third_party/sofar/encoder.py -- FrequencyLayeredEncoder (port target: rain/routing/encoder.py)
+  - third_party/sofar/attention.py -- LoRA + beam-steering envelopes (port target: rain/routing/beam.py)
+  - third_party/sofar/benchmarks/fidelity.py -- SVD-fidelity metric (port target: evals/tier3_soundness/sofar_fidelity.py)
+- Per-file SHA-256:
+  - third_party/sofar/__init__.py -- c38300d171cc714d3907c8e2977af9acdd2622ec1138d56b495a719f7778fd63
+  - third_party/sofar/mapper.py -- a1a034128b26ea7b0a8fbd6158a761068e43f196097845fb6ca2d2fad21eb8c7
+  - third_party/sofar/encoder.py -- 4d777d83c0c6f8bf87a17a82d29b80281785c4cf276952aa123cedf7bf3fe8df
+  - third_party/sofar/attention.py -- ef3f4fcdebac7aaf646faa0a532c4437edaa6d98e1d06c3f79ec8e0e99214f72
+  - third_party/sofar/benchmarks/__init__.py -- e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 (empty)
+  - third_party/sofar/benchmarks/fidelity.py -- 7f33576b4d943ef16a25c85cb493aa762ecbd099474616cbff26ac1f8543de16
+- Adapter notes: Unmodified copies. Tasks 3.1-3.3 transplant from transformer residual stream onto VSA state.
+
+### tsetlin.py -- vendored 2026-05-22
+
+- Source: ~/projects/active/rck/rck/tsetlin.py
+- Source git SHA: d1e7a68dd003c4bddda2cccd5cd41cda2762493e
+- File SHA-256: a865f732d8de3f8747a145c073753cb73b81f1e9c99ea3c4d7857d563da9296c
+- Destination: third_party/rck/tsetlin.py
+- Adapter notes: Unmodified copy. Vectorised TM port to bipolar 10K happens in Task 3.4 (rain/core/tsetlin.py).
+- Original-source attribution preserved in file header.
+
+### lsm.py -- vendored 2026-05-22
+
+- Source: ~/projects/active/rck/rck/lsm.py
+- Source git SHA: d1e7a68dd003c4bddda2cccd5cd41cda2762493e
+- File SHA-256: 18563d274c0f0bd1ecc4df310656107ed80a2051f6f49eefcbe332feccad7316
+- Destination: third_party/rck/lsm.py
+- Adapter notes: Unmodified copy. LSM + RLS port to bipolar 10K happens in Task 3.5 (rain/core/liquid_state.py).
+- Original-source attribution preserved in file header.
+
+### RCK cognitive modules (22 files) -- vendored 2026-05-22
+
+- Source: ~/projects/active/rck/rck/
+- Source git SHA: d1e7a68dd003c4bddda2cccd5cd41cda2762493e
+- Destination: third_party/rck/
+- Files copied: 22
+- Files missing (logged for follow-up): none
+- Per-file SHA-256 hashes preserved in scripts/check_rck_cognitive_provenance.sh
+- Adapter notes: Unmodified copies. Tasks 5.1-5.5 port these to bipolar 10K
+  under rain/cognition/ and rain/core/.
+- Modules mapped to RAIN destinations (per docs/architecture/component-map.md):
+  - self_model.py -> rain/cognition/self_model.py (Task 5.1)
+  - theory_of_mind.py -> rain/cognition/theory_of_mind.py (Task 5.2)
+  - metacog.py -> rain/cognition/metacog.py (Task 5.1)
+  - introspect.py -> rain/cognition/introspect.py (Task 5.1)
+  - dialogue.py -> rain/cognition/dialogue.py (Task 5.3)
+  - inference.py -> rain/cognition/inference.py (Task 5.3)
+  - compose.py -> rain/cognition/compose.py (Task 5.4)
+  - explain.py -> rain/cognition/explain.py (Task 5.4)
+  - think_aloud.py -> rain/cognition/think_aloud.py (Task 5.4)
+  - compose_answer.py -> rain/cognition/compose_answer.py (Task 5.4)
+  - nlg.py -> rain/cognition/nlg.py (Task 5.4)
+  - conscious_agent.py -> rain/agent.py (Task 5.5)
+  - bigram.py -> rain/core/bigram.py (Task 5.3)
+  - bulk_ingest.py -> rain/data/bulk_ingest.py (likely already in scope but verify)
+  - synonyms.py -> rain/data/synonyms.py (likely already in scope but verify)
+  - self_verify.py -> rain/additions/self_verify.py (Phase 7 capability addition)
+  - federated_merge.py -> rain/additions/federated.py (Phase 7 capability addition)
+  - dreaming.py -> rain/additions/sleep_replay.py (Phase 7 capability addition)
+  - personality.py -> rain/additions/identity.py (Phase 7 capability addition)
+  - idk_detection.py -> rain/cognition/metacog.py merge (Task 5.1)
+  - provenance.py -> rain/cognition/explain.py merge (Task 5.4)
+  - episodic_consolidate.py -> rain/additions/sleep_replay.py merge (Phase 7)

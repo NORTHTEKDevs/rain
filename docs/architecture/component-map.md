@@ -119,7 +119,7 @@ For each vendored module:
 - [ ] Source file copied to `third_party/<repo>/<path>` with provenance hash
       logged in `VENDORED.md`.
 - [ ] Adapted copy placed at the RAIN destination per this map.
-- [ ] Header on adapted copy carries the RAIN patent-pending notice.
+- [ ] Header on adapted copy carries the RAIN confidential notice.
 - [ ] Original-source attribution preserved in a `# Original-source:` comment.
 - [ ] Bind-space adapted (4K complex FHRR → 10K bipolar) if from RCK.
 - [ ] All transformer-specific imports stripped if from SOFAR.

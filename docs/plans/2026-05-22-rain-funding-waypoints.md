@@ -47,7 +47,7 @@ the wins.
 
 | Source | Realistic ask | Effort | Notes |
 |---|---|---|---|
-| NSF SBIR Phase I | $275k | High | 6-9 month cycle. Patent-pending novel ML from small business is textbook fit. |
+| NSF SBIR Phase I | $275k | High | 6-9 month cycle. Confidential novel ML from small business is textbook fit. |
 | NSF SBIR Phase II | $1-1.5M (after Phase I) | High | Sequential after Phase I. |
 | DARPA AIE Open BAA | $250k-1M | High | Solicitation themes: assured autonomy, calibrated AI, robust ML — RAIN fits. |
 | DOE / DARPA SBIR | $250k-1M | High | Various solicitations. |
@@ -79,7 +79,7 @@ landed.
 ### Compute-grant orgs (Google / AWS / NVIDIA / Microsoft / Lambda)
 
 Lead with: "Novel non-transformer generative architecture. Sub-1% the training
-cost of equivalent-scale LLMs. Patent-pending. Looking for compute credits to
+cost of equivalent-scale LLMs. Confidential. Looking for compute credits to
 run Phase 1 bootstrap." Show the cost-ratio chart. They love this story.
 
 ### NSF SBIR
@@ -87,7 +87,7 @@ run Phase 1 bootstrap." Show the cost-ratio chart. They love this story.
 Lead with: technical merit + commercialization potential. NSF specifically
 funds the "alternative to transformer LLMs" angle because of national-AI-
 strategy interest in not being dependent on one architectural class. Show:
-- Patent-pending architecture (Claims 1-6 in PATENT_NOTES.md).
+- Confidential architecture (six novelty claims documented internally).
 - Falsifiable benchmarks (Tier 1/2/3 in design doc §5).
 - 70% of code already exists across 5 prior repos.
 - Commercialization path (alaska-watchdog, kryos, fieldwork already use
@@ -137,12 +137,12 @@ RWKV/Liquid are looking for exactly this.
 
 ## Critical fundraising-protective rules
 
-1. **No public benchmark posts before patent filing.** Even on private
-   channels, anyone could screenshot.
+1. **No public benchmark posts.** Even on private channels, anyone could
+   screenshot.
 2. **Sign NDAs before any pitch.** Standard, non-negotiable.
 3. **One-line architecture descriptions only** in outreach until under NDA:
    "A new non-LLM generative AI based on Vector Symbolic Architecture and
-   Active Inference. Patent-pending. Trained at <1% the cost of equivalent-
+   Active Inference. Confidential. Trained at <1% the cost of equivalent-
    scale LLMs."
 4. **No code in pitch decks.** Demo videos + benchmark numbers + the
    one-sentence claim. Code is for under-NDA technical diligence.
@@ -156,10 +156,7 @@ RWKV/Liquid are looking for exactly this.
 
 ## Open questions for the user
 
-1. **Patent attorney selected?** First filing needs to happen before v0
-   public demo. Recommended: Frostbyte's existing attorney if any, otherwise
-   a small-firm software-patent specialist.
-2. **Trademark strategy?** "RAIN" + "Resonant Active Inference Network" +
+1. **Trademark strategy?** "RAIN" + "Resonant Active Inference Network" +
    "NORTHTEKDevs" should all be searched and reserved before launch.
 3. **Domain?** rain.dev, rainai.dev, raincore.ai, rain.ai (likely taken),
    resonantai.dev. Pick + park ASAP.
