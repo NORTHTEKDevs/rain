@@ -42,11 +42,20 @@ def main() -> int:
     parts_summary: list[tuple[str, int, int]] = []
 
     for spec in args.part:
-        path_str, _, weight_str = spec.partition(":")
-        if not weight_str:
+        # Use rpartition so Windows drive colons (e.g. 'C:\foo:5') survive.
+        # The WEIGHT is always after the LAST colon.
+        path_str, _, weight_str = spec.rpartition(":")
+        if not path_str:
+            # No colon at all -- treat the whole spec as a path with weight 1.
+            path_str = weight_str
             weight_str = "1"
+        try:
+            weight = max(1, int(weight_str))
+        except ValueError:
+            # weight_str isn't a number; treat the whole spec as the path.
+            path_str = spec
+            weight = 1
         path = Path(path_str)
-        weight = max(1, int(weight_str))
         if not path.is_file():
             print(f"warn: skipping missing {path}")
             continue
