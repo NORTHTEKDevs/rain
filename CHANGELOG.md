@@ -47,6 +47,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Best L1 to date: **1.72 nats/char** (carry=8, 30K steps, 8 min CPU). 60% of the gap from the prior 2.92 baseline to the 1.55 design-plan target closed in one shift via sequence-carry (RNN-style) training. Architecture is no longer the bottleneck at v0; we're now genuinely in striking distance of the target. WikiText-2 carry=8 + carry=16 Tiny Shakespeare runs queued.
 
+### v0 L1 PASSED (shift rain-v0-12h)
+
+| Config | Wall | Train (last 2K) | L1 val NLL | Pass? |
+|---|---|---|---|---|
+| Per-position, lr=1e-3 + warmup + cosine, ctx=16, wd=5e-5, CPU, 100K | 559s | 2.70 | 2.92 | no |
+| **Carry=4**, lr=5e-4, grad_clip=1.0, wd=1e-4, CPU, 5K | 48s | 2.47 | 2.34 | no |
+| **Carry=8**, lr=5e-4, grad_clip=1.0, wd=1e-4, CPU, 30K | 483s | 1.84 | 1.72 | no |
+| **Carry=16**, lr=5e-4, grad_clip=1.0, wd=1e-4, CPU, 30K | 833s | 1.64 | **1.5359** | **YES** |
+
+WikiText-2 self-eval NLL (carry=16 30K, DirectML, 11 min): **1.72**.
+
+The lever was **sequence-carry (RNN-style teacher-forced) training** + matched eval mode + cross-entropy on codebook-projected logits. Architecture itself unchanged (same 2-weight tanh-MLP HYMN as the numpy reference).
+
+### Added (shift rain-v0-12h)
+- `rain/train/torch_trainer.py`: `--carry-steps W` for RNN-style training, `--grad-clip`, `--warmup-steps`, `--cosine-decay`. `train_torch.loss_type` selects MSE vs NLL.
+- `rain/train/checkpoint.py`: schema v2 self-describes the checkpoint (loss_type, context_len, carry_steps, batch_size). L1 auto-picks the matching eval mode.
+- `rain/feedback/ollama_judge.py`: free-RLAIF judge primitive over the local Ollama daemon.
+- `scripts/sample_hymn.py`: autoregressive char generation with temperature/top-k/repetition-penalty.
+- `scripts/extract_wikitext2.py`: parquet -> flat .txt corpus adapter.
+- `scripts/run_phase2_feedback.py`: at-scale RLAIF runner.
+- `scripts/filter_seed_with_judge.py`: judge-during-seeding -- vet llama3.2 triples before they hit the KB.
+- `scripts/eval_all_checkpoints.py`: L1 across the entire checkpoint dir in one pass.
+- `scripts/rain_chat.py`: v0 chat REPL combining KB + HYMN + judge in one interactive surface.
+- `examples/02_ollama_seed_chat.py`, `examples/03_seed_then_judge.py`: end-to-end demos.
+
+### Verified at shift wrap
+- 190 tests passing.
+- L1 NLL on Tiny Shakespeare = 1.5359, `pass: true`.
+- WT2 NLL on WikiText-2 self-eval = 1.72.
+- 2711-fact KB distilled from llama3.2:3b (120 of 173 topics, ~24 min wall).
+- Phase-2 RLAIF @ scale: 50/50 verdicts fired, judge identified real semantic errors in the KB, calibration shifted appropriately (e.g. lives_in 0.50 -> 0.11).
+- Sample output from the L1-passing checkpoint produces recognizable Shakespeare structure with real character labels (ROMEO, MOPSA, BUCKINGHAM).
+
 ### Added (Track 3 - LLM-as-judge feedback)
 
 ### Added (Track 3 - LLM-as-judge feedback)
