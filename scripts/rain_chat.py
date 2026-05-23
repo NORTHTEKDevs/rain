@@ -37,7 +37,7 @@ import numpy as np
 from rain.agent import ConsciousAgent
 from rain.data.kb_seed import seed_from_jsonl
 from rain.feedback.ollama_judge import OllamaJudge, build_triple_prompt
-from rain.train.checkpoint import load_checkpoint
+from rain.train.checkpoint import load_checkpoint, load_codebook
 from rain.core.relational import Codebook
 from rain.cognition.rag import KbAugmentedSampler
 from scripts.sample_hymn import _hymn_forward, _sample_from_logits
@@ -49,13 +49,23 @@ class _HymnSampler:
 
     def __init__(self, checkpoint_path: str, corpus_path: str) -> None:
         self.W1, self.W2, self.meta = load_checkpoint(checkpoint_path)
-        corpus = Path(corpus_path).read_text(encoding="utf-8")
-        self.vocab = sorted(set(corpus))
-        self.char_to_idx = {c: i for i, c in enumerate(self.vocab)}
         cb = Codebook(vocab_size=256, dim=self.meta.in_dim, seed=self.meta.seed)
-        self.codebook_matrix = np.stack(
-            [cb.vector(c).astype(np.float32) for c in self.vocab]
-        )
+        # Load the EXACT codebook the model was trained against (warm-start
+        # aware). Falls back to seed-based reconstruction for legacy
+        # checkpoints that predate codebook persistence.
+        saved = load_codebook(checkpoint_path)
+        if saved is not None:
+            self.vocab, cb_matrix = saved
+            for c, v in zip(self.vocab, cb_matrix):
+                cb._cache[c] = v
+            self.codebook_matrix = cb_matrix.astype(np.float32)
+        else:
+            corpus = Path(corpus_path).read_text(encoding="utf-8")
+            self.vocab = sorted(set(corpus))
+            self.codebook_matrix = np.stack(
+                [cb.vector(c).astype(np.float32) for c in self.vocab]
+            )
+        self.char_to_idx = {c: i for i, c in enumerate(self.vocab)}
         self._cb = cb
 
     def sample(self, prompt: str, n_tokens: int, temperature: float,
