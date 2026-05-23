@@ -160,7 +160,16 @@ def _make_routes(
     async def self_describe(_: web.Request) -> web.Response:
         return web.json_response({"text": agent.self_describe()})
 
+    async def ui(_: web.Request) -> web.Response:
+        """Serve the built-in chat UI at GET /."""
+        ui_path = Path(__file__).resolve().parents[1] / "rain" / "webui" / "chat.html"
+        if not ui_path.is_file():
+            return web.Response(text="(chat.html missing)", status=404)
+        return web.Response(text=ui_path.read_text(encoding="utf-8"),
+                            content_type="text/html")
+
     return [
+        web.get("/", ui),
         web.get("/health", health),
         web.post("/ask", ask),
         web.post("/tell", tell),

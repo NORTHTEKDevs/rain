@@ -102,3 +102,15 @@ class TestSnapshotAndSelf(_ServerCase):
             data = await resp.json()
             assert isinstance(data["text"], str)
             assert len(data["text"]) > 0
+
+
+class TestUi(_ServerCase):
+    async def test_root_serves_chat_html(self):
+        async with self.client.request("GET", "/") as resp:
+            assert resp.status == 200
+            assert resp.content_type == "text/html"
+            body = await resp.text()
+            assert "<title>RAIN v0 chat</title>" in body
+            # The JS should at least mention the endpoints it calls.
+            assert "/ask" in body
+            assert "/tell" in body
