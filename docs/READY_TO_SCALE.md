@@ -80,20 +80,25 @@ empirical scaling rule.
 ### 5. Integrate cognitive primitives during inference
 
 The LSM / Tsetlin / FEP / SOFAR modules are TRAINED and TESTED in
-isolation (Tier-3 A1-A5 all wired) but the inference path does NOT
-use them. Phase 6 work:
+isolation (Tier-3 A1-A5 all wired). Inference-path integration:
 
 - LSM: per-turn state update from token embeddings -> reservoir state
-  -> RLS readout. Augments HYMN's prediction.
+  -> RLS readout. **WRITE SIDE DONE** in agent.tell when
+  `enable_continual=True`. Read side (use LSM.predict in ask) not yet.
 - Tsetlin: per-relation clause votes -> additional epistemic signal.
+  **WRITE SIDE DONE** -- Type-I feedback on every tell. Read side
+  (vote during ask) not yet.
 - FEP rank-1 A matrix: low-rank update of the generative model after
-  each turn (Phase 2 continual learning).
+  each turn (Phase 2 continual learning). **WRITE SIDE DONE.**
 - SOFAR beam adapter: trained LoRA weights focus state on relevant
   routing directions. This is what unlocks the A2 ablation kill-trigger
-  (currently 0.08% improvement; design target >=3%).
+  (currently 0.08% improvement; design target >=3%). **NOT STARTED.**
 
-**Estimated effort:** 1-2 weeks. Each module is shipped as a primitive;
-the work is in the integration glue + per-token cost optimization.
+**Estimated effort remaining:** 1 week for read-side cognitive
+integration (use signals during ask). Several days for SOFAR LoRA
+training. The write side ("continual learning by construction") works
+end-to-end through agent.tell + the HTTP /tell endpoint -- LSM W_out,
+FEP U, Tsetlin clauses all evolve per fact.
 
 ### 6. Train on conversational data so HYMN can actually chat
 
@@ -125,11 +130,16 @@ Current: 2399 judge-filtered facts across 120 topics. v1.0 target:
 ### 8. Deployment surface
 
 The chat REPL is the v0 UI. v1.0 needs:
-- HTTP/WS server wrapping ConsciousAgent.ask + sampler.
-- Optional Tauri 2 + React shell per the design plan.
-- Multi-user session management.
+- HTTP/WS server wrapping ConsciousAgent.ask + sampler. **DONE.**
+  `scripts/rain_server.py` -- aiohttp server with /health, /ask, /tell,
+  /describe, /sample, /judge, /tally, /snapshot, /self endpoints.
+  +7 tests in `tests/test_rain_server.py`. CLI flags compose every
+  working surface (--enable-continual, --use-rag, --judge-model).
+- Optional Tauri 2 + React shell per the design plan. **NOT STARTED.**
+- Multi-user session management. **NOT STARTED.**
 
-**Estimated effort:** 1-2 weeks. Pure engineering.
+**Estimated effort remaining:** 1 week for Tauri UI, several days for
+multi-user state isolation. Backend is done.
 
 ## "Press the v1.0 button" cost estimate
 
