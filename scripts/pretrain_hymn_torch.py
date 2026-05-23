@@ -28,6 +28,8 @@ from rain.train.torch_trainer import (
     device_name,
     train_torch,
     save_torch_checkpoint,
+    LOSS_MSE,
+    LOSS_NLL,
 )
 
 
@@ -39,6 +41,8 @@ def main() -> None:
     p.add_argument("--context-len", type=int, default=0,
                    help="0 = no context (matches numpy ref); K>0 bundles previous K chars")
     p.add_argument("--lr", type=float, default=1e-3)
+    p.add_argument("--loss", choices=[LOSS_MSE, LOSS_NLL], default=LOSS_MSE,
+                   help="mse = HV-MSE (v0 reference); nll = real cross-entropy via codebook softmax")
     p.add_argument("--in-dim", type=int, default=1024)
     p.add_argument("--hidden-dim", type=int, default=512)
     p.add_argument("--out-dim", type=int, default=1024)
@@ -69,6 +73,7 @@ def main() -> None:
         batch_size=args.batch_size,
         context_len=args.context_len,
         lr=args.lr,
+        loss_type=args.loss,
         device=dev,
         seed=args.seed,
         log_every=args.log_every,
@@ -83,8 +88,8 @@ def main() -> None:
     print(f"saved {npz_path} + {json_path}")
     print(
         f"steps={result.steps}  batch={result.batch_size}  "
-        f"context={result.context_len}  device={result.device}  "
-        f"wall={result.wall_seconds:.1f}s  "
+        f"context={result.context_len}  loss={result.loss_type}  "
+        f"device={result.device}  wall={result.wall_seconds:.1f}s  "
         f"initial_loss={result.initial_loss:.4f}  final_loss={result.final_loss:.4f}"
     )
 

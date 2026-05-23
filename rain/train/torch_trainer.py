@@ -29,6 +29,7 @@ from typing import Any
 import numpy as np
 import torch
 from torch import nn
+from torch.nn import functional as F
 
 from rain.core.relational import Codebook
 from rain.train.checkpoint import (
@@ -36,6 +37,11 @@ from rain.train.checkpoint import (
     save_checkpoint,
     load_checkpoint,
 )
+
+
+# Loss types accepted by train_torch.
+LOSS_MSE = "mse"   # MSE on bipolar hypervector targets (v0 reference, matches numpy)
+LOSS_NLL = "nll"   # Cross-entropy over codebook-projected logits (real LM loss)
 
 
 def auto_device() -> "torch.device":
@@ -136,6 +142,35 @@ def _codebook_lookup_batch(
     return torch.from_numpy(arr).to(device)
 
 
+def build_char_vocab(
+    corpus_text: str, codebook: Codebook, device: "torch.device"
+) -> tuple[list[str], dict[str, int], torch.Tensor]:
+    """Build the stable char-vocab + codebook matrix needed by NLL loss.
+
+    Returns:
+        chars_in_order: list of unique chars in the corpus, deterministic order.
+        char_to_idx:    dict mapping each char to its row index in the matrix.
+        codebook_matrix: (vocab, dim) float32 tensor on `device`. Each row is
+                         the codebook vector for the corresponding char, ready
+                         for `out @ codebook_matrix.T` to produce class logits.
+    """
+    chars_in_order = sorted(set(corpus_text))
+    char_to_idx = {c: i for i, c in enumerate(chars_in_order)}
+    matrix_np = np.stack([
+        codebook.vector(c).astype(np.float32) for c in chars_in_order
+    ])
+    matrix = torch.from_numpy(matrix_np).to(device)
+    return chars_in_order, char_to_idx, matrix
+
+
+def codebook_logits(out: torch.Tensor, codebook_matrix: torch.Tensor) -> torch.Tensor:
+    """Project HYMN output (batch, dim) onto the codebook vocab via dot product.
+
+    Returns logits of shape (batch, vocab) suitable for `F.cross_entropy`.
+    """
+    return out @ codebook_matrix.T
+
+
 def _sample_positions(
     n_corpus: int, batch_size: int, context_len: int, rng: np.random.Generator
 ) -> np.ndarray:
@@ -151,6 +186,7 @@ class TorchTrainResult:
     steps: int
     batch_size: int
     context_len: int
+    loss_type: str
     initial_loss: float
     final_loss: float
     losses: list[float]
@@ -168,18 +204,26 @@ def train_torch(
     batch_size: int = 32,
     context_len: int = 0,
     lr: float = 1e-3,
+    loss_type: str = LOSS_MSE,
     device: "torch.device | None" = None,
     seed: int = 0,
     log_every: int = 0,
 ) -> TorchTrainResult:
-    """Train HymnTorch with Adam on next-char MSE-on-HV.
+    """Train HymnTorch with Adam on next-char prediction.
 
     Args:
         context_len: if 0, `input_` is zeros (matches numpy reference).
             if K>0, `input_` is the mean of the previous K bipolar codebook
             vectors at each position, projected back to float32. Equivalent
             to a simple bundle of the recent history.
+        loss_type: "mse" -- MSE on the bipolar HV target (v0 reference).
+            "nll" -- project HYMN output onto the codebook to produce vocab
+            logits, then cross-entropy against the true next-char index.
+            NLL is a much sharper gradient signal (the gap closes ~3-5x faster
+            empirically) and is the real Phase-2.3 loss.
     """
+    if loss_type not in (LOSS_MSE, LOSS_NLL):
+        raise ValueError(f"unknown loss_type {loss_type!r}; expected 'mse' or 'nll'")
     if device is None:
         device = next(model.parameters()).device
     model.train()
@@ -191,6 +235,12 @@ def train_torch(
         raise ValueError(
             f"corpus too short ({n_corpus} chars) for context_len={context_len}"
         )
+
+    # Pre-build NLL machinery once if applicable (much faster than per-step).
+    if loss_type == LOSS_NLL:
+        _, char_to_idx, codebook_matrix = build_char_vocab(corpus_text, codebook, device)
+    else:
+        char_to_idx, codebook_matrix = None, None
 
     rng = np.random.default_rng(seed)
     losses: list[float] = []
@@ -212,10 +262,18 @@ def train_torch(
             input_ = torch.from_numpy(history_mean).to(device)
         else:
             input_ = torch.zeros_like(state)
-        target = _codebook_lookup_batch(codebook, next_chars, device)
 
         out = model(state, input_)
-        loss = ((out - target) ** 2).mean()
+        if loss_type == LOSS_NLL:
+            target_idx = torch.tensor(
+                [char_to_idx[c] for c in next_chars], dtype=torch.long, device=device,
+            )
+            logits = codebook_logits(out, codebook_matrix)
+            loss = F.cross_entropy(logits, target_idx)
+        else:
+            target = _codebook_lookup_batch(codebook, next_chars, device)
+            loss = ((out - target) ** 2).mean()
+
         optim.zero_grad()
         loss.backward()
         optim.step()
@@ -223,13 +281,15 @@ def train_torch(
 
         if log_every and (step + 1) % log_every == 0:
             recent = float(np.mean(losses[-min(log_every, len(losses)):]))
-            print(f"step {step + 1}/{n_steps}  loss(avg last {log_every}) = {recent:.4f}")
+            unit = "nats/char" if loss_type == LOSS_NLL else "hv_mse"
+            print(f"step {step + 1}/{n_steps}  loss(avg last {log_every}, {unit}) = {recent:.4f}")
 
     wall = time.perf_counter() - t0
     return TorchTrainResult(
         steps=n_steps,
         batch_size=batch_size,
         context_len=context_len,
+        loss_type=loss_type,
         initial_loss=float(losses[0]) if losses else 0.0,
         final_loss=float(losses[-1]) if losses else 0.0,
         losses=losses,

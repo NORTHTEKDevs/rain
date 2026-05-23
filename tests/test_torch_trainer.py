@@ -10,6 +10,10 @@ from rain.train.torch_trainer import (
     HymnTorch,
     train_torch,
     save_torch_checkpoint,
+    build_char_vocab,
+    codebook_logits,
+    LOSS_MSE,
+    LOSS_NLL,
 )
 from rain.train.checkpoint import load_checkpoint
 from scripts.pretrain_hymn import HymnSurrogate
@@ -74,6 +78,57 @@ def test_context_len_changes_training_dynamics():
                       context_len=4, lr=5e-3, device=CPU, seed=0)
     # Different trajectories on otherwise identical setup
     assert r_a.losses != r_b.losses
+
+
+def test_build_char_vocab_is_deterministic_and_complete():
+    """Vocab covers every unique char in the corpus and is in stable sorted order."""
+    cb = Codebook(vocab_size=128, dim=64, seed=0)
+    corpus = "the quick brown fox jumps over the lazy dog"
+    chars, c2i, matrix = build_char_vocab(corpus, cb, CPU)
+    assert set(chars) == set(corpus)
+    assert chars == sorted(set(corpus))
+    assert all(c2i[c] == i for i, c in enumerate(chars))
+    assert matrix.shape == (len(chars), 64)
+
+
+def test_codebook_logits_argmax_recovers_self():
+    """For each row of the codebook matrix, `out=row` should produce a logits
+    vector whose argmax is that row's own index -- the basic decoding check."""
+    cb = Codebook(vocab_size=128, dim=64, seed=0)
+    corpus = "the quick brown fox jumps over the lazy dog"
+    _, _, matrix = build_char_vocab(corpus, cb, CPU)
+    logits = codebook_logits(matrix, matrix)  # (vocab, vocab)
+    argmax = logits.argmax(dim=1)
+    expected = torch.arange(matrix.shape[0])
+    assert torch.equal(argmax, expected), (
+        f"codebook self-decoding broke: {argmax.tolist()} != {expected.tolist()}"
+    )
+
+
+def test_nll_train_loop_reduces_loss_on_cpu():
+    """Smoke: NLL training reduces cross-entropy on a small corpus."""
+    corpus = "the quick brown fox jumps over the lazy dog. " * 80
+    cb = Codebook(vocab_size=64, dim=128, seed=0)
+    model = HymnTorch(128, 64, 128, seed=0, device=CPU)
+    r = train_torch(
+        model, cb, corpus,
+        n_steps=200, batch_size=16, context_len=4,
+        lr=5e-3, loss_type=LOSS_NLL, device=CPU, seed=0,
+    )
+    assert r.loss_type == LOSS_NLL
+    assert len(r.losses) == 200
+    early = float(np.mean(r.losses[:20]))
+    late = float(np.mean(r.losses[-20:]))
+    assert late < early, f"NLL loss did not decrease: early={early}, late={late}"
+
+
+def test_train_torch_rejects_unknown_loss_type():
+    cb = Codebook(vocab_size=64, dim=64, seed=0)
+    model = HymnTorch(64, 32, 64, seed=0, device=CPU)
+    with pytest.raises(ValueError, match="unknown loss_type"):
+        train_torch(model, cb, "the quick brown fox " * 10,
+                    n_steps=1, batch_size=2, loss_type="bogus",
+                    device=CPU, seed=0)
 
 
 def test_checkpoint_roundtrip(tmp_path):
