@@ -1,0 +1,208 @@
+# Expanded topic list for broke-mode KB distillation -- 200 topics across
+# common knowledge domains. Generated for the rain-v0-12h shift on 2026-05-23.
+# Empty lines and lines starting with # are skipped.
+
+# --- Animals ---
+lions
+wolves
+eagles
+dolphins
+elephants
+tigers
+bears
+sharks
+penguins
+owls
+giraffes
+zebras
+pandas
+koalas
+kangaroos
+crocodiles
+snakes
+spiders
+honeybees
+ants
+
+# --- Plants ---
+oak trees
+roses
+ferns
+cacti
+sunflowers
+bamboo
+mushrooms (fungi)
+algae
+mosses
+seaweeds
+
+# --- History ---
+the Roman Empire
+the French Revolution
+World War II
+ancient Egypt
+the Industrial Revolution
+the American Civil War
+the Renaissance
+the Cold War
+the Mongol Empire
+ancient Greece
+the British Empire
+World War I
+the moon landing
+the printing press
+the discovery of penicillin
+
+# --- Geography ---
+the Pacific Ocean
+the Atlantic Ocean
+the Sahara desert
+the Amazon rainforest
+Mount Everest
+Mount Fuji
+the Andes mountains
+the Nile river
+the Mississippi river
+the Great Barrier Reef
+Antarctica
+the Grand Canyon
+the Alps
+Greenland
+Iceland
+
+# --- Chemistry ---
+water (chemistry)
+carbon (chemistry)
+oxygen (chemistry)
+hydrogen (chemistry)
+the periodic table
+acids and bases
+metals
+salt (NaCl)
+sugar (glucose)
+proteins
+
+# --- Biology ---
+DNA and genetics
+photosynthesis
+cells (biology)
+the human heart
+the human brain
+the immune system
+blood circulation
+vitamins
+bacteria
+viruses
+evolution
+mitochondria
+the nervous system
+
+# --- Physics ---
+gravity
+electromagnetism
+the speed of light
+black holes
+supernovae
+quantum mechanics (basics)
+the standard model of physics
+relativity
+thermodynamics
+nuclear fission
+
+# --- Astronomy ---
+the solar system
+the Milky Way galaxy
+the Andromeda galaxy
+the moon
+the sun
+Jupiter
+Saturn
+Mars
+Venus
+Mercury
+Neptune
+Uranus
+Pluto
+comets
+asteroids
+
+# --- Computing ---
+the Internet
+the transistor
+machine learning
+the World Wide Web
+the C programming language
+the Python programming language
+the C++ programming language
+the Linux kernel
+the TCP/IP stack
+relational databases
+the Unix operating system
+the Apple Macintosh
+the IBM PC
+the Java programming language
+the JavaScript programming language
+
+# --- Art and culture ---
+Shakespeare's plays
+Beethoven's symphonies
+Picasso's paintings
+jazz music
+classical music
+hip-hop music
+the Renaissance art movement
+photography (history)
+cinema (history)
+opera
+
+# --- Mythology and religion ---
+Greek mythology
+Norse mythology
+Egyptian mythology
+Hindu mythology
+Buddhism (basics)
+
+# --- Sports ---
+soccer (football)
+basketball
+baseball
+tennis
+chess
+the Olympic Games
+
+# --- Politics and institutions ---
+the United States Constitution
+the European Union
+the United Nations
+NATO
+the World Bank
+
+# --- Science (engineering / applied) ---
+the steam engine
+the airplane (Wright brothers)
+the automobile
+the smartphone
+solar panels
+wind turbines
+nuclear reactors
+the laser
+the radio
+
+# --- Famous people (kept narrow + factual) ---
+Albert Einstein
+Marie Curie
+Isaac Newton
+Charles Darwin
+Galileo Galilei
+Leonardo da Vinci
+Aristotle
+Confucius
+Mahatma Gandhi
+Nelson Mandela
+
+# --- Misc / language ---
+the English language
+the Latin language
+the Mandarin Chinese language
+Spanish (language)
+Arabic (language)

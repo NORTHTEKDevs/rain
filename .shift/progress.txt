@@ -58,3 +58,37 @@ SHIFTS:
     - Run init.sh and confirm READY.
     - Implement sequence-carry training (Phase A): state_{t+1} = HYMN(state_t, input_t)
       backprop across a K-step window. Add --carry-steps CLI flag and tests.
+  ---
+  step: 1
+  date: 2026-05-23T02:53:00Z
+  status: complete
+  tag: shift/rain-v0-12h/1
+  commit: 9cfc77b
+  summary: |
+    Sequence-carry RNN-style training shipped end-to-end:
+    train_torch(carry_steps=W) + grad_clip + L1 nll eval with matching
+    carry mode + schema v2 with carry_steps field. Bootstrap-bug found
+    + fixed (initial state must be HYMN-transformed before decoding,
+    not raw codebook vector, otherwise loss starts at ~250 nats/char).
+    Final architecture: zero-init state, ingest each char via HYMN,
+    decode after each transition, average loss across the window.
+  files:
+    - rain/train/torch_trainer.py
+    - rain/train/checkpoint.py
+    - scripts/pretrain_hymn_torch.py
+    - tests/test_torch_trainer.py
+    - evals/tier2_llm_parity/tiny_shakespeare.py
+    - data/topics_expanded.txt (new, untracked yet)
+  results:
+    - 5K-step carry=4 NLL on CPU: 48 s wall, train loss 2.47
+    - L1 NLL (per-position eval, sub-optimal):  2.84
+    - L1 NLL (carry=4 eval, matched):           **2.34**  (vs prior best 2.92)
+    - 174 tests passing, 0 failures
+    - bug log: argparse help string with bare "%" rejected by Py3.14
+      (background bash uses system Python, not venv); use %% or .venv/Scripts/python
+  blockers: none
+  next:
+    - Append topics_expanded.txt + the %% fix in a maintenance commit.
+    - Step 2: wire WikiText-2 (parquet) as a corpus + train HYMN on it.
+    - In parallel: 30K-step carry=8 training is running in background,
+      will produce an even sharper L1 NLL number.
