@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Verified
 - PyTorch 2.4.1 + torch-directml 0.2.5 installed in `.venv`; AMD Radeon 8060S iGPU validated at 3.4 ms / 2048x2048 fp32 matmul (~6x faster than CPU). First non-toy HYMN pretrain ran on Tiny Shakespeare: 5000 steps, dim=512/hidden=256, 6 seconds wall clock, loss 1.232 -> 0.988.
 
+### Added (Track 1 - HYMN PyTorch port)
+- `rain/train/torch_trainer.py` -- HymnTorch nn.Module + train_torch loop + save_torch_checkpoint. Same forward semantics as the numpy `HymnSurrogate` (verified by `test_init_matches_numpy_reference` + `test_forward_matches_numpy_reference`), but uses Adam + batching + optional sequence-context bundling + DirectML device auto-detection. Checkpoint format unchanged so the existing L1 Tier-2 benchmark consumes it.
+- `scripts/pretrain_hymn_torch.py` -- CLI driver mirroring `pretrain_hymn.py`. Flags: `--batch-size`, `--context-len`, `--device {auto,cpu,directml}`.
+- `tests/test_torch_trainer.py` -- 5 tests covering numpy-reference parity, training-reduces-loss, context-len changes dynamics, checkpoint roundtrip.
+- First DirectML training run on Tiny Shakespeare: 5000 steps, batch=64, context_len=8, dim=1024/hidden=512, **34.8s wall** on the AMD Radeon 8060S, loss 1.188 -> 0.828. L1 val MSE = 0.880 -- matches the 50000-step numpy / no-context run, confirming sequence context is the dominant quality lever per step.
+
 ### Fixed
 - M-NEW-1: Removed `continue-on-error: true` from CI install-deps step; maturin/Rust build failures now hard-fail the job.
 - M-NEW-2: Renamed `compute_val_loss` -> `compute_hv_mse_loss` in `evals/tier2_llm_parity/tiny_shakespeare.py`; updated module docstring to reflect MSE-on-HV semantics and Phase 2.3 NLL handoff.

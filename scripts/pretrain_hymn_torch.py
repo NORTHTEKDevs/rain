@@ -1,0 +1,93 @@
+# CONFIDENTIAL
+# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
+"""HYMN pre-training driver, PyTorch + DirectML edition.
+
+Mirrors `scripts/pretrain_hymn.py` but trains on the iGPU (when DirectML
+is available) with Adam + batching + optional sequence context.
+
+Usage:
+
+    python -m scripts.pretrain_hymn_torch \
+        --corpus data/corpora/tiny_shakespeare.txt \
+        --steps 50000 --batch-size 64 --context-len 8 \
+        --in-dim 1024 --hidden-dim 512 \
+        --out data/checkpoints/hymn_tinyshake_torch.npz
+
+Produces the same checkpoint format as the numpy reference driver, so the
+existing L1 Tier-2 benchmark consumes it without modification.
+"""
+
+from __future__ import annotations
+import argparse
+from pathlib import Path
+
+from rain.core.relational import Codebook
+from rain.train.torch_trainer import (
+    HymnTorch,
+    auto_device,
+    device_name,
+    train_torch,
+    save_torch_checkpoint,
+)
+
+
+def main() -> None:
+    p = argparse.ArgumentParser(description="HYMN pretrain (PyTorch + DirectML)")
+    p.add_argument("--corpus", required=True, help="path to text corpus")
+    p.add_argument("--steps", type=int, default=10000)
+    p.add_argument("--batch-size", type=int, default=32)
+    p.add_argument("--context-len", type=int, default=0,
+                   help="0 = no context (matches numpy ref); K>0 bundles previous K chars")
+    p.add_argument("--lr", type=float, default=1e-3)
+    p.add_argument("--in-dim", type=int, default=1024)
+    p.add_argument("--hidden-dim", type=int, default=512)
+    p.add_argument("--out-dim", type=int, default=1024)
+    p.add_argument("--seed", type=int, default=42)
+    p.add_argument("--device", choices=["auto", "cpu", "directml"], default="auto")
+    p.add_argument("--log-every", type=int, default=1000)
+    p.add_argument("--out", required=True, help="output checkpoint path (Task 2.4 format)")
+    args = p.parse_args()
+
+    if args.device == "cpu":
+        import torch
+        dev = torch.device("cpu")
+    elif args.device == "directml":
+        import torch_directml as _dml
+        dev = _dml.device(0)
+    else:
+        dev = auto_device()
+    print(f"device: {device_name(dev)}")
+
+    corpus = Path(args.corpus).read_text()
+    cb = Codebook(vocab_size=256, dim=args.in_dim, seed=args.seed)
+    model = HymnTorch(args.in_dim, args.hidden_dim, args.out_dim,
+                      seed=args.seed, device=dev)
+
+    result = train_torch(
+        model, cb, corpus,
+        n_steps=args.steps,
+        batch_size=args.batch_size,
+        context_len=args.context_len,
+        lr=args.lr,
+        device=dev,
+        seed=args.seed,
+        log_every=args.log_every,
+    )
+
+    npz_path, json_path = save_torch_checkpoint(
+        model, args.out,
+        n_steps=args.steps, lr=args.lr, seed=args.seed,
+        initial_loss=result.initial_loss, final_loss=result.final_loss,
+        losses=result.losses,
+    )
+    print(f"saved {npz_path} + {json_path}")
+    print(
+        f"steps={result.steps}  batch={result.batch_size}  "
+        f"context={result.context_len}  device={result.device}  "
+        f"wall={result.wall_seconds:.1f}s  "
+        f"initial_loss={result.initial_loss:.4f}  final_loss={result.final_loss:.4f}"
+    )
+
+
+if __name__ == "__main__":
+    main()
