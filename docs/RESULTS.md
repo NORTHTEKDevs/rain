@@ -23,6 +23,28 @@ L1's pass threshold per the design plan is **NLL <= 1.55 nats/char**.
 |---|---|---|---|---|---|---|---|---|---|---|
 | hymn_wt2_carry16_30k | WikiText-2 | 30,000 | 16 | 16 | 1024 | 11 min | -- | 1.72 | ~6.5 | ~26% |
 | hymn_wt103_warm_100k | WikiText-103 | 100,000 | 8 | 16 | 1024 | 20 min | 1.95 | **2.04** | 8.51 (4979 chars) | **24%** |
+| hymn_conversational_v1_60k | Hybrid (Alpaca 1x + KB-QA 3x + Shakespeare 1x, 20.8 MB) | 60,000 | 8 | 16 | 1024 | 10 min | 1.86 | (no held-out yet) | -- | -- |
+
+## Conversational HYMN qualitative
+
+`hymn_conversational_v1_60k` (NLL 1.86 on the training mix). Trained on
+20.8 MB hybrid: 51,709 Alpaca Q/A pairs + 7,197 KB-derived Q/A pairs
+(3x oversampled) + 7,222 Shakespeare paragraphs. Shuffled at chunk level.
+
+**Observed at 60K steps**:
+- Always emits the Q:/A: alternation pattern (structure learned)
+- Periods after sentences, blank lines between Q/A blocks (formatting learned)
+- Short common words (and, is, as, the, A:) reproduced correctly
+- Longer content reads as gibberish -- expected at char-level for 60K steps
+
+**Honest assessment**: HYMN learned the SURFACE FORM of Q/A dialogue but
+not yet the SEMANTICS. This matches RAIN's design thesis: HYMN is the
+sequence engine (form/fluency), KB is the knowledge source (semantics).
+The combined system in agent.ask is what produces grounded answers.
+
+**Next training run to push semantics**: re-train at 300K+ steps,
+ideally larger hidden_dim, ideally with conversational data >100 MB.
+Not blocking v0 demo.
 
 **Generalist vs specialist note:** the WT-103-trained generalist scores
 3.69 on Tiny Shakespeare (expected -- different character distribution).

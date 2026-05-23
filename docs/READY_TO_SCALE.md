@@ -105,19 +105,23 @@ isolation (Tier-3 A1-A5 all wired). Inference-path integration:
 `tests/test_agent_cognitive_signals.py`. Only SOFAR LoRA training
 remains (several days of training + ablation re-runs).
 
-### 6. Train on conversational data so HYMN can actually chat
+### 6. Train on conversational data so HYMN can actually chat -- DONE for surface, NOT for semantics
 
-HYMN trained on Shakespeare or WikiText answers KB-miss queries with
-period-correct prose, not factual answers. For RAIN to be a useful
-chat agent, HYMN needs to be pre-trained on Q/A or dialogue data:
+`hymn_conversational_v1_60k` trained on a 20.8 MB hybrid:
+51,709 Alpaca Q/A + 7,197 KB-derived Q/A (3x) + 7,222 Shakespeare,
+chunk-shuffled. 60K steps in 10 min DirectML, final NLL 1.86.
 
-- Alpaca (50K Q/A pairs, ~40 MB).
-- ShareGPT (filtered to ~10K curated dialogues).
-- Or use the local Ollama Qwen-30B to generate a synthetic Q/A dataset
-  from RAIN's own KB.
+**Result**: HYMN learned the Q:/A: alternation pattern, periods,
+blank-line separators, and short common words. Longer continuations
+are gibberish -- 60K chars-level steps is not enough to learn
+semantics, only surface form.
 
-**Estimated effort:** 1-2 days to wire + train. Compute: similar to L1
-training time.
+This matches RAIN's design thesis: HYMN is the sequence engine
+(form/fluency); KB is the knowledge source (semantics). The combined
+`agent.ask` flow IS the v0 conversational surface.
+
+**Open**: 300K+ step training run for more coherent continuations. Not
+blocking v0 demo.
 
 ### 7. Larger KB (~50K-100K facts)
 
