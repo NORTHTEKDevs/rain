@@ -34,7 +34,7 @@ from pathlib import Path
 
 from rain.agent import ConsciousAgent
 from rain.data.kb_seed import seed_from_jsonl
-from rain.feedback.ollama_judge import OllamaJudge
+from rain.feedback.ollama_judge import OllamaJudge, build_triple_prompt
 
 
 @dataclass
@@ -151,8 +151,13 @@ def run(args: argparse.Namespace) -> Phase2Run:
         ans = agent.ask(s, r)
         if ans.inference_source is not None:
             run_state.answered_probes += 1
-        question = f"What is the {r} of {s}?"
-        verdict = judge.judge(question, ans.text)
+        # Judge the clean (subject, relation, object) triple rather than
+        # RAIN's surface-form answer; otherwise the judge rejects based on
+        # snake_case formatting and the "I know that ... directly from a
+        # stored fact" framing instead of the underlying fact.
+        stored_obj = (ans.citations[0][2] if ans.citations else expected)
+        question, judge_answer = build_triple_prompt(s, r, stored_obj)
+        verdict = judge.judge(question, judge_answer)
         if verdict is None:
             run_state.judge_parse_failures += 1
             continue

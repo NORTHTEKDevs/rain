@@ -70,3 +70,13 @@ def test_build_user_prompt_carries_question_and_answer():
     assert "What is the capital of France?" in p
     assert "Paris." in p
     assert "JSON" in p
+
+
+def test_build_triple_prompt_de_underscores_for_judge():
+    """The clean-form helper renders snake_case triples as spaced prose so the
+    judge doesn't reject based on form (e.g. 'sandro_botticelli' vs 'Sandro Botticelli')."""
+    from rain.feedback.ollama_judge import build_triple_prompt
+    q, a = build_triple_prompt("albert_einstein", "born_in", "ulm_germany")
+    assert "_" not in q and "_" not in a
+    assert q == "What is the born in of albert einstein?"
+    assert a == "The born in of albert einstein is ulm germany."

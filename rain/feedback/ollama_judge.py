@@ -59,6 +59,22 @@ def build_user_prompt(question: str, rain_answer: str) -> str:
     )
 
 
+def build_triple_prompt(subject: str, relation: str, obj: str) -> tuple[str, str]:
+    """Render a (subject, relation, object) triple as a clean (question, answer) pair
+    for the judge, free of RAIN's surface artifacts ('I know that...directly from a
+    stored fact') AND of snake_case formatting noise that triggers the judge to
+    reject based on form rather than fact.
+
+    Returns: (question_str, answer_str).
+    """
+    s_clean = subject.replace("_", " ")
+    r_clean = relation.replace("_", " ")
+    o_clean = obj.replace("_", " ")
+    question = f"What is the {r_clean} of {s_clean}?"
+    answer = f"The {r_clean} of {s_clean} is {o_clean}."
+    return question, answer
+
+
 def parse_judge_response(text: str) -> Judgment | None:
     """Extract the first JSON object from `text` and coerce to Judgment.
 
