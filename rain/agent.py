@@ -52,7 +52,8 @@ class Answer:
     epistemic: str   # know / think / guess / unknown
     citations: list[tuple[str, str, str]] = field(default_factory=list)
     confidence: float = 0.0
-    inference_source: str | None = None  # direct / inherited / transitive / None
+    inference_source: str | None = None  # direct / inherited / transitive / None / hymn
+    cognitive_signals: dict[str, float] | None = None  # populated when enable_continual
 
 
 class ConsciousAgent:
@@ -231,13 +232,55 @@ class ConsciousAgent:
         self.dialogue.record_turn("user", f"ask({subject_r}, {relation_r})")
         self.dialogue.record_turn("rain", text)
 
+        cognitive = self._cognitive_signals_for(subject_r, result) if self._continual else None
         return Answer(
             text=text,
             epistemic=epistemic,
             citations=list(result.chain),
             confidence=confidence,
             inference_source=result.source,
+            cognitive_signals=cognitive,
         )
+
+    def _cognitive_signals_for(self, subject: str, result: InferenceResult) -> dict[str, float]:
+        """Read-side use of the LSM / FEP / Tsetlin surfaces.
+
+        Returns a small diagnostic dict that exposes how strongly each
+        cognitive surface 'agrees' with the KB answer. At v0 these are
+        observability-only; future work can fold them into confidence/
+        epistemic. The signals:
+          * fep_cos: cosine similarity between FEP.predict(state) and
+                     codebook(answer). Higher = FEP agrees.
+          * lsm_state_l2: L2 norm of the LSM reservoir state after one
+                          step on the state vector (rough 'familiarity').
+          * tsetlin_votes_class: per-relation Tsetlin vote, normalized.
+        """
+        out: dict[str, float] = {}
+        state_vec = self.codebook.vector(subject).astype(np.float32)
+        try:
+            self.lsm.step(state_vec)
+            out["lsm_state_l2"] = float(np.linalg.norm(self.lsm.state))
+        except Exception:
+            out["lsm_state_l2"] = -1.0
+        if result.answer is not None:
+            try:
+                pred = self.fep.predict(state_vec)
+                target = self.codebook.vector(result.answer).astype(np.float32)
+                num = float(pred @ target)
+                den = float(np.linalg.norm(pred) * np.linalg.norm(target) + 1e-9)
+                out["fep_cos"] = num / den
+            except Exception:
+                out["fep_cos"] = 0.0
+        else:
+            out["fep_cos"] = 0.0
+        try:
+            bipolar = np.sign(state_vec + 1e-9).astype(np.int8)
+            votes = self.tsetlin.vote(bipolar)
+            max_vote = int(np.max(np.abs(votes))) if votes.size else 0
+            out["tsetlin_max_abs_vote"] = float(max_vote)
+        except Exception:
+            out["tsetlin_max_abs_vote"] = 0.0
+        return out
 
     def describe(self, entity: str, relations: list[str] | None = None) -> str:
         """Multi-sentence description from stored facts."""
