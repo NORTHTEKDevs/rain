@@ -75,7 +75,7 @@ def main() -> None:
         dev = auto_device()
     print(f"device: {device_name(dev)}")
 
-    corpus = Path(args.corpus).read_text()
+    corpus = Path(args.corpus).read_text(encoding="utf-8")
     cb = Codebook(vocab_size=256, dim=args.in_dim, seed=args.seed)
     model = HymnTorch(args.in_dim, args.hidden_dim, args.out_dim,
                       seed=args.seed, device=dev)

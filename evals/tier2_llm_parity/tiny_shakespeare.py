@@ -150,7 +150,7 @@ def evaluate(
     if metric not in ("hv_mse", "nll"):
         raise ValueError(f"unknown metric {metric!r}; expected 'hv_mse' or 'nll'")
     W1, W2, meta = load_checkpoint(checkpoint_path)
-    corpus = Path(corpus_path).read_text()
+    corpus = Path(corpus_path).read_text(encoding="utf-8")
     cb = Codebook(vocab_size=256, dim=meta.in_dim, seed=meta.seed)
     effective_carry = carry_steps if carry_steps is not None else getattr(meta, "carry_steps", 0)
     base = {

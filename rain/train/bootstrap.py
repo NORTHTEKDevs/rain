@@ -163,7 +163,7 @@ def main() -> None:
     parser.add_argument("--summary-out", type=str, default="bootstrap_summary.json")
     args = parser.parse_args()
 
-    corpus_text = Path(args.corpus).read_text()
+    corpus_text = Path(args.corpus).read_text(encoding="utf-8")
     boot = bootstrap_phase1(
         corpus_texts=[corpus_text],
         kb_jsonl_path=args.kb,
