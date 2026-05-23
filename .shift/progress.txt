@@ -175,3 +175,36 @@ SHIFTS:
     - Step 4: comprehensive wrap report covering every L1 number we measured,
       KB seed stats, Phase-2 deltas, and the architectural finding about
       sequence-carry being THE lever.
+  ---
+  step: wrap
+  date: 2026-05-23T04:30:00Z
+  status: closed
+  tag: shift/rain-v0-12h/wrap (pending)
+  commit: 4aef16a + wrap commit
+  summary: |
+    Shift closes with L1 PASSING (1.54 nats/char on Tiny Shakespeare).
+    The carry=16 30K-step training that finished mid-step crossed the
+    1.55 design-plan threshold. See .shift/WRAP_REPORT.md for the full
+    table + sample text + DONE-WHEN scoreboard.
+  files:
+    - .shift/WRAP_REPORT.md (new)
+    - data/checkpoints/hymn_carry16_30k.npz (gitignored, ~4 MB)
+  final_results:
+    - L1 NLL: **1.5359 nats/char**, pass: true (carry=16 30K, 14 min CPU)
+    - WT2 NLL: 1.96 (carry=8 20K, DirectML, 5.5 min)
+    - KB facts: 2711 from llama3.2:3b across 120 topics
+    - Phase-2 RLAIF: 50/50 updates fired, identified real KB errors
+    - 180 tests green
+    - 12 shift commits + 4 maintenance commits pushed; tags 0..wrap
+  verification:
+    - pytest tests/ ... 180 passed
+    - L1 (carry=16): 1.5359, pass=true, eval_carry_steps=16
+    - L1 (wt2 self-eval): 1.96
+    - sample_hymn on best checkpoint produces recognizable Shakespeare
+  ready_to_merge: no (CI still budget-blocked on NORTHTEKDevs; PR #1 sits
+                     awaiting Actions cap lift)
+  next_shift_followups:
+    - Wire trained HYMN into ConsciousAgent for chat-style generation.
+    - Judge-during-seeding: filter llama3.2 triples BEFORE write.
+    - WikiText-2 carry=16 (carry=8 hit 1.96; carry=16 likely much lower).
+    - dim=2048 HYMN -- the architecture lever we haven't pulled yet.
