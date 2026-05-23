@@ -6,9 +6,9 @@ import pytest
 
 torch = pytest.importorskip("torch")
 
-from rain.core.relational import Codebook
-from rain.train.checkpoint import load_checkpoint
-from rain.train.torch_trainer import (
+from rain.core.relational import Codebook  # noqa: E402
+from rain.train.checkpoint import load_checkpoint  # noqa: E402
+from rain.train.torch_trainer import (  # noqa: E402
     LOSS_NLL,
     HymnTorch,
     build_char_vocab,
@@ -16,7 +16,7 @@ from rain.train.torch_trainer import (
     save_torch_checkpoint,
     train_torch,
 )
-from scripts.pretrain_hymn import HymnSurrogate
+from scripts.pretrain_hymn import HymnSurrogate  # noqa: E402
 
 CPU = torch.device("cpu")
 
