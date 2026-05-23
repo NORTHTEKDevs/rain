@@ -24,6 +24,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `scripts/pretrain_hymn_torch.py` -- CLI driver mirroring `pretrain_hymn.py`. Flags: `--batch-size`, `--context-len`, `--device {auto,cpu,directml}`.
 - `tests/test_torch_trainer.py` -- 5 tests covering numpy-reference parity, training-reduces-loss, context-len changes dynamics, checkpoint roundtrip.
 - First DirectML training run on Tiny Shakespeare: 5000 steps, batch=64, context_len=8, dim=1024/hidden=512, **34.8s wall** on the AMD Radeon 8060S, loss 1.188 -> 0.828. L1 val MSE = 0.880 -- matches the 50000-step numpy / no-context run, confirming sequence context is the dominant quality lever per step.
+- 50000-step DirectML+context=8 run: 324.5s wall, train loss 1.188 -> 0.820, L1 val MSE = 0.894 (slightly worse than 5K; 50K x batch=64 = 3.2M samples vs 1.1M-char corpus -> mild overfit). Confirms the next levers are real NLL loss + regularization + bigger corpus (WikiText-2), not more steps on Tiny Shakespeare.
+- CPU vs DirectML reality-check at training scale (dim=1024, hidden=512, batch=64, context=8): **CPU 203 steps/s, DirectML 154 steps/s.** DirectML wins on raw matmul (6.1x on 2048x2048) but Adam's lerp falls back to CPU under DirectML + per-step batch transfer overhead eats the advantage at this dim. The iGPU wins as model / batch size grows; the broke-mode plan retains DirectML for higher-dim runs and recommends CPU below dim~2048.
+
+### Added (Track 2 - Ollama KB distillation)
+- `scripts/seed_kb_from_ollama.py` -- distillation driver. Calls a local Ollama model via HTTP, asks for N (subject, relation, object) triples per topic, schema-validates each (lowercased, underscored, non-empty), writes JSONL compatible with `rain.data.kb_seed.seed_from_jsonl`. Built-in 50-topic baseline; `--topics-file` for custom lists. Resilient JSON extractor balances unclosed `]` and drops half-written final triples (a known llama3.2:3b failure mode).
+- `tests/test_seed_kb_from_ollama.py` -- 10 tests covering token normalization, schema validation, JSON extraction across bare/prose/fenced inputs, and recovery from truncated arrays.
+- Smoke run validated against the live Ollama daemon (llama3.2:3b, 3 topics x 12 triples = 36 facts in 15.3 seconds, 0 rejected). Bigger overnight runs queued for qwen3-coder-30B with the full default topic list.
 
 ### Fixed
 - M-NEW-1: Removed `continue-on-error: true` from CI install-deps step; maturin/Rust build failures now hard-fail the job.

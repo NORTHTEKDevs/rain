@@ -89,6 +89,7 @@ data/cache/
 data/raw/
 data/corpora/
 data/checkpoints/
+data/kb_seed/
 logs/
 
 # Model artifacts (too large for git, use LFS or external storage)
