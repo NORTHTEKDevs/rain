@@ -34,6 +34,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - First real NLL training run on Tiny Shakespeare via DirectML: 10000 steps, batch=64, context_len=8, lr=5e-4, dim=1024/hidden=512. **Initial NLL 27.7 -> final 2.71 (train) / 3.39 (L1 val).** That's ~2.5x compression below uniform-random (4.17 nats/char on a 65-char vocab) -- the model is genuinely learning. Still above the 1.55 nats/char production threshold; closing that gap is the next set of levers (lr schedule, larger context, weight decay, WikiText-2 scale).
 - LR-too-high finding logged: lr=2e-3 with NLL on DirectML diverges after ~step 2000 (loss climbs from 3.8 back to 5.2). Default LR for NLL kept at 5e-4 in the CLI; MSE LR unchanged at 1e-3.
 - Switched optimizer to AdamW + added `--weight-decay` flag (default 0). AdamW's decoupled weight-decay fights the train/val gap seen on Tiny Shakespeare NLL runs at 10K+ steps. Tests unchanged (all 9 torch tests still pass).
+- Added `--warmup-steps` + `--cosine-decay` for LR scheduling. Useful when pushing peak LR; less useful at the lr=5e-4 scale where the model is already stable.
+
+### NLL training run log on Tiny Shakespeare (dim=1024, hidden=512)
+| Config | Wall | Train (last 10K avg) | L1 val NLL |
+|---|---|---|---|
+| 10K, lr=5e-4, ctx=8, no wd, DirectML | 65s | 2.71 | 3.39 |
+| 50K, lr=5e-4, ctx=16, wd=1e-4, CPU | 286s | 2.51 | 2.97 |
+| 100K, lr=1e-3 + warmup=2K + cosine, ctx=16, wd=5e-5, CPU | 559s | 2.70 | **2.92** |
+
+Best L1 to date: **2.92 nats/char** (best so far in real cross-entropy units). The design-plan threshold of 1.55 is still distant; we've established that the lever is no longer hyperparameters but the architecture itself + corpus scale. WikiText-2 + sequence-carry training are queued.
+
+### Added (Track 3 - LLM-as-judge feedback)
 
 ### Added (Track 3 - LLM-as-judge feedback)
 - `rain/feedback/ollama_judge.py`: `OllamaJudge`, `Judgment`, `parse_judge_response`, and a high-level `judge_agent_session()` that runs a `ConsciousAgent` through a list of questions, asks a local Ollama model whether each answer is correct, and feeds the verdict back through `agent.feedback(relation, was_correct)` to update the per-relation Bayesian calibration tally. This is the no-paid-RLHF Phase-2 feedback loop.
