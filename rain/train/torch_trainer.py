@@ -298,7 +298,10 @@ def train_torch(
         if log_every and (step + 1) % log_every == 0:
             recent = float(np.mean(losses[-min(log_every, len(losses)):]))
             unit = "nats/char" if loss_type == LOSS_NLL else "hv_mse"
-            print(f"step {step + 1}/{n_steps}  loss(avg last {log_every}, {unit}) = {recent:.4f}")
+            print(
+                f"step {step + 1}/{n_steps}  loss(avg last {log_every}, {unit}) = {recent:.4f}",
+                flush=True,  # vital when stdout is a pipe (block-buffered otherwise)
+            )
 
     wall = time.perf_counter() - t0
     return TorchTrainResult(
