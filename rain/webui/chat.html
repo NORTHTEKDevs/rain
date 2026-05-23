@@ -176,6 +176,15 @@ function fmtCites(citations) {
   return ' cites: ' + citations.map(c => `(${c.join(', ')})`).join(' ');
 }
 
+function fmtCognitive(signals) {
+  if (!signals) return '';
+  const parts = [];
+  if ('fep_cos' in signals) parts.push(`FEP-cos ${signals.fep_cos.toFixed(2)}`);
+  if ('lsm_state_l2' in signals) parts.push(`LSM-l2 ${signals.lsm_state_l2.toFixed(2)}`);
+  if ('tsetlin_max_abs_vote' in signals) parts.push(`Tsetlin-vote ${signals.tsetlin_max_abs_vote.toFixed(0)}`);
+  return parts.length ? `<br>cognitive: ${parts.join(' · ')}` : '';
+}
+
 async function handleLine(line) {
   if (!line.trim()) return;
   appendTurn('user', line);
@@ -231,7 +240,8 @@ async function handleLine(line) {
       const data = await post('/ask', { subject, relation });
       const meta = epistemicBadge(data.epistemic, data.inference_source)
         + `conf ${data.confidence.toFixed(2)} · rel-cal ${data.relation_calibration}`
-        + fmtCites(data.citations);
+        + fmtCites(data.citations)
+        + fmtCognitive(data.cognitive_signals);
       appendTurn('rain', data.text, meta);
     }
   } catch (e) {

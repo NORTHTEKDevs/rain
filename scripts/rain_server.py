@@ -79,14 +79,19 @@ def _make_routes(
             return web.json_response({"error": "subject and relation required"}, status=400)
         ans = agent.ask(s, r)
         cal = agent.calibration.calibration(r)
-        return web.json_response({
+        payload = {
             "text": ans.text,
             "epistemic": ans.epistemic,
             "confidence": ans.confidence,
             "inference_source": ans.inference_source,
             "citations": ans.citations,
             "relation_calibration": round(cal, 4),
-        })
+        }
+        if ans.cognitive_signals is not None:
+            payload["cognitive_signals"] = {
+                k: round(v, 4) for k, v in ans.cognitive_signals.items()
+            }
+        return web.json_response(payload)
 
     async def tell(req: web.Request) -> web.Response:
         body = await req.json()
