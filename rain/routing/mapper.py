@@ -33,6 +33,7 @@ class RoutingDirections:
         D: hypervector dimension
         source_hash: blake2b digest of the stacked source matrices
     """
+
     U: np.ndarray
     sigma: np.ndarray
     V_T: np.ndarray

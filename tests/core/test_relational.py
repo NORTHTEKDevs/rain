@@ -8,11 +8,13 @@ from rain.core.relational import Codebook, bind, bundle, unbind
 
 D = 10000
 
+
 def test_codebook_values_are_bipolar():
     cb = Codebook(vocab_size=100, dim=D, seed=42)
     hv = cb.vector("hello")
     assert hv.shape == (D,)
     assert set(np.unique(hv).tolist()) <= {-1, 1}
+
 
 def test_bind_is_self_inverse_for_bipolar():
     cb = Codebook(vocab_size=10, dim=D, seed=0)
@@ -24,6 +26,7 @@ def test_bind_is_self_inverse_for_bipolar():
     sim = (recovered @ b) / (np.linalg.norm(recovered) * np.linalg.norm(b))
     assert sim > 0.95
 
+
 def test_bundle_preserves_membership():
     cb = Codebook(vocab_size=10, dim=D, seed=0)
     items = [cb.vector(s) for s in ["a", "b", "c"]]
@@ -31,6 +34,7 @@ def test_bundle_preserves_membership():
     for item in items:
         sim = (bundle_hv @ item) / D
         assert sim > 0.3  # bundling preserves approximate membership
+
 
 def test_seeding_is_deterministic():
     cb1 = Codebook(vocab_size=5, dim=D, seed=123)

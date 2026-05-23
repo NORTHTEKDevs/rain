@@ -13,13 +13,23 @@ from scripts.rain_server import _make_routes
 
 def _args(**overrides) -> argparse.Namespace:
     base = {
-        "kb": None, "checkpoint": None, "corpus": None,
-        "dim": 128, "num_shards": 4, "rng_seed": 0,
-        "enable_continual": False, "use_rag": False, "rag_max_facts": 3,
-        "sample_tokens": 20, "temperature": 0.8, "top_k": 10,
+        "kb": None,
+        "checkpoint": None,
+        "corpus": None,
+        "dim": 128,
+        "num_shards": 4,
+        "rng_seed": 0,
+        "enable_continual": False,
+        "use_rag": False,
+        "rag_max_facts": 3,
+        "sample_tokens": 20,
+        "temperature": 0.8,
+        "top_k": 10,
         "repetition_penalty": 1.0,
-        "judge_model": "", "min_confidence": 0.5,
-        "host": "127.0.0.1", "port": 0,
+        "judge_model": "",
+        "min_confidence": 0.5,
+        "host": "127.0.0.1",
+        "port": 0,
     }
     base.update(overrides)
     return argparse.Namespace(**base)
@@ -47,7 +57,8 @@ class TestHealth(_ServerCase):
 class TestAsk(_ServerCase):
     async def test_ask_kb_hit_returns_citation(self):
         async with self.client.request(
-            "POST", "/ask",
+            "POST",
+            "/ask",
             json={"subject": "lion", "relation": "lives_in"},
         ) as resp:
             assert resp.status == 200
@@ -58,7 +69,9 @@ class TestAsk(_ServerCase):
 
     async def test_ask_missing_body_returns_400(self):
         async with self.client.request(
-            "POST", "/ask", json={"subject": "lion"},
+            "POST",
+            "/ask",
+            json={"subject": "lion"},
         ) as resp:
             assert resp.status == 400
 
@@ -66,7 +79,8 @@ class TestAsk(_ServerCase):
 class TestTell(_ServerCase):
     async def test_tell_then_ask_round_trip(self):
         async with self.client.request(
-            "POST", "/tell",
+            "POST",
+            "/tell",
             json={"subject": "wolf", "relation": "lives_in", "object": "forest"},
         ) as resp:
             assert resp.status == 200
@@ -74,7 +88,8 @@ class TestTell(_ServerCase):
             assert data["ok"] is True
         # Now ask should return it
         async with self.client.request(
-            "POST", "/ask",
+            "POST",
+            "/ask",
             json={"subject": "wolf", "relation": "lives_in"},
         ) as resp:
             data = await resp.json()
@@ -84,7 +99,8 @@ class TestTell(_ServerCase):
 class TestSampleWithoutSampler(_ServerCase):
     async def test_sample_returns_503_when_no_sampler(self):
         async with self.client.request(
-            "POST", "/sample",
+            "POST",
+            "/sample",
             json={"prompt": "hello"},
         ) as resp:
             assert resp.status == 503

@@ -14,8 +14,13 @@ from scripts.pretrain_hymn import HymnSurrogate
 def test_a2_runs_and_emits_finite_metrics():
     """Smoke: both branches return finite MSE; result carries the spec fields."""
     r = run_benchmark(
-        dim=256, vocab_size=32, routing_k=16, num_roles=8,
-        hidden_dim=128, n_eval_steps=100, seed=0,
+        dim=256,
+        vocab_size=32,
+        routing_k=16,
+        num_roles=8,
+        hidden_dim=128,
+        n_eval_steps=100,
+        seed=0,
     )
     assert r.benchmark == "A2_sofar_on_vsa_ablation"
     assert np.isfinite(r.mse_routing_off)
@@ -32,7 +37,11 @@ def test_routing_at_identity_init_is_noop():
     -- the BeamSteeringAdapter short-circuit returns the state unchanged."""
     dim, k = 256, 16
     cb, mapper, beam, cb_arr, role_arr = _build_codebook_and_dirs(
-        dim=dim, vocab_size=32, k=k, num_roles=8, seed=0,
+        dim=dim,
+        vocab_size=32,
+        k=k,
+        num_roles=8,
+        seed=0,
     )
     # Force STRICT identity-at-init (undo the benchmark's post-warmup seeding)
     beam.lora_up = np.zeros_like(beam.lora_up)
@@ -42,9 +51,7 @@ def test_routing_at_identity_init_is_noop():
     corpus = "the quick brown fox " * 50
     off = _val_mse(model, cb, corpus, 50, seed=42, route=False)
     on = _val_mse(model, cb, corpus, 50, seed=42, route=True, beam=beam, directions=directions)
-    assert abs(off - on) < 1e-6, (
-        f"identity-at-init should be a no-op; got off={off}, on={on}"
-    )
+    assert abs(off - on) < 1e-6, f"identity-at-init should be a no-op; got off={off}, on={on}"
 
 
 def test_a2_improvement_sign_is_consistent():
@@ -52,12 +59,22 @@ def test_a2_improvement_sign_is_consistent():
     because v0 routing (untrained LoRA) is not expected to clear the 3% bar;
     we only assert the metric is computed correctly and reproducibly."""
     r1 = run_benchmark(
-        dim=256, vocab_size=32, routing_k=16, num_roles=8,
-        hidden_dim=128, n_eval_steps=100, seed=7,
+        dim=256,
+        vocab_size=32,
+        routing_k=16,
+        num_roles=8,
+        hidden_dim=128,
+        n_eval_steps=100,
+        seed=7,
     )
     r2 = run_benchmark(
-        dim=256, vocab_size=32, routing_k=16, num_roles=8,
-        hidden_dim=128, n_eval_steps=100, seed=7,
+        dim=256,
+        vocab_size=32,
+        routing_k=16,
+        num_roles=8,
+        hidden_dim=128,
+        n_eval_steps=100,
+        seed=7,
     )
     assert r1.mse_routing_off == r2.mse_routing_off
     assert r1.mse_routing_on == r2.mse_routing_on

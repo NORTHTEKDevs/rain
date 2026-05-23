@@ -28,9 +28,7 @@ def test_n1_no_decay_when_no_interference():
     retrieves A perfectly when re-asked).
     """
     r = run_benchmark(n_a=200, n_b=0, n_probe=80, dim=2048, num_shards=16, seed=0)
-    assert r.retention == 1.0, (
-        f"retention should be 1.0 with no interference, got {r.retention}"
-    )
+    assert r.retention == 1.0, f"retention should be 1.0 with no interference, got {r.retention}"
 
 
 def test_n1_record_per_query():
@@ -38,7 +36,12 @@ def test_n1_record_per_query():
     both phases.
     """
     r = run_benchmark(
-        n_a=50, n_b=50, n_probe=20, dim=1024, num_shards=8, seed=0,
+        n_a=50,
+        n_b=50,
+        n_probe=20,
+        dim=1024,
+        num_shards=8,
+        seed=0,
         record_per_query=True,
     )
     assert len(r.per_query) == 40  # 20 initial + 20 post_b

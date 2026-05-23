@@ -17,13 +17,7 @@ pub struct PyHymnModel {
 impl PyHymnModel {
     #[new]
     #[pyo3(signature = (in_dim=10000, hidden_dim=4096, out_dim=10000, dropout=0.0, seed=42))]
-    fn new(
-        in_dim: usize,
-        hidden_dim: usize,
-        out_dim: usize,
-        dropout: f32,
-        seed: u64,
-    ) -> Self {
+    fn new(in_dim: usize, hidden_dim: usize, out_dim: usize, dropout: f32, seed: u64) -> Self {
         let config = HymnConfig {
             in_dim,
             hidden_dim,

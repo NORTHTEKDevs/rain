@@ -42,9 +42,7 @@ class TsetlinMachine:
 
         # Clause inclusion bits per class. Shape: (num_classes, num_clauses_per_class, num_features)
         # Each clause's included features are sparse; initialize empty (no features included).
-        self.inclusion = np.zeros(
-            (num_classes, num_clauses_per_class, num_features), dtype=np.int8
-        )
+        self.inclusion = np.zeros((num_classes, num_clauses_per_class, num_features), dtype=np.int8)
         # Clause polarity per class: half positive, half negative.
         # Shape: (num_classes, num_clauses_per_class) -- +1 or -1.
         polarities = np.array(
@@ -71,9 +69,7 @@ class TsetlinMachine:
     def vote(self, state: np.ndarray) -> np.ndarray:
         """Return per-class scores. Shape: (num_classes,)."""
         if state.shape != (self.num_features,):
-            raise ValueError(
-                f"state shape {state.shape} != ({self.num_features},)"
-            )
+            raise ValueError(f"state shape {state.shape} != ({self.num_features},)")
         scores = np.zeros(self.num_classes, dtype=np.float32)
         for cls in range(self.num_classes):
             for c in range(self.num_clauses_per_class):

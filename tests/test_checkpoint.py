@@ -18,9 +18,14 @@ def test_save_load_round_trip(tmp_path):
     W1 = np.random.RandomState(0).randn(4, 8).astype(np.float32)
     W2 = np.random.RandomState(1).randn(8, 4).astype(np.float32)
     meta = HymnCheckpointMetadata(
-        in_dim=4, hidden_dim=8, out_dim=4,
-        steps=100, lr=0.01, seed=42,
-        final_loss=0.5, initial_loss=1.5,
+        in_dim=4,
+        hidden_dim=8,
+        out_dim=4,
+        steps=100,
+        lr=0.01,
+        seed=42,
+        final_loss=0.5,
+        initial_loss=1.5,
     )
     npz_path, json_path = save_checkpoint(tmp_path / "ckpt", W1, W2, meta)
     assert npz_path.exists() and json_path.exists()
@@ -35,9 +40,14 @@ def test_freeze_marks_metadata(tmp_path):
     W1 = np.zeros((2, 2), dtype=np.float32)
     W2 = np.zeros((2, 2), dtype=np.float32)
     meta = HymnCheckpointMetadata(
-        in_dim=2, hidden_dim=2, out_dim=2,
-        steps=0, lr=0.01, seed=0,
-        final_loss=None, initial_loss=None,
+        in_dim=2,
+        hidden_dim=2,
+        out_dim=2,
+        steps=0,
+        lr=0.01,
+        seed=0,
+        final_loss=None,
+        initial_loss=None,
     )
     save_checkpoint(tmp_path / "ckpt", W1, W2, meta)
     frozen_meta = freeze_checkpoint(tmp_path / "ckpt")
@@ -48,9 +58,14 @@ def test_freeze_marks_metadata(tmp_path):
 
 def test_assert_not_frozen_passes_for_unfrozen():
     meta = HymnCheckpointMetadata(
-        in_dim=1, hidden_dim=1, out_dim=1,
-        steps=0, lr=0.01, seed=0,
-        final_loss=None, initial_loss=None,
+        in_dim=1,
+        hidden_dim=1,
+        out_dim=1,
+        steps=0,
+        lr=0.01,
+        seed=0,
+        final_loss=None,
+        initial_loss=None,
         frozen=False,
     )
     assert_not_frozen(meta)  # no exception
@@ -58,9 +73,14 @@ def test_assert_not_frozen_passes_for_unfrozen():
 
 def test_assert_not_frozen_raises_for_frozen():
     meta = HymnCheckpointMetadata(
-        in_dim=1, hidden_dim=1, out_dim=1,
-        steps=0, lr=0.01, seed=0,
-        final_loss=None, initial_loss=None,
+        in_dim=1,
+        hidden_dim=1,
+        out_dim=1,
+        steps=0,
+        lr=0.01,
+        seed=0,
+        final_loss=None,
+        initial_loss=None,
         frozen=True,
     )
     with pytest.raises(FrozenCheckpointError):

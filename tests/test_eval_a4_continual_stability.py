@@ -19,6 +19,6 @@ def test_a4_short_run_no_nan_no_corruption():
 def test_a4_full_10k_turns():
     """Full 10K-turn run -- slow, marked as 'slow' for normal CI skip."""
     r = run_benchmark(n_turns=10000, dim=512, seed=0)
-    assert r.overall_pass, (
-        f"issues: {r.issues}, retention: {r.first_50_retention}, ece_drift: {r.ece_drift}"
-    )
+    assert (
+        r.overall_pass
+    ), f"issues: {r.issues}, retention: {r.first_50_retention}, ece_drift: {r.ece_drift}"

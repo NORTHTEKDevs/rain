@@ -29,7 +29,10 @@ class BPETokenizer:
                 model_writer=model_buf,
                 vocab_size=self.vocab_size,
                 model_type="bpe",
-                pad_id=0, unk_id=1, bos_id=2, eos_id=3,
+                pad_id=0,
+                unk_id=1,
+                bos_id=2,
+                eos_id=3,
                 hard_vocab_limit=False,
             )
             self._sp = spm.SentencePieceProcessor(model_proto=model_buf.getvalue())

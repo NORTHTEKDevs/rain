@@ -44,9 +44,16 @@ def test_bootstrap_composes_all_components(tmp_path):
 def test_bootstrap_summary_is_json_serializable():
     boot = bootstrap_phase1(
         corpus_texts=["hello world " * 20],
-        D=128, vocab_size=32, num_shards=2, tsetlin_classes=2,
-        tsetlin_clauses_per_class=2, lsm_reservoir=8, fep_rank=4,
-        routing_k=4, bpe_vocab=64, seed=0,
+        D=128,
+        vocab_size=32,
+        num_shards=2,
+        tsetlin_classes=2,
+        tsetlin_clauses_per_class=2,
+        lsm_reservoir=8,
+        fep_rank=4,
+        routing_k=4,
+        bpe_vocab=64,
+        seed=0,
     )
     summary = boot.summary()
     # Must JSON serialize without errors
@@ -58,9 +65,16 @@ def test_components_are_independently_callable():
     """Bootstrap returns components that can be used independently."""
     boot = bootstrap_phase1(
         corpus_texts=["abc def " * 30],
-        D=64, vocab_size=16, num_shards=2, tsetlin_classes=2,
-        tsetlin_clauses_per_class=2, lsm_reservoir=8, fep_rank=4,
-        routing_k=2, bpe_vocab=64, seed=0,
+        D=64,
+        vocab_size=16,
+        num_shards=2,
+        tsetlin_classes=2,
+        tsetlin_clauses_per_class=2,
+        lsm_reservoir=8,
+        fep_rank=4,
+        routing_k=2,
+        bpe_vocab=64,
+        seed=0,
     )
     # KB write+query
     boot.kb.write("a", "r", "b")

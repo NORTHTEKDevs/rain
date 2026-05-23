@@ -27,21 +27,25 @@ def test_repetition_penalty_avoids_argmax_loop():
     twice in a row when there's an alternative."""
     logits = np.array([0.5, 1.0, 0.3], dtype=np.float64)
     rng = np.random.default_rng(0)
-    first = _sample_from_logits(logits, temperature=0.0, rng=rng,
-                                recent_ids=[], repetition_penalty=2.0)
+    first = _sample_from_logits(
+        logits, temperature=0.0, rng=rng, recent_ids=[], repetition_penalty=2.0
+    )
     assert first == 1  # argmax with empty history
     # Now id 1 is in history; with penalty=2.0 its logit becomes 0.5,
     # tied with id 0's 0.5; argmax picks the earlier index -> 0.
-    second = _sample_from_logits(logits, temperature=0.0, rng=rng,
-                                 recent_ids=[1], repetition_penalty=2.0)
+    second = _sample_from_logits(
+        logits, temperature=0.0, rng=rng, recent_ids=[1], repetition_penalty=2.0
+    )
     assert second != 1
 
 
 def test_repetition_penalty_one_is_a_noop():
     logits = np.array([0.5, 1.0, 0.3], dtype=np.float64)
     rng = np.random.default_rng(0)
-    plain = _sample_from_logits(logits, temperature=0.0, rng=rng,
-                                recent_ids=[], repetition_penalty=1.0)
-    with_history = _sample_from_logits(logits, temperature=0.0, rng=rng,
-                                       recent_ids=[1], repetition_penalty=1.0)
+    plain = _sample_from_logits(
+        logits, temperature=0.0, rng=rng, recent_ids=[], repetition_penalty=1.0
+    )
+    with_history = _sample_from_logits(
+        logits, temperature=0.0, rng=rng, recent_ids=[1], repetition_penalty=1.0
+    )
     assert plain == with_history == 1

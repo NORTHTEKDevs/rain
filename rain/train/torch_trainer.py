@@ -41,8 +41,8 @@ from rain.train.checkpoint import (
 )
 
 # Loss types accepted by train_torch.
-LOSS_MSE = "mse"   # MSE on bipolar hypervector targets (v0 reference, matches numpy)
-LOSS_NLL = "nll"   # Cross-entropy over codebook-projected logits (real LM loss)
+LOSS_MSE = "mse"  # MSE on bipolar hypervector targets (v0 reference, matches numpy)
+LOSS_NLL = "nll"  # Cross-entropy over codebook-projected logits (real LM loss)
 
 
 def auto_device() -> torch.device:
@@ -53,6 +53,7 @@ def auto_device() -> torch.device:
     """
     try:
         import torch_directml as _dml
+
         if _dml.device_count() > 0:
             return _dml.device(0)
     except Exception:
@@ -68,6 +69,7 @@ def device_name(dev: torch.device | Any) -> str:
     """Human-readable device label for logging."""
     try:
         import torch_directml as _dml
+
         # DirectML returns a string-formattable device; probe via dml api
         if "privateuseone" in str(dev).lower() or "dml" in str(dev).lower():
             return f"DirectML({_dml.device_name(0)})"
@@ -157,9 +159,7 @@ def build_char_vocab(
     """
     chars_in_order = sorted(set(corpus_text))
     char_to_idx = {c: i for i, c in enumerate(chars_in_order)}
-    matrix_np = np.stack([
-        codebook.vector(c).astype(np.float32) for c in chars_in_order
-    ])
+    matrix_np = np.stack([codebook.vector(c).astype(np.float32) for c in chars_in_order])
     matrix = torch.from_numpy(matrix_np).to(device)
     return chars_in_order, char_to_idx, matrix
 
@@ -291,10 +291,7 @@ def train_torch(
             # position except the last input-only step).
             high = max(carry_steps + 1, n_corpus - (carry_steps + 2))
             starts = rng.integers(0, high, size=batch_size)
-            window_chars = [
-                [chars[s + i] for i in range(carry_steps + 2)]
-                for s in starts
-            ]
+            window_chars = [[chars[s + i] for i in range(carry_steps + 2)] for s in starts]
             state = torch.zeros((batch_size, model.in_dim), device=device)
             total_loss = torch.zeros((), device=device)
             for t in range(carry_steps + 1):
@@ -306,7 +303,8 @@ def train_torch(
                 if loss_type == LOSS_NLL:
                     target_idx = torch.tensor(
                         [char_to_idx[c] for c in target_chars],
-                        dtype=torch.long, device=device,
+                        dtype=torch.long,
+                        device=device,
                     )
                     logits = codebook_logits(state, codebook_matrix)
                     total_loss = total_loss + F.cross_entropy(logits, target_idx)
@@ -325,7 +323,9 @@ def train_torch(
                     for ki in range(context_len):
                         prev_pos = p - (ki + 1)
                         if prev_pos >= 0:
-                            history_stack[bi, ki] = codebook.vector(chars[prev_pos]).astype(np.float32)
+                            history_stack[bi, ki] = codebook.vector(chars[prev_pos]).astype(
+                                np.float32
+                            )
                 history_mean = history_stack.mean(axis=1)
                 input_ = torch.from_numpy(history_mean).to(device)
             else:
@@ -333,7 +333,9 @@ def train_torch(
             out = model(state, input_)
             if loss_type == LOSS_NLL:
                 target_idx = torch.tensor(
-                    [char_to_idx[c] for c in next_chars], dtype=torch.long, device=device,
+                    [char_to_idx[c] for c in next_chars],
+                    dtype=torch.long,
+                    device=device,
                 )
                 logits = codebook_logits(out, codebook_matrix)
                 loss = F.cross_entropy(logits, target_idx)
@@ -349,7 +351,7 @@ def train_torch(
         losses.append(float(loss.detach().cpu()))
 
         if log_every and (step + 1) % log_every == 0:
-            recent = float(np.mean(losses[-min(log_every, len(losses)):]))
+            recent = float(np.mean(losses[-min(log_every, len(losses)) :]))
             unit = "nats/char" if loss_type == LOSS_NLL else "hv_mse"
             print(
                 f"step {step + 1}/{n_steps}  loss(avg last {log_every}, {unit}) = {recent:.4f}",
@@ -418,11 +420,12 @@ def save_torch_checkpoint(
         # warm-started training where the codebook isn't a pure function
         # of (seed, dim).
         codebook_chars = sorted(set(corpus_text))
-        codebook_matrix = np.stack(
-            [codebook.vector(c).astype(np.int16) for c in codebook_chars]
-        )
+        codebook_matrix = np.stack([codebook.vector(c).astype(np.int16) for c in codebook_chars])
     return save_checkpoint(
-        path, W1, W2, meta,
+        path,
+        W1,
+        W2,
+        meta,
         losses=np.asarray(losses, dtype=np.float32) if losses else None,
         codebook_chars=codebook_chars,
         codebook_matrix=codebook_matrix,

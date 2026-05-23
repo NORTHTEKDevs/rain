@@ -16,11 +16,17 @@ def main() -> int:
     print("  python examples/01_chat_e2e.py    -- end-to-end Tier-1 surfaces")
     print()
     print("Pretrain drivers:")
-    print("  python -m scripts.pretrain_hymn       --corpus <path> --out <path>   # numpy CPU reference")
-    print("  python -m scripts.pretrain_hymn_torch --corpus <path> --out <path>   # PyTorch + DirectML iGPU")
+    print(
+        "  python -m scripts.pretrain_hymn       --corpus <path> --out <path>   # numpy CPU reference"
+    )
+    print(
+        "  python -m scripts.pretrain_hymn_torch --corpus <path> --out <path>   # PyTorch + DirectML iGPU"
+    )
     print()
     print("KB seed drivers:")
-    print("  python -m scripts.seed_kb_from_ollama --model <ollama-name> --out <path>  # distill from local LLM")
+    print(
+        "  python -m scripts.seed_kb_from_ollama --model <ollama-name> --out <path>  # distill from local LLM"
+    )
     print("  pytest -q -m 'not slow'            -- full 155-test acceptance suite")
     print()
     print("Benchmark drivers:")
@@ -29,7 +35,9 @@ def main() -> int:
     print("  python evals/tier1_novelty/tom.py --out <path>")
     print("  python evals/tier1_novelty/transparency.py --out <path>")
     print("  python evals/tier1_novelty/calibration.py --n 1000 --out <path>")
-    print("  python evals/tier2_llm_parity/tiny_shakespeare.py --checkpoint <path> --corpus <path> --out <path>")
+    print(
+        "  python evals/tier2_llm_parity/tiny_shakespeare.py --checkpoint <path> --corpus <path> --out <path>"
+    )
     print("  python evals/tier3_soundness/efe_source_mix.py --out <path>")
     print("  python evals/tier3_soundness/nsga2_promotion.py --out <path>")
     print("  python evals/tier3_soundness/continual_stability.py --out <path>")

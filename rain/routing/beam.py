@@ -23,9 +23,9 @@ from rain.routing.mapper import RoutingDirections
 
 
 class BeamMode(enum.Enum):
-    FOCUS = "focus"   # Gaussian -- attend to one direction
-    SWEEP = "sweep"   # sinusoidal -- scan across directions
-    TRACK = "track"   # sigmoidal -- follow a chain
+    FOCUS = "focus"  # Gaussian -- attend to one direction
+    SWEEP = "sweep"  # sinusoidal -- scan across directions
+    TRACK = "track"  # sigmoidal -- follow a chain
 
 
 @dataclass

@@ -71,7 +71,9 @@ def _python_reference_forward(
     state = state.astype(np.int16)
     input_ = input_.astype(np.int16)
     # Step 1: combined[d] = sign(state[d] + input_[d])
-    combined = np.where((state.astype(np.int32) + input_.astype(np.int32)) >= 0, 1, -1).astype(np.int16)
+    combined = np.where((state.astype(np.int32) + input_.astype(np.int32)) >= 0, 1, -1).astype(
+        np.int16
+    )
     # Step 2: hidden_pre[h] = sum_d W1[d,h] * combined[d]  (= combined @ W1)
     hidden_pre = combined.astype(np.float32) @ W1  # shape (hidden_dim,)
     # Step 3: hidden_signed[h] = sign(hidden_pre[h])

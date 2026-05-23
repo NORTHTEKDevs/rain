@@ -44,7 +44,11 @@ class LiquidStateMachine:
         self.W_res = W_res
 
         # Input projection: dense small-magnitude random
-        self.W_in = rng.standard_normal((reservoir_dim, input_dim)).astype(np.float32) * input_scale / np.sqrt(input_dim)
+        self.W_in = (
+            rng.standard_normal((reservoir_dim, input_dim)).astype(np.float32)
+            * input_scale
+            / np.sqrt(input_dim)
+        )
 
         # Readout: zero-init
         self.W_out = np.zeros((self.output_dim, reservoir_dim), dtype=np.float32)

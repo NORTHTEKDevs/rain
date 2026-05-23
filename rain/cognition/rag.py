@@ -52,9 +52,11 @@ class KbAugmentedSampler:
         """Very simple subject extraction: every alphanumeric token of length
         >= 3 plus their two-token concatenation. The KB's `query()` returns
         None for unknown subjects so over-fetching is cheap."""
-        words = [w.strip(".,?!;:'\"()[]{}").lower()
-                 for w in question.split()
-                 if w.strip(".,?!;:'\"()[]{}")]
+        words = [
+            w.strip(".,?!;:'\"()[]{}").lower()
+            for w in question.split()
+            if w.strip(".,?!;:'\"()[]{}")
+        ]
         words = [w for w in words if len(w) >= 3]
         candidates: list[str] = list(words)
         for a, b in zip(words, words[1:]):
@@ -77,9 +79,20 @@ class KbAugmentedSampler:
         # We probe a small fixed relation set per candidate -- the same
         # relations the rendered Q/A corpus uses.
         probe_relations = [
-            "isa", "is_a", "kind", "lives_in", "located_in", "born_in",
-            "has_part", "has_property", "made_of", "color", "size",
-            "is", "wrote", "is_used_for",
+            "isa",
+            "is_a",
+            "kind",
+            "lives_in",
+            "located_in",
+            "born_in",
+            "has_part",
+            "has_property",
+            "made_of",
+            "color",
+            "size",
+            "is",
+            "wrote",
+            "is_used_for",
         ]
         for subj in cands:
             for rel in probe_relations:
@@ -110,8 +123,7 @@ class KbAugmentedSampler:
         facts = self.retrieve(question)
         context = self._format_context(facts)
         prompt = (
-            (context + self.question_prefix if context
-             else self.question_prefix.lstrip())
+            (context + self.question_prefix if context else self.question_prefix.lstrip())
             + question.strip()
             + self.answer_prefix
         )

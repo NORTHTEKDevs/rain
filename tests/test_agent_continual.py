@@ -39,8 +39,9 @@ def test_tell_drives_local_rule_updates():
     # At least one of the modules' parameter L2 norms should change.
     lsm_changed = snap_after["lsm"]["W_out_l2"] != snap_before["lsm"]["W_out_l2"]
     fep_changed = snap_after["fep"]["U_l2"] != snap_before["fep"]["U_l2"]
-    tsetlin_changed = (snap_after["tsetlin"]["active_inclusions"]
-                       != snap_before["tsetlin"]["active_inclusions"])
+    tsetlin_changed = (
+        snap_after["tsetlin"]["active_inclusions"] != snap_before["tsetlin"]["active_inclusions"]
+    )
     assert lsm_changed and fep_changed and tsetlin_changed
 
 

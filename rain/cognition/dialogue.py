@@ -28,7 +28,9 @@ class DialogueContext:
     def record_turn(self, role: str, utterance: str) -> None:
         self.history.append((role, utterance))
 
-    def resolve_references(self, entity: str | None, relation: str | None) -> tuple[str | None, str | None]:
+    def resolve_references(
+        self, entity: str | None, relation: str | None
+    ) -> tuple[str | None, str | None]:
         """If entity or relation is None (or pronoun-like), substitute from context."""
         resolved_entity = entity if entity else self.last_entity
         resolved_relation = relation if relation else self.last_relation

@@ -61,7 +61,7 @@ def test_parse_returns_none_when_required_key_missing():
 
 def test_parse_handles_non_dict_top_level():
     # Top-level array, not an object
-    assert parse_judge_response('[1,2,3]') is None
+    assert parse_judge_response("[1,2,3]") is None
 
 
 def test_build_user_prompt_carries_question_and_answer():
@@ -75,6 +75,7 @@ def test_build_triple_prompt_de_underscores_for_judge():
     """The clean-form helper renders snake_case triples as spaced prose so the
     judge doesn't reject based on form (e.g. 'sandro_botticelli' vs 'Sandro Botticelli')."""
     from rain.feedback.ollama_judge import build_triple_prompt
+
     q, a = build_triple_prompt("albert_einstein", "born_in", "ulm_germany")
     assert "_" not in q and "_" not in a
     assert q == "What is the born in of albert einstein?"

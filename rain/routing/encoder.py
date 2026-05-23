@@ -60,6 +60,7 @@ def _iwht(x: np.ndarray) -> np.ndarray:
 @dataclass
 class FrequencyBands:
     """Result of frequency-banded decomposition."""
+
     s_L: np.ndarray  # low band, shape (D,)
     s_M: np.ndarray  # mid band, shape (D,)
     s_H: np.ndarray  # high band, shape (D,)

@@ -11,6 +11,7 @@ def test_train_and_encode():
     assert len(ids) > 0
     assert all(isinstance(i, int) for i in ids)
 
+
 def test_round_trip():
     tok = BPETokenizer(vocab_size=512)
     tok.train(["hello world", "goodbye world"])

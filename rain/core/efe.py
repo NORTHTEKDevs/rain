@@ -115,7 +115,9 @@ class MultiSignalEFEDecoder:
             return []
         return self.hymn_predict_fn(state, vocab)
 
-    def _candidates_kb(self, recent_context: list[str], vocab: list[str]) -> list[tuple[str, float]]:
+    def _candidates_kb(
+        self, recent_context: list[str], vocab: list[str]
+    ) -> list[tuple[str, float]]:
         if self.kb is None or not recent_context:
             return []
         if len(recent_context) >= 2:
@@ -146,7 +148,9 @@ class MultiSignalEFEDecoder:
             out.append((tok, sim))
         return out
 
-    def _candidates_bigram(self, recent_context: list[str], vocab: list[str]) -> list[tuple[str, float]]:
+    def _candidates_bigram(
+        self, recent_context: list[str], vocab: list[str]
+    ) -> list[tuple[str, float]]:
         if self.bigram is None or len(recent_context) < self.bigram.order:
             return []
         return self.bigram.query(recent_context, candidate_tokens=vocab, top_k=len(vocab))

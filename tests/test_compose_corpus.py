@@ -20,12 +20,22 @@ def test_compose_concatenates_with_weights(tmp_path):
     out = tmp_path / "combined.txt"
 
     res = subprocess.run(
-        [_python(), "-m", "scripts.compose_corpus",
-         "--part", f"{a}:2",
-         "--part", f"{b}:3",
-         "--out", str(out),
-         "--rng-seed", "0"],
-        capture_output=True, text=True, cwd=Path(__file__).parents[1],
+        [
+            _python(),
+            "-m",
+            "scripts.compose_corpus",
+            "--part",
+            f"{a}:2",
+            "--part",
+            f"{b}:3",
+            "--out",
+            str(out),
+            "--rng-seed",
+            "0",
+        ],
+        capture_output=True,
+        text=True,
+        cwd=Path(__file__).parents[1],
     )
     assert res.returncode == 0, res.stderr
     text = out.read_text(encoding="utf-8")
@@ -43,14 +53,37 @@ def test_compose_chunk_shuffle_changes_order(tmp_path):
     out_unshuffled = tmp_path / "u.txt"
     out_shuffled = tmp_path / "s.txt"
 
-    subprocess.run([_python(), "-m", "scripts.compose_corpus",
-                    "--part", f"{a}:1", "--out", str(out_unshuffled),
-                    "--rng-seed", "0"],
-                   capture_output=True, cwd=Path(__file__).parents[1])
-    subprocess.run([_python(), "-m", "scripts.compose_corpus",
-                    "--part", f"{a}:1", "--out", str(out_shuffled),
-                    "--shuffle-chunks", "--rng-seed", "7"],
-                   capture_output=True, cwd=Path(__file__).parents[1])
+    subprocess.run(
+        [
+            _python(),
+            "-m",
+            "scripts.compose_corpus",
+            "--part",
+            f"{a}:1",
+            "--out",
+            str(out_unshuffled),
+            "--rng-seed",
+            "0",
+        ],
+        capture_output=True,
+        cwd=Path(__file__).parents[1],
+    )
+    subprocess.run(
+        [
+            _python(),
+            "-m",
+            "scripts.compose_corpus",
+            "--part",
+            f"{a}:1",
+            "--out",
+            str(out_shuffled),
+            "--shuffle-chunks",
+            "--rng-seed",
+            "7",
+        ],
+        capture_output=True,
+        cwd=Path(__file__).parents[1],
+    )
 
     u = out_unshuffled.read_text(encoding="utf-8")
     s = out_shuffled.read_text(encoding="utf-8")
@@ -64,12 +97,22 @@ def test_compose_skips_missing_part(tmp_path):
     missing = tmp_path / "does_not_exist.txt"
     out = tmp_path / "out.txt"
     res = subprocess.run(
-        [_python(), "-m", "scripts.compose_corpus",
-         "--part", f"{a}:1",
-         "--part", f"{missing}:5",
-         "--out", str(out),
-         "--rng-seed", "0"],
-        capture_output=True, text=True, cwd=Path(__file__).parents[1],
+        [
+            _python(),
+            "-m",
+            "scripts.compose_corpus",
+            "--part",
+            f"{a}:1",
+            "--part",
+            f"{missing}:5",
+            "--out",
+            str(out),
+            "--rng-seed",
+            "0",
+        ],
+        capture_output=True,
+        text=True,
+        cwd=Path(__file__).parents[1],
     )
     assert res.returncode == 0
     assert "warn:" in res.stdout or "warn:" in res.stderr

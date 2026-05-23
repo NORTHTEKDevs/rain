@@ -12,7 +12,9 @@ def narrate(question: str, infer_result: InferenceResult) -> str:
     """Produce a CoT narration. Question comes in, narrated steps + answer come out."""
     lines: list[str] = [f"Q: {question}"]
     if infer_result.answer is None:
-        lines.append("Thought: I don't have a stored fact for that, and inheritance/transitive walks didn't help.")
+        lines.append(
+            "Thought: I don't have a stored fact for that, and inheritance/transitive walks didn't help."
+        )
         lines.append("A: I don't know.")
         return "\n".join(lines)
 

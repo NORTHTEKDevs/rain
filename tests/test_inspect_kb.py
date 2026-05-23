@@ -16,8 +16,8 @@ def test_read_facts_skips_blank_and_malformed(tmp_path):
     p = tmp_path / "facts.jsonl"
     p.write_text(
         '{"subject":"lion","relation":"isa","object":"mammal"}\n'
-        '\n'
-        '{ malformed line }\n'
+        "\n"
+        "{ malformed line }\n"
         '{"subject":"tiger","relation":"isa","object":"mammal"}\n',
         encoding="utf-8",
     )

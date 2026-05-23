@@ -43,6 +43,7 @@ from rain.train.warm_start import warm_start_from_vectors
 @dataclass
 class RainBootstrap:
     """Container for all bootstrapped components."""
+
     config: dict
     tokenizer: BPETokenizer
     codebook: Codebook
@@ -131,7 +132,10 @@ def bootstrap_phase1(
 
     # 1.6 LSM
     lsm = LiquidStateMachine(
-        input_dim=D, reservoir_dim=lsm_reservoir, output_dim=D, seed=seed,
+        input_dim=D,
+        reservoir_dim=lsm_reservoir,
+        output_dim=D,
+        seed=seed,
     )
 
     # 1.7 FEP
@@ -156,6 +160,7 @@ def bootstrap_phase1(
 
 def main() -> None:
     import argparse
+
     parser = argparse.ArgumentParser(description="Run RAIN Phase 1 bootstrap")
     parser.add_argument("--corpus", type=str, required=True, help="path to corpus text")
     parser.add_argument("--kb", type=str, default=None, help="path to KB JSONL")

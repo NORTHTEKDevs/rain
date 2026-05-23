@@ -27,7 +27,7 @@ class BigramMemory:
         """Bind the last `order` tokens into one context hypervector."""
         if not context_tokens:
             raise ValueError("context_tokens must be non-empty")
-        ctx_tokens = context_tokens[-self.order:]
+        ctx_tokens = context_tokens[-self.order :]
         # Bind sequentially: a, b, c -> bind(a, bind(b, c))
         result = self.codebook.vector(ctx_tokens[0])
         for t in ctx_tokens[1:]:
@@ -42,7 +42,9 @@ class BigramMemory:
         self.memory += contribution
         self.count += 1
 
-    def query(self, context_tokens: list[str], candidate_tokens: list[str], top_k: int = 5) -> list[tuple[str, float]]:
+    def query(
+        self, context_tokens: list[str], candidate_tokens: list[str], top_k: int = 5
+    ) -> list[tuple[str, float]]:
         """Given a context, return top-k candidates ranked by cleanup similarity."""
         if self.count == 0:
             return []

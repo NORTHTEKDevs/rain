@@ -52,8 +52,8 @@ def test_bands_are_independent():
     # A constant signal (all +1) should land mostly in the LOW band.
     state = np.ones(256, dtype=np.int16)
     bands = encode(state)
-    low_energy = float(np.sum(bands.s_L ** 2))
-    mid_energy = float(np.sum(bands.s_M ** 2))
-    high_energy = float(np.sum(bands.s_H ** 2))
+    low_energy = float(np.sum(bands.s_L**2))
+    mid_energy = float(np.sum(bands.s_M**2))
+    high_energy = float(np.sum(bands.s_H**2))
     assert low_energy > mid_energy, f"low={low_energy} mid={mid_energy}"
     assert low_energy > high_energy, f"low={low_energy} high={high_energy}"

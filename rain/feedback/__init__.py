@@ -16,5 +16,10 @@ from rain.feedback.ollama_judge import (
     parse_judge_response,
 )
 
-__all__ = ["OllamaJudge", "Judgment", "judge_agent_session",
-           "parse_judge_response", "build_triple_prompt"]
+__all__ = [
+    "OllamaJudge",
+    "Judgment",
+    "judge_agent_session",
+    "parse_judge_response",
+    "build_triple_prompt",
+]

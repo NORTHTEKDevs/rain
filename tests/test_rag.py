@@ -34,11 +34,13 @@ def test_candidate_subjects_includes_bigrams():
 
 
 def test_retrieve_pulls_kb_facts_for_known_subject():
-    kb = _kb_with_facts([
-        ("lion", "lives_in", "savanna"),
-        ("lion", "isa", "mammal"),
-        ("tiger", "lives_in", "jungle"),
-    ])
+    kb = _kb_with_facts(
+        [
+            ("lion", "lives_in", "savanna"),
+            ("lion", "isa", "mammal"),
+            ("tiger", "lives_in", "jungle"),
+        ]
+    )
     sampler = KbAugmentedSampler(kb, base_sampler=lambda p, n: "")
     facts = sampler.retrieve("Where does the lion live?")
     triples = {(s, r, o) for s, r, o in facts}
@@ -78,7 +80,7 @@ def test_sample_with_no_kb_hits_still_passes_q_to_base():
     sampler = KbAugmentedSampler(kb, base_sampler=lambda p, n: captured.append(p) or "ignored")
     sampler.sample("What is the meaning of dragon?", n_tokens=10)
     prompt = captured[0]
-    assert "Context:" not in prompt   # no KB facts to inject
+    assert "Context:" not in prompt  # no KB facts to inject
     assert prompt.startswith("Q:")
     assert prompt.endswith("A:")
 

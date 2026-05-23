@@ -18,9 +18,14 @@ from rain.train.checkpoint import (
 
 def _meta(in_dim=64, hidden_dim=32, out_dim=64) -> HymnCheckpointMetadata:
     return HymnCheckpointMetadata(
-        in_dim=in_dim, hidden_dim=hidden_dim, out_dim=out_dim,
-        steps=100, lr=1e-3, seed=42,
-        final_loss=0.5, initial_loss=4.0,
+        in_dim=in_dim,
+        hidden_dim=hidden_dim,
+        out_dim=out_dim,
+        steps=100,
+        lr=1e-3,
+        seed=42,
+        final_loss=0.5,
+        initial_loss=4.0,
     )
 
 
@@ -40,8 +45,7 @@ def test_codebook_roundtrips_through_save_and_load(tmp_path):
     chars = ["a", "b", "c", "d"]
     matrix = np.random.choice([-1, 1], size=(4, 64)).astype(np.int16)
     path = tmp_path / "with_codebook.npz"
-    save_checkpoint(path, W1, W2, _meta(),
-                    codebook_chars=chars, codebook_matrix=matrix)
+    save_checkpoint(path, W1, W2, _meta(), codebook_chars=chars, codebook_matrix=matrix)
     loaded = load_codebook(path)
     assert loaded is not None
     loaded_chars, loaded_matrix = loaded

@@ -22,7 +22,11 @@ def test_ask_unknown_is_classified_unknown_or_yields_dont_know():
     a = _agent()
     answer = a.ask("nonexistent_entity", "isa")
     assert answer.epistemic == "unknown"
-    assert "don't" in answer.text.lower() or "do not" in answer.text.lower() or "enough" in answer.text.lower()
+    assert (
+        "don't" in answer.text.lower()
+        or "do not" in answer.text.lower()
+        or "enough" in answer.text.lower()
+    )
 
 
 def test_think_aloud_emits_cot():

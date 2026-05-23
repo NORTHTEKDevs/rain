@@ -57,25 +57,39 @@ def test_run_keeps_only_correct_verdicts(tmp_path, monkeypatch):
     in_path = tmp_path / "in.jsonl"
     out_path = tmp_path / "out.jsonl"
     rej_path = tmp_path / "rej.jsonl"
-    _write_jsonl(in_path, [
-        {"subject": "lion", "relation": "isa", "object": "mammal"},
-        {"subject": "soccer", "relation": "made_of", "object": "feet"},
-        {"subject": "owl", "relation": "isa", "object": "bird"},
-        {"subject": "cell", "relation": "lives_in", "object": "organism"},
-    ])
+    _write_jsonl(
+        in_path,
+        [
+            {"subject": "lion", "relation": "isa", "object": "mammal"},
+            {"subject": "soccer", "relation": "made_of", "object": "feet"},
+            {"subject": "owl", "relation": "isa", "object": "bird"},
+            {"subject": "cell", "relation": "lives_in", "object": "organism"},
+        ],
+    )
     import scripts.filter_seed_with_judge as mod
-    monkeypatch.setattr(mod, "OllamaJudge",
-                        lambda **k: _StubJudge([
-                            _StubVerdict(True, 0.9),
-                            _StubVerdict(False, 0.9),
-                            _StubVerdict(True, 0.9),
-                            _StubVerdict(False, 0.9),
-                        ]))
+
+    monkeypatch.setattr(
+        mod,
+        "OllamaJudge",
+        lambda **k: _StubJudge(
+            [
+                _StubVerdict(True, 0.9),
+                _StubVerdict(False, 0.9),
+                _StubVerdict(True, 0.9),
+                _StubVerdict(False, 0.9),
+            ]
+        ),
+    )
     args = argparse.Namespace(
-        in_path=str(in_path), out_path=str(out_path),
+        in_path=str(in_path),
+        out_path=str(out_path),
         rejected_path=str(rej_path),
-        judge_model="stub", min_confidence=0.5, accept_unsure=False,
-        url="http://stub", timeout=5, verbose=False,
+        judge_model="stub",
+        min_confidence=0.5,
+        accept_unsure=False,
+        url="http://stub",
+        timeout=5,
+        verbose=False,
     )
     rs = run(args)
     assert rs.total == 4
@@ -93,13 +107,18 @@ def test_unsure_verdicts_drop_by_default(tmp_path, monkeypatch):
     out_path = tmp_path / "out.jsonl"
     _write_jsonl(in_path, [{"subject": "a", "relation": "r", "object": "b"}])
     import scripts.filter_seed_with_judge as mod
-    monkeypatch.setattr(mod, "OllamaJudge",
-                        lambda **k: _StubJudge([_StubVerdict(True, 0.1)]))
+
+    monkeypatch.setattr(mod, "OllamaJudge", lambda **k: _StubJudge([_StubVerdict(True, 0.1)]))
     args = argparse.Namespace(
-        in_path=str(in_path), out_path=str(out_path),
+        in_path=str(in_path),
+        out_path=str(out_path),
         rejected_path=None,
-        judge_model="stub", min_confidence=0.5, accept_unsure=False,
-        url="http://stub", timeout=5, verbose=False,
+        judge_model="stub",
+        min_confidence=0.5,
+        accept_unsure=False,
+        url="http://stub",
+        timeout=5,
+        verbose=False,
     )
     rs = run(args)
     assert rs.kept == 0 and rs.rejected == 1
@@ -110,13 +129,18 @@ def test_unsure_verdicts_kept_when_accept_unsure(tmp_path, monkeypatch):
     out_path = tmp_path / "out.jsonl"
     _write_jsonl(in_path, [{"subject": "a", "relation": "r", "object": "b"}])
     import scripts.filter_seed_with_judge as mod
-    monkeypatch.setattr(mod, "OllamaJudge",
-                        lambda **k: _StubJudge([_StubVerdict(True, 0.1)]))
+
+    monkeypatch.setattr(mod, "OllamaJudge", lambda **k: _StubJudge([_StubVerdict(True, 0.1)]))
     args = argparse.Namespace(
-        in_path=str(in_path), out_path=str(out_path),
+        in_path=str(in_path),
+        out_path=str(out_path),
         rejected_path=None,
-        judge_model="stub", min_confidence=0.5, accept_unsure=True,
-        url="http://stub", timeout=5, verbose=False,
+        judge_model="stub",
+        min_confidence=0.5,
+        accept_unsure=True,
+        url="http://stub",
+        timeout=5,
+        verbose=False,
     )
     rs = run(args)
     assert rs.kept == 1 and rs.rejected == 0
@@ -127,13 +151,18 @@ def test_judge_parse_failure_is_kept_with_annotation(tmp_path, monkeypatch):
     out_path = tmp_path / "out.jsonl"
     _write_jsonl(in_path, [{"subject": "a", "relation": "r", "object": "b"}])
     import scripts.filter_seed_with_judge as mod
-    monkeypatch.setattr(mod, "OllamaJudge",
-                        lambda **k: _StubJudge([None]))
+
+    monkeypatch.setattr(mod, "OllamaJudge", lambda **k: _StubJudge([None]))
     args = argparse.Namespace(
-        in_path=str(in_path), out_path=str(out_path),
+        in_path=str(in_path),
+        out_path=str(out_path),
         rejected_path=None,
-        judge_model="stub", min_confidence=0.5, accept_unsure=False,
-        url="http://stub", timeout=5, verbose=False,
+        judge_model="stub",
+        min_confidence=0.5,
+        accept_unsure=False,
+        url="http://stub",
+        timeout=5,
+        verbose=False,
     )
     rs = run(args)
     assert rs.judge_parse_failures == 1

@@ -23,7 +23,12 @@ from rain.core.knowledge_base import ShardedKB
 
 # Parent relations that propagate properties from ancestors to descendants
 PARENT_RELATIONS: tuple[str, ...] = (
-    "isa", "kind", "category", "partof", "locatedin", "lives_in",
+    "isa",
+    "kind",
+    "category",
+    "partof",
+    "locatedin",
+    "lives_in",
 )
 
 

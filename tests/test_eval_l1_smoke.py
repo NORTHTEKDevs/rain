@@ -19,9 +19,14 @@ def test_l1_runs_end_to_end_on_random_init(tmp_path):
     W1 = rng.standard_normal((64, 32)).astype(np.float32)
     W2 = rng.standard_normal((32, 64)).astype(np.float32)
     meta = HymnCheckpointMetadata(
-        in_dim=64, hidden_dim=32, out_dim=64,
-        steps=0, lr=0.01, seed=42,
-        final_loss=None, initial_loss=None,
+        in_dim=64,
+        hidden_dim=32,
+        out_dim=64,
+        steps=0,
+        lr=0.01,
+        seed=42,
+        final_loss=None,
+        initial_loss=None,
     )
     save_checkpoint(tmp_path / "random_ckpt", W1, W2, meta)
 
@@ -48,9 +53,14 @@ def test_l1_writes_json_via_cli(tmp_path):
     W1 = rng.standard_normal((32, 16)).astype(np.float32)
     W2 = rng.standard_normal((16, 32)).astype(np.float32)
     meta = HymnCheckpointMetadata(
-        in_dim=32, hidden_dim=16, out_dim=32,
-        steps=0, lr=0.01, seed=42,
-        final_loss=None, initial_loss=None,
+        in_dim=32,
+        hidden_dim=16,
+        out_dim=32,
+        steps=0,
+        lr=0.01,
+        seed=42,
+        final_loss=None,
+        initial_loss=None,
     )
     save_checkpoint(tmp_path / "ckpt", W1, W2, meta)
     corpus_path = tmp_path / "c.txt"

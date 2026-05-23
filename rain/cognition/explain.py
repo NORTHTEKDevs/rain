@@ -13,7 +13,7 @@ from rain.cognition.inference import InferenceResult
 @dataclass
 class Explanation:
     answer: str | None
-    citations: list[tuple[str, str, str]]   # (subject, relation, object) triples
+    citations: list[tuple[str, str, str]]  # (subject, relation, object) triples
     text: str
 
 

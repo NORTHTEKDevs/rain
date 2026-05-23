@@ -26,10 +26,13 @@ def _write_jsonl(path: Path, facts: list[dict]) -> None:
 
 def test_read_facts_handles_long_form_keys(tmp_path):
     p = tmp_path / "facts.jsonl"
-    _write_jsonl(p, [
-        {"subject": "lion", "relation": "isa", "object": "mammal"},
-        {"subject": "lion", "relation": "lives_in", "object": "savanna"},
-    ])
+    _write_jsonl(
+        p,
+        [
+            {"subject": "lion", "relation": "isa", "object": "mammal"},
+            {"subject": "lion", "relation": "lives_in", "object": "savanna"},
+        ],
+    )
     facts = _read_facts(p)
     assert len(facts) == 2
     assert facts[0]["subject"] == "lion"
@@ -39,8 +42,8 @@ def test_read_facts_skips_malformed_lines(tmp_path):
     p = tmp_path / "facts.jsonl"
     p.write_text(
         '{"subject":"a","relation":"r","object":"b"}\n'
-        '{ not json }\n'
-        '\n'  # blank line
+        "{ not json }\n"
+        "\n"  # blank line
         '{"subject":"c","relation":"r","object":"d"}\n'
     )
     facts = _read_facts(p)
@@ -56,20 +59,14 @@ def test_normalize_triple_handles_both_shapes():
 
 def test_build_probes_returns_at_most_n(tmp_path):
     rng = random.Random(0)
-    facts = [
-        {"subject": f"s{i}", "relation": "r", "object": f"o{i}"}
-        for i in range(20)
-    ]
+    facts = [{"subject": f"s{i}", "relation": "r", "object": f"o{i}"} for i in range(20)]
     probes = _build_probes(facts, n=5, rng=rng)
     assert len(probes) == 5
 
 
 def test_build_probes_returns_all_when_n_exceeds_facts(tmp_path):
     rng = random.Random(0)
-    facts = [
-        {"subject": f"s{i}", "relation": "r", "object": f"o{i}"}
-        for i in range(3)
-    ]
+    facts = [{"subject": f"s{i}", "relation": "r", "object": f"o{i}"} for i in range(3)]
     probes = _build_probes(facts, n=10, rng=rng)
     assert len(probes) == 3
 
@@ -98,14 +95,14 @@ def test_run_with_stub_judge_updates_calibration(tmp_path, monkeypatch):
     calibration shifts, and the report payload is well-formed.
     """
     seed_path = tmp_path / "facts.jsonl"
-    _write_jsonl(seed_path, [
-        {"subject": f"s{i}", "relation": "isa", "object": f"o{i}"}
-        for i in range(8)
-    ])
+    _write_jsonl(
+        seed_path, [{"subject": f"s{i}", "relation": "isa", "object": f"o{i}"} for i in range(8)]
+    )
     out_path = tmp_path / "report.json"
 
     # Patch OllamaJudge inside the script's namespace so run() picks it up.
     import scripts.run_phase2_feedback as mod
+
     monkeypatch.setattr(mod, "OllamaJudge", lambda **kwargs: _StubJudge())
 
     args = argparse.Namespace(

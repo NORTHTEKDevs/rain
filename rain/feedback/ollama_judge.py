@@ -36,6 +36,7 @@ DEFAULT_TIMEOUT = 60
 @dataclass
 class Judgment:
     """One verdict from the judge."""
+
     correct: bool
     confidence: float
     reasoning: str
@@ -93,7 +94,7 @@ def parse_judge_response(text: str) -> Judgment | None:
         start = text.find("{")
         end = text.rfind("}")
         if start >= 0 and end > start:
-            candidate = text[start:end + 1]
+            candidate = text[start : end + 1]
     if not candidate:
         return None
     try:

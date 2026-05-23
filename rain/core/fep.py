@@ -28,7 +28,7 @@ class LowRankA:
         if state.shape != (self.D,):
             raise ValueError(f"state shape {state.shape} != ({self.D},)")
         s = state.astype(np.float64)
-        v_proj = self.V.T @ s          # (R,)
+        v_proj = self.V.T @ s  # (R,)
         return (self.U @ v_proj).astype(np.float32)  # (D,)
 
     def update(self, state: np.ndarray, target: np.ndarray, alpha: float = 0.01) -> float:
@@ -48,18 +48,20 @@ class LowRankA:
 
         # Project state into latent space to get the rank-1 update direction.
         # Normalize both new columns so energy per rank-1 step is bounded by alpha^2.
-        v_proj = self.V.T @ s                                         # (R,)
+        v_proj = self.V.T @ s  # (R,)
         v_proj_norm = float(np.linalg.norm(v_proj)) + 1e-9
         r_norm = float(np.linalg.norm(residual)) + 1e-9
-        new_u = (alpha * residual / r_norm).reshape(-1, 1)            # unit residual, scaled alpha
-        new_v_d = (self.V @ (v_proj / v_proj_norm)).reshape(-1, 1)    # unit state projection
+        new_u = (alpha * residual / r_norm).reshape(-1, 1)  # unit residual, scaled alpha
+        new_v_d = (self.V @ (v_proj / v_proj_norm)).reshape(-1, 1)  # unit state projection
 
-        U_aug = np.concatenate([self.U, new_u], axis=1)      # (D, R+1)
-        V_aug = np.concatenate([self.V, new_v_d], axis=1)    # (D, R+1)
+        U_aug = np.concatenate([self.U, new_u], axis=1)  # (D, R+1)
+        V_aug = np.concatenate([self.V, new_v_d], axis=1)  # (D, R+1)
 
         # Prune: always keep the new column (index R); drop the weakest of the original R.
         # The new column encodes the current residual and must enter the factorization.
-        existing_contributions = np.linalg.norm(U_aug[:, :self.R], axis=0) * np.linalg.norm(V_aug[:, :self.R], axis=0)
+        existing_contributions = np.linalg.norm(U_aug[:, : self.R], axis=0) * np.linalg.norm(
+            V_aug[:, : self.R], axis=0
+        )
         drop = int(np.argmin(existing_contributions))
         keep_mask = np.ones(self.R + 1, dtype=bool)
         keep_mask[drop] = False

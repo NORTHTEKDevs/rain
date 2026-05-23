@@ -3,7 +3,7 @@
 
 //! VSA bench scaffold — populated during implementation phase.
 
-use criterion::{criterion_group, criterion_main, Criterion};
+use criterion::{Criterion, criterion_group, criterion_main};
 
 fn placeholder(c: &mut Criterion) {
     c.bench_function("placeholder", |b| b.iter(|| 1 + 1));

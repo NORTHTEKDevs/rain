@@ -10,12 +10,14 @@ def test_write_then_read():
     kb.write("rome", "capital_of", "italy")
     assert kb.query("rome", "capital_of") == "italy"
 
+
 def test_capacity_scales_with_shards():
     kb = ShardedKB(num_shards=64, dim=10000, seed=0)
     for i in range(1000):
         kb.write(f"s{i}", "r", f"o{i}")
     correct = sum(1 for i in range(1000) if kb.query(f"s{i}", "r") == f"o{i}")
     assert correct / 1000 >= 0.85
+
 
 def test_unknown_returns_none():
     kb = ShardedKB(num_shards=8, dim=10000, seed=0)

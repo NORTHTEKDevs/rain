@@ -47,8 +47,9 @@ HymnSamplerFn = Callable[[str, int], str]
 @dataclass
 class Answer:
     """One agent reply with all the metadata RAIN exposes (calibration + epistemic + citations)."""
+
     text: str
-    epistemic: str   # know / think / guess / unknown
+    epistemic: str  # know / think / guess / unknown
     citations: list[tuple[str, str, str]] = field(default_factory=list)
     confidence: float = 0.0
     inference_source: str | None = None  # direct / inherited / transitive / None / hymn
@@ -85,14 +86,17 @@ class ConsciousAgent:
         # the v0 reference behavior; opt in with enable_continual=True.
         if enable_continual:
             self.lsm = LiquidStateMachine(
-                input_dim=dim, reservoir_dim=lsm_reservoir,
-                output_dim=dim, seed=seed + 3,
+                input_dim=dim,
+                reservoir_dim=lsm_reservoir,
+                output_dim=dim,
+                seed=seed + 3,
             )
             self.fep = LowRankA(D=dim, R=fep_rank, seed=seed + 4)
             self.tsetlin = TsetlinMachine(
                 num_classes=tsetlin_classes,
                 num_clauses_per_class=tsetlin_clauses_per_class,
-                num_features=dim, seed=seed + 5,
+                num_features=dim,
+                seed=seed + 5,
             )
             self._continual = True
         else:
@@ -185,8 +189,9 @@ class ConsciousAgent:
         # Resolve references from dialogue context
         subject_r, relation_r = self.dialogue.resolve_references(subject, relation)
         if subject_r is None or relation_r is None:
-            ans = Answer(text="I don't have enough context to know what you're asking.",
-                         epistemic="unknown")
+            ans = Answer(
+                text="I don't have enough context to know what you're asking.", epistemic="unknown"
+            )
             self.introspect.record("refuse", reason="missing context")
             return ans
 
@@ -285,8 +290,17 @@ class ConsciousAgent:
         """Multi-sentence description from stored facts."""
         if relations is None:
             relations = [
-                "isa", "category", "color", "size", "capital_of", "locatedin",
-                "lives_in", "made_of", "has_part", "wrote", "creator",
+                "isa",
+                "category",
+                "color",
+                "size",
+                "capital_of",
+                "locatedin",
+                "lives_in",
+                "made_of",
+                "has_part",
+                "wrote",
+                "creator",
             ]
         out = describe_fn(self.kb, entity, relations)
         self.introspect.record("explain", topic=entity)

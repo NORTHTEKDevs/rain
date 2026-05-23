@@ -27,7 +27,9 @@ def test_normalize_token_basic_cases():
 def test_valid_triple_accepts_clean_lists():
     assert _valid_triple(["lion", "isa", "mammal"]) == ("lion", "isa", "mammal")
     assert _valid_triple(["Roman Empire", "founded_in", "27 BC"]) == (
-        "roman_empire", "founded_in", "27_bc",
+        "roman_empire",
+        "founded_in",
+        "27_bc",
     )
 
 
@@ -55,11 +57,7 @@ def test_extract_json_array_finds_inside_prose():
 
 
 def test_extract_json_array_finds_inside_markdown_fence():
-    txt = (
-        "```json\n"
-        '[["lion","isa","mammal"]]\n'
-        "```"
-    )
+    txt = "```json\n" '[["lion","isa","mammal"]]\n' "```"
     arr = _extract_json_array(txt)
     assert arr == [["lion", "isa", "mammal"]]
 
@@ -73,7 +71,7 @@ def test_extract_json_array_recovers_from_missing_closing_bracket():
     """llama3.2:3b sometimes drops the outer ']'. The extractor must still
     parse the inner triples by balancing brackets."""
     txt = (
-        '[\n'
+        "[\n"
         '  ["lion", "kind", "felidae"],\n'
         '  ["lion", "color", "golden_brown"],\n'
         '  ["lion", "lives_in", "savanna"]\n'
@@ -86,7 +84,7 @@ def test_extract_json_array_recovers_from_missing_closing_bracket():
 def test_extract_json_array_recovers_from_trailing_partial_triple():
     """Recovery should also drop a half-written final triple."""
     txt = (
-        '[\n'
+        "[\n"
         '  ["lion", "kind", "felidae"],\n'
         '  ["lion", "color", "golden_brown"],\n'
         '  ["lion", "lives_in",'  # cut off mid-triple, no value, no closing

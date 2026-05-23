@@ -56,8 +56,19 @@ def _char_features(char: str, corpus_freq: float) -> np.ndarray:
     ascii_norm = (code & 0x7F) / 128.0
     high_byte = float(code > 127)
     return np.array(
-        [is_letter, is_lower, is_upper, is_digit, is_punct, is_space,
-         is_vowel, is_consonant, ascii_norm, high_byte, corpus_freq],
+        [
+            is_letter,
+            is_lower,
+            is_upper,
+            is_digit,
+            is_punct,
+            is_space,
+            is_vowel,
+            is_consonant,
+            ascii_norm,
+            high_byte,
+            corpus_freq,
+        ],
         dtype=np.float32,
     )
 
@@ -107,14 +118,16 @@ def warm_start_chars(
     # Compute a quick prior-quality stat: mean cosine within letter category
     # vs across categories. Higher within / lower across = better prior.
     def _cos(a, b):
-        a = a.astype(np.float32); b = b.astype(np.float32)
+        a = a.astype(np.float32)
+        b = b.astype(np.float32)
         return float(a @ b) / (np.linalg.norm(a) * np.linalg.norm(b) + 1e-9)
 
     letters = [v for c, v in feature_vecs.items() if c.isalpha() and c.islower()]
     digits = [v for c, v in feature_vecs.items() if c.isdigit()]
     within_letter = (
-        np.mean([_cos(a, b) for i, a in enumerate(letters)
-                 for b in letters[i + 1:]]) if len(letters) > 1 else 0.0
+        np.mean([_cos(a, b) for i, a in enumerate(letters) for b in letters[i + 1 :]])
+        if len(letters) > 1
+        else 0.0
     )
     if letters and digits:
         across = float(np.mean([_cos(a, b) for a in letters[:8] for b in digits[:8]]))

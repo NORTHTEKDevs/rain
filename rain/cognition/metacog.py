@@ -49,7 +49,9 @@ class CalibrationTally:
 
 
 def classify_epistemic(
-    confidence: float, relation_calibration: float | None = None, thresholds: Thresholds | None = None
+    confidence: float,
+    relation_calibration: float | None = None,
+    thresholds: Thresholds | None = None,
 ) -> str:
     """Classify an output as know / think / guess / unknown."""
     t = thresholds or Thresholds()
