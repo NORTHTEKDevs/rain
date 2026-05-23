@@ -57,6 +57,10 @@ Best L1 to date: **1.72 nats/char** (carry=8, 30K steps, 8 min CPU). 60% of the 
 | **Carry=16**, lr=5e-4, grad_clip=1.0, wd=1e-4, CPU, 30K | 833s | 1.64 | 1.5359 | YES |
 | **Carry=16**, lr=5e-4, grad_clip=1.0, wd=1e-4, CPU, 50K | 1313s | 1.58 | **1.4721** | **YES** |
 | dim=2048 Carry=16, same other hparams, CPU, 30K | 2769s | 2.01 | 1.88 | no |
+| dim=2048 Carry=16, lr=2e-4 retune (negative LR-scaling test), CPU, 30K | 2282s | 1.96 | 1.89 | no |
+| **WT-103** carry=16, warm-start, DirectML, 50K | 1176s | 1.73 | **1.62** (self-eval) | n/a |
+| **KB Q/A** carry=16, warm-start, CPU, 20K | 487s | 0.91 | n/a (Q/A repetitive) | n/a |
+| **Hybrid** (WT-103+80x KB-Q/A+Shakespeare), carry=16, warm-start, DirectML, 30K | 879s | 1.80 | n/a | n/a |
 
 WikiText-2 self-eval NLL (carry=16 30K, DirectML, 11 min): **1.72**.
 
