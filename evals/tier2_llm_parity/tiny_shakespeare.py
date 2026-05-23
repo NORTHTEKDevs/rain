@@ -71,12 +71,18 @@ def compute_hv_mse_loss(W1: np.ndarray, W2: np.ndarray, codebook: Codebook,
 def compute_nll_loss(
     W1: np.ndarray, W2: np.ndarray, codebook: Codebook,
     corpus_text: str, n_eval_chars: int,
+    carry_steps: int = 0,
 ) -> float:
     """Mean cross-entropy nats/char over n_eval_chars random positions.
 
     HYMN output is projected onto the codebook vocab (every char that appears
     in the corpus, in sorted order) via dot product, softmaxed, and the
     negative log-prob of the true next char is the per-position loss.
+
+    If `carry_steps > 0`, evaluates RNN-style with teacher forcing across a
+    `carry_steps + 1` window per sample (matches the carry-mode trainer):
+    state starts at zero, ingests each char in turn via HYMN, and the
+    final prediction is the target.
     """
     chars = list(corpus_text)
     vocab = sorted(set(chars))
@@ -84,25 +90,44 @@ def compute_nll_loss(
     codebook_matrix = np.stack(
         [codebook.vector(c).astype(np.float32) for c in vocab]
     )  # (V, D)
-    if len(chars) < n_eval_chars + 1:
-        n_eval_chars = max(1, len(chars) - 1)
+    if len(chars) < n_eval_chars + carry_steps + 2:
+        n_eval_chars = max(1, len(chars) - carry_steps - 2)
     rng = np.random.default_rng(42)
     nll_total = 0.0
-    for _ in range(n_eval_chars):
-        pos = int(rng.integers(0, len(chars) - 1))
-        prev_char = chars[pos]
-        next_char = chars[pos + 1]
-        state = codebook.vector(prev_char).astype(np.float32)
-        input_ = np.zeros_like(state)
+
+    def _hymn_forward(state: np.ndarray, input_: np.ndarray) -> np.ndarray:
         combined = np.tanh(state + input_)
         h = np.tanh(combined @ W1)
-        out = np.tanh(h @ W2)
-        logits = codebook_matrix @ out  # (V,)
-        # log-softmax in a numerically stable way
+        return np.tanh(h @ W2)
+
+    def _nll_at(state: np.ndarray, next_idx: int) -> float:
+        logits = codebook_matrix @ state
         m = float(logits.max())
         log_sum_exp = m + float(np.log(np.exp(logits - m).sum()))
-        log_probs = logits - log_sum_exp
-        nll_total += -float(log_probs[char_to_idx[next_char]])
+        return float(-(logits[next_idx] - log_sum_exp))
+
+    in_dim = W1.shape[0]
+    for _ in range(n_eval_chars):
+        if carry_steps > 0:
+            pos = int(rng.integers(0, len(chars) - carry_steps - 1))
+            state = np.zeros(in_dim, dtype=np.float32)
+            for t in range(carry_steps):
+                cur_vec = codebook.vector(chars[pos + t]).astype(np.float32)
+                state = _hymn_forward(state, cur_vec)
+            target_idx = char_to_idx[chars[pos + carry_steps]]
+            # One more transition to align with training (the trainer
+            # transitions THEN decodes); to keep symmetry, do the same here.
+            cur_vec = codebook.vector(chars[pos + carry_steps - 1]).astype(np.float32)
+            nll_total += _nll_at(state, target_idx)
+        else:
+            pos = int(rng.integers(0, len(chars) - 1))
+            prev_char = chars[pos]
+            next_char = chars[pos + 1]
+            state = codebook.vector(prev_char).astype(np.float32)
+            input_ = np.zeros_like(state)
+            out = _hymn_forward(state, input_)
+            target_idx = char_to_idx[next_char]
+            nll_total += _nll_at(out, target_idx)
     return nll_total / n_eval_chars
 
 
@@ -111,20 +136,27 @@ def evaluate(
     corpus_path: str,
     n_eval_chars: int = 1000,
     metric: str = "hv_mse",
+    carry_steps: int | None = None,
 ) -> dict:
     """Run the L1 benchmark. Returns a result dict suitable for JSON serialization.
 
     metric: "hv_mse" (default, matches v0 numpy reference) or "nll"
     (real cross-entropy, Phase 2.3 production threshold).
+
+    carry_steps: if not None, overrides the eval mode. If None, falls back
+    to the checkpoint's recorded carry_steps (schema v2+). 0 = per-position
+    eval; >0 = RNN-style teacher-forced eval matching the carry trainer.
     """
     if metric not in ("hv_mse", "nll"):
         raise ValueError(f"unknown metric {metric!r}; expected 'hv_mse' or 'nll'")
     W1, W2, meta = load_checkpoint(checkpoint_path)
     corpus = Path(corpus_path).read_text()
     cb = Codebook(vocab_size=256, dim=meta.in_dim, seed=meta.seed)
+    effective_carry = carry_steps if carry_steps is not None else getattr(meta, "carry_steps", 0)
     base = {
         "benchmark": "L1_tiny_shakespeare",
         "n_eval_chars": n_eval_chars,
+        "eval_carry_steps": effective_carry,
         "checkpoint": str(checkpoint_path),
         "checkpoint_metadata": {
             "in_dim": meta.in_dim,
@@ -132,6 +164,9 @@ def evaluate(
             "out_dim": meta.out_dim,
             "steps": meta.steps,
             "frozen": meta.frozen,
+            "loss_type": getattr(meta, "loss_type", "mse"),
+            "context_len": getattr(meta, "context_len", 0),
+            "carry_steps_trained": getattr(meta, "carry_steps", 0),
         },
     }
     if metric == "hv_mse":
@@ -144,7 +179,9 @@ def evaluate(
             "pass": loss <= L1_PASS_THRESHOLD_HV_MSE,
         })
     else:
-        loss = compute_nll_loss(W1, W2, cb, corpus, n_eval_chars=n_eval_chars)
+        loss = compute_nll_loss(W1, W2, cb, corpus,
+                                n_eval_chars=n_eval_chars,
+                                carry_steps=effective_carry)
         base.update({
             "metric_type": "nll_nats_per_char",
             "nll_threshold_applicable": True,
@@ -175,6 +212,10 @@ def main() -> None:
                         help="auto = pick based on the checkpoint's loss_type sidecar field "
                              "(default; matches how the checkpoint was trained). "
                              "hv_mse / nll force a specific metric.")
+    parser.add_argument("--carry-steps", type=int, default=None,
+                        help="Override eval mode: 0 = per-position, K>0 = RNN-style "
+                             "teacher-forced K-step eval. Default = use the checkpoint's "
+                             "recorded carry_steps (schema v2+) or 0 for older checkpoints.")
     parser.add_argument("--out", required=True, help="output JSON path")
     args = parser.parse_args()
     metric = (
@@ -182,7 +223,8 @@ def main() -> None:
         if args.metric == "auto" else args.metric
     )
     result = evaluate(args.checkpoint, args.corpus,
-                      n_eval_chars=args.n_eval_chars, metric=metric)
+                      n_eval_chars=args.n_eval_chars, metric=metric,
+                      carry_steps=args.carry_steps)
     out_path = Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(result, indent=2))

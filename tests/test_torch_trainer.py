@@ -142,6 +142,63 @@ def test_lr_warmup_starts_below_peak_and_reaches_it():
     assert late < early, f"warmup+cosine didn't reduce loss: early={early}, late={late}"
 
 
+def test_carry_steps_reduces_nll_loss():
+    """Sequence-carry training (W=4) reduces NLL on a small corpus."""
+    corpus = "the quick brown fox jumps over the lazy dog. " * 80
+    cb = Codebook(vocab_size=64, dim=128, seed=0)
+    model = HymnTorch(128, 64, 128, seed=0, device=CPU)
+    r = train_torch(
+        model, cb, corpus,
+        n_steps=80, batch_size=8, carry_steps=4, grad_clip=1.0,
+        lr=1e-3, loss_type=LOSS_NLL, device=CPU, seed=0,
+    )
+    assert r.carry_steps == 4
+    early = float(np.mean(r.losses[:10]))
+    late = float(np.mean(r.losses[-10:]))
+    assert late < early, f"carry training didn't reduce NLL: early={early}, late={late}"
+
+
+def test_carry_steps_overrides_context_len_silently():
+    """When carry_steps>0, the trainer ignores context_len -- they should not
+    interfere. Same seed, same data: result is deterministic."""
+    corpus = "the quick brown fox " * 80
+    cb1 = Codebook(vocab_size=64, dim=128, seed=0)
+    cb2 = Codebook(vocab_size=64, dim=128, seed=0)
+    m1 = HymnTorch(128, 64, 128, seed=0, device=CPU)
+    m2 = HymnTorch(128, 64, 128, seed=0, device=CPU)
+    r1 = train_torch(m1, cb1, corpus, n_steps=20, batch_size=4,
+                     carry_steps=3, context_len=0,
+                     lr=1e-3, device=CPU, seed=0)
+    r2 = train_torch(m2, cb2, corpus, n_steps=20, batch_size=4,
+                     carry_steps=3, context_len=16,  # ignored
+                     lr=1e-3, device=CPU, seed=0)
+    assert r1.losses == r2.losses
+
+
+def test_grad_clip_does_not_break_training():
+    """grad_clip=1.0 should not prevent learning on a normal small run."""
+    corpus = "the quick brown fox jumps over the lazy dog. " * 60
+    cb = Codebook(vocab_size=64, dim=128, seed=0)
+    model = HymnTorch(128, 64, 128, seed=0, device=CPU)
+    r = train_torch(
+        model, cb, corpus,
+        n_steps=80, batch_size=8, context_len=4, grad_clip=1.0,
+        lr=5e-3, loss_type=LOSS_NLL, device=CPU, seed=0,
+    )
+    early = float(np.mean(r.losses[:10]))
+    late = float(np.mean(r.losses[-10:]))
+    assert late < early
+
+
+def test_carry_steps_negative_is_rejected():
+    cb = Codebook(vocab_size=64, dim=64, seed=0)
+    model = HymnTorch(64, 32, 64, seed=0, device=CPU)
+    with pytest.raises(ValueError, match="carry_steps"):
+        train_torch(model, cb, "the quick brown fox " * 10,
+                    n_steps=1, batch_size=2, carry_steps=-1,
+                    device=CPU, seed=0)
+
+
 def test_train_torch_rejects_unknown_loss_type():
     cb = Codebook(vocab_size=64, dim=64, seed=0)
     model = HymnTorch(64, 32, 64, seed=0, device=CPU)

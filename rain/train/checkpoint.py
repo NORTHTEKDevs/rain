@@ -33,6 +33,7 @@ class HymnCheckpointMetadata:
     # New in schema_version >= 2. Optional so older checkpoint sidecars still load.
     loss_type: str = "mse"        # "mse" or "nll" -- which loss the trainer minimized
     context_len: int = 0          # sequence-context size used during training
+    carry_steps: int = 0          # RNN-style carry window (0 = per-position training)
     batch_size: int = 1           # per-step batch size used during training
 
 

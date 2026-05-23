@@ -40,6 +40,13 @@ def main() -> None:
     p.add_argument("--batch-size", type=int, default=32)
     p.add_argument("--context-len", type=int, default=0,
                    help="0 = no context (matches numpy ref); K>0 bundles previous K chars")
+    p.add_argument("--carry-steps", type=int, default=0,
+                   help="If W>0, autoregressive sequence training: HYMN state "
+                        "evolves across a W-step window with per-step loss summed. "
+                        "Closer to true RNN-style training. Overrides --context-len.")
+    p.add_argument("--grad-clip", type=float, default=0.0,
+                   help="Max L2 norm for gradient clipping. Recommended for "
+                        "carry-steps >= 4 to prevent BPTT explosion.")
     p.add_argument("--lr", type=float, default=1e-3)
     p.add_argument("--weight-decay", type=float, default=0.0,
                    help="AdamW L2 regularization; helps NLL overfitting at higher step counts")
@@ -78,10 +85,12 @@ def main() -> None:
         n_steps=args.steps,
         batch_size=args.batch_size,
         context_len=args.context_len,
+        carry_steps=args.carry_steps,
         lr=args.lr,
         weight_decay=args.weight_decay,
         warmup_steps=args.warmup_steps,
         cosine_decay=args.cosine_decay,
+        grad_clip=args.grad_clip,
         loss_type=args.loss,
         device=dev,
         seed=args.seed,
@@ -93,13 +102,15 @@ def main() -> None:
         n_steps=args.steps, lr=args.lr, seed=args.seed,
         initial_loss=result.initial_loss, final_loss=result.final_loss,
         losses=result.losses,
-        loss_type=args.loss, context_len=args.context_len, batch_size=args.batch_size,
+        loss_type=args.loss, context_len=args.context_len,
+        carry_steps=args.carry_steps, batch_size=args.batch_size,
     )
     print(f"saved {npz_path} + {json_path}")
     print(
         f"steps={result.steps}  batch={result.batch_size}  "
-        f"context={result.context_len}  loss={result.loss_type}  "
-        f"device={result.device}  wall={result.wall_seconds:.1f}s  "
+        f"context={result.context_len}  carry={result.carry_steps}  "
+        f"loss={result.loss_type}  device={result.device}  "
+        f"wall={result.wall_seconds:.1f}s  "
         f"initial_loss={result.initial_loss:.4f}  final_loss={result.final_loss:.4f}"
     )
 

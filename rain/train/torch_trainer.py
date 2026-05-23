@@ -187,6 +187,7 @@ class TorchTrainResult:
     steps: int
     batch_size: int
     context_len: int
+    carry_steps: int
     loss_type: str
     initial_loss: float
     final_loss: float
@@ -204,30 +205,43 @@ def train_torch(
     n_steps: int,
     batch_size: int = 32,
     context_len: int = 0,
+    carry_steps: int = 0,
     lr: float = 1e-3,
     weight_decay: float = 0.0,
     warmup_steps: int = 0,
     cosine_decay: bool = False,
+    grad_clip: float = 0.0,
     loss_type: str = LOSS_MSE,
     device: "torch.device | None" = None,
     seed: int = 0,
     log_every: int = 0,
 ) -> TorchTrainResult:
-    """Train HymnTorch with Adam on next-char prediction.
+    """Train HymnTorch with AdamW on next-char prediction.
 
     Args:
         context_len: if 0, `input_` is zeros (matches numpy reference).
             if K>0, `input_` is the mean of the previous K bipolar codebook
-            vectors at each position, projected back to float32. Equivalent
-            to a simple bundle of the recent history.
+            vectors at each position, projected back to float32.
+        carry_steps: if 0, every batch position is an independent one-step
+            next-char prediction (the v0 reference). If W>0, each batch
+            sample is a window of W+1 chars; HYMN state evolves
+            autoregressively across the window with per-step loss summed
+            (state_{t+1} = HYMN(state_t, codebook(char_t))). This is the
+            closest the v0 trainer gets to RNN-style sequence training.
+            When carry_steps>0 the trainer ignores context_len (the
+            evolving state already carries history).
+        grad_clip: max L2-norm for gradient clipping (0 = disabled).
+            Recommended for carry_steps >= 4 to prevent BPTT explosion.
         loss_type: "mse" -- MSE on the bipolar HV target (v0 reference).
             "nll" -- project HYMN output onto the codebook to produce vocab
             logits, then cross-entropy against the true next-char index.
-            NLL is a much sharper gradient signal (the gap closes ~3-5x faster
-            empirically) and is the real Phase-2.3 loss.
+            NLL is a much sharper gradient signal (the gap closes ~3-5x
+            faster empirically) and is the real Phase-2.3 loss.
     """
     if loss_type not in (LOSS_MSE, LOSS_NLL):
         raise ValueError(f"unknown loss_type {loss_type!r}; expected 'mse' or 'nll'")
+    if carry_steps < 0:
+        raise ValueError(f"carry_steps must be >= 0, got {carry_steps}")
     if device is None:
         device = next(model.parameters()).device
     model.train()
@@ -244,9 +258,11 @@ def train_torch(
 
     chars = list(corpus_text)
     n_corpus = len(chars)
-    if n_corpus < context_len + 2:
+    min_corpus = max(context_len + 2, carry_steps + 2)
+    if n_corpus < min_corpus:
         raise ValueError(
-            f"corpus too short ({n_corpus} chars) for context_len={context_len}"
+            f"corpus too short ({n_corpus} chars) for "
+            f"context_len={context_len} carry_steps={carry_steps}"
         )
 
     # Pre-build NLL machinery once if applicable (much faster than per-step).
@@ -263,35 +279,72 @@ def train_torch(
         if warmup_steps or cosine_decay:
             for g in optim.param_groups:
                 g["lr"] = _lr_at(step)
-        positions = _sample_positions(n_corpus, batch_size, context_len, rng)
-        cur_chars = [chars[p] for p in positions]
-        next_chars = [chars[p + 1] for p in positions]
-        state = _codebook_lookup_batch(codebook, cur_chars, device)
-        if context_len > 0:
-            history_stack = np.zeros((batch_size, context_len, model.in_dim), dtype=np.float32)
-            for bi, p in enumerate(positions):
-                for ki in range(context_len):
-                    prev_pos = p - (ki + 1)
-                    if prev_pos >= 0:
-                        history_stack[bi, ki] = codebook.vector(chars[prev_pos]).astype(np.float32)
-            history_mean = history_stack.mean(axis=1)
-            input_ = torch.from_numpy(history_mean).to(device)
-        else:
-            input_ = torch.zeros_like(state)
 
-        out = model(state, input_)
-        if loss_type == LOSS_NLL:
-            target_idx = torch.tensor(
-                [char_to_idx[c] for c in next_chars], dtype=torch.long, device=device,
-            )
-            logits = codebook_logits(out, codebook_matrix)
-            loss = F.cross_entropy(logits, target_idx)
+        if carry_steps > 0:
+            # Sequence-carry training: each batch sample is a (carry_steps+1)-char
+            # window. We RNN-evolve HYMN state with teacher forcing:
+            #   state = ZERO (neutral hidden state)
+            #   for t in 0..carry_steps:
+            #       state = HYMN(state, codebook(char_t))   # ingest current char
+            #       predict char_{t+1} from state           # then decode
+            # Loss is averaged over the carry_steps predictions (one per window
+            # position except the last input-only step).
+            high = max(carry_steps + 1, n_corpus - (carry_steps + 2))
+            starts = rng.integers(0, high, size=batch_size)
+            window_chars = [
+                [chars[s + i] for i in range(carry_steps + 2)]
+                for s in starts
+            ]
+            state = torch.zeros((batch_size, model.in_dim), device=device)
+            total_loss = torch.zeros((), device=device)
+            for t in range(carry_steps + 1):
+                cur_chars = [w[t] for w in window_chars]
+                input_vec = _codebook_lookup_batch(codebook, cur_chars, device)
+                state = model(state, input_vec)
+                # Predict char_{t+1} from the updated state.
+                target_chars = [w[t + 1] for w in window_chars]
+                if loss_type == LOSS_NLL:
+                    target_idx = torch.tensor(
+                        [char_to_idx[c] for c in target_chars],
+                        dtype=torch.long, device=device,
+                    )
+                    logits = codebook_logits(state, codebook_matrix)
+                    total_loss = total_loss + F.cross_entropy(logits, target_idx)
+                else:
+                    target_vec = _codebook_lookup_batch(codebook, target_chars, device)
+                    total_loss = total_loss + ((state - target_vec) ** 2).mean()
+            loss = total_loss / float(carry_steps + 1)
         else:
-            target = _codebook_lookup_batch(codebook, next_chars, device)
-            loss = ((out - target) ** 2).mean()
+            positions = _sample_positions(n_corpus, batch_size, context_len, rng)
+            cur_chars = [chars[p] for p in positions]
+            next_chars = [chars[p + 1] for p in positions]
+            state = _codebook_lookup_batch(codebook, cur_chars, device)
+            if context_len > 0:
+                history_stack = np.zeros((batch_size, context_len, model.in_dim), dtype=np.float32)
+                for bi, p in enumerate(positions):
+                    for ki in range(context_len):
+                        prev_pos = p - (ki + 1)
+                        if prev_pos >= 0:
+                            history_stack[bi, ki] = codebook.vector(chars[prev_pos]).astype(np.float32)
+                history_mean = history_stack.mean(axis=1)
+                input_ = torch.from_numpy(history_mean).to(device)
+            else:
+                input_ = torch.zeros_like(state)
+            out = model(state, input_)
+            if loss_type == LOSS_NLL:
+                target_idx = torch.tensor(
+                    [char_to_idx[c] for c in next_chars], dtype=torch.long, device=device,
+                )
+                logits = codebook_logits(out, codebook_matrix)
+                loss = F.cross_entropy(logits, target_idx)
+            else:
+                target = _codebook_lookup_batch(codebook, next_chars, device)
+                loss = ((out - target) ** 2).mean()
 
         optim.zero_grad()
         loss.backward()
+        if grad_clip > 0:
+            torch.nn.utils.clip_grad_norm_(model.parameters(), grad_clip)
         optim.step()
         losses.append(float(loss.detach().cpu()))
 
@@ -308,6 +361,7 @@ def train_torch(
         steps=n_steps,
         batch_size=batch_size,
         context_len=context_len,
+        carry_steps=carry_steps,
         loss_type=loss_type,
         initial_loss=float(losses[0]) if losses else 0.0,
         final_loss=float(losses[-1]) if losses else 0.0,
@@ -329,12 +383,14 @@ def save_torch_checkpoint(
     losses: list[float] | None = None,
     loss_type: str = LOSS_MSE,
     context_len: int = 0,
+    carry_steps: int = 0,
     batch_size: int = 1,
 ) -> tuple[Path, Path]:
     """Detach weights + write the numpy checkpoint format.
 
-    Carries loss_type + context_len + batch_size into the sidecar so consumers
-    (L1 benchmark, future scripts) can auto-pick the right eval metric.
+    Carries loss_type + context_len + carry_steps + batch_size into the
+    sidecar so consumers (L1 benchmark, future scripts) can auto-pick the
+    right eval metric and eval mode.
     """
     W1, W2 = model.to_numpy_weights()
     meta = HymnCheckpointMetadata(
@@ -349,6 +405,7 @@ def save_torch_checkpoint(
         schema_version=2,
         loss_type=loss_type,
         context_len=context_len,
+        carry_steps=carry_steps,
         batch_size=batch_size,
     )
     return save_checkpoint(
