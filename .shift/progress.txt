@@ -208,3 +208,21 @@ SHIFTS:
     - Judge-during-seeding: filter llama3.2 triples BEFORE write.
     - WikiText-2 carry=16 (carry=8 hit 1.96; carry=16 likely much lower).
     - dim=2048 HYMN -- the architecture lever we haven't pulled yet.
+---
+SHIFTS_CONTINUED:
+  ---
+  shift: 5
+  date: 2026-05-23T04:35:00Z
+  status: open
+  engineer: claude
+  starting_commit: 10b4458
+  goal: |
+    User said "keep working" after the L1 PASS wrap. This phase pursues
+    the wrap report's "next" items, prioritized for visible v0 payoff:
+      (a) chat surface combining KB lookup + HYMN sampling fallback.
+      (b) judge-during-seeding to fix Track-2 quality at the source.
+      (c) WikiText-2 carry=16 (training in background).
+      (d) dim=2048 HYMN if time permits.
+  next:
+    - Build rain-cli chat REPL: KB-first answers + HYMN sampling fallback.
+    - Background: WT2 carry=16 30K running, will report NLL when done.
