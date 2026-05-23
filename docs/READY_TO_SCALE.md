@@ -27,32 +27,35 @@
 
 In rough order. Each item is gated -- you can't skip ahead.
 
-### 1. Real warm-start (the missing Phase-1 step)
+### 1. Real warm-start (the missing Phase-1 step) -- DONE for chars, partial for BPE
 
 The bootstrap orchestrator's `warm_start_from_vectors` accepts a dict of
 {token -> embedding} but the v0 runs all skipped it and started from
-random codebook vectors. For v1.0:
+random codebook vectors. **Now wired both ways:**
 
-- Download FastText `cc.en.300.bin` (~7 GB) or sentence-transformers
-  `all-MiniLM-L6-v2` (~80 MB) projection.
-- Pass embeddings into `bootstrap_phase1(warm_start_vectors=...)`.
-- Should drop initial NLL by 2-4 nats/char (the warm-start IS the
-  Phase-1 magic per the design doc).
+- `rain.train.warm_start_chars` -- feature-based char prior. Zero deps.
+  3K-step A/B on Tiny Shakespeare: final_loss=2.40 vs random 2.87 (-16%).
+  Cluster gap (within-letter cos minus letters-to-digits cos) = 0.74.
+- `rain.train.warm_start_minilm` -- sentence-transformers MiniLM (~80 MB).
+  **Negative finding for chars:** final_loss=2.73 vs feature 2.40.
+  MiniLM's single-char embeddings collapse on sentence-pooling so
+  the cluster gap is only 0.01. **Keep MiniLM for BPE subwords** via
+  `warm_start_bpe_minilm()` -- that's where each token is genuinely
+  a "sentence" and MiniLM shines.
 
-**Estimated effort:** 1 day to wire + validate. No code-architecture change.
+Bootstrap entry: `bootstrap_phase1(warm_start_method="chars"|"minilm")`.
+CLI flag on `pretrain_hymn_torch`: `--warm-start-chars` or
+`--warm-start-minilm`.
 
-### 2. Scale corpus to WikiText-103 (or larger)
+**Status:** wired, tested, A/B-validated. Char path is the v0 winner.
 
-Current largest local corpus: WikiText-2 train @ 11 MB.
-WikiText-103 train is ~500 MB; ~45x more text. Enough to actually
-saturate dim=1024 on a few-day local run.
+### 2. Scale corpus to WikiText-103 (or larger) -- DONE for download
 
-- Download via HuggingFace datasets.
-- Use scripts/extract_wikitext2 pattern.
-- Set up `data/corpora/wikitext103_train.txt`.
+`data/corpora/wikitext103_train.txt` is on disk @ 543 MB (~45x WT-2).
+Extraction script: `scripts/extract_wikitext103.py`.
 
-**Estimated effort:** 2 hours. Compute: 8-16 hours local training on
-the workstation for one pass.
+**Compute remaining:** 8-16 hours local training on the workstation for
+one pass. This is the next button-press.
 
 ### 3. Real Phase-1 gradient pre-train end-to-end
 
