@@ -85,6 +85,7 @@ credentials/
 *.sqlite-journal
 *.db
 checkpoints/
+evals_out/
 data/cache/
 data/raw/
 data/corpora/
