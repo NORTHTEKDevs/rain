@@ -21,6 +21,7 @@ Auto-detects DirectML if `torch_directml` is importable; otherwise CPU.
 """
 
 from __future__ import annotations
+import math
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -205,6 +206,8 @@ def train_torch(
     context_len: int = 0,
     lr: float = 1e-3,
     weight_decay: float = 0.0,
+    warmup_steps: int = 0,
+    cosine_decay: bool = False,
     loss_type: str = LOSS_MSE,
     device: "torch.device | None" = None,
     seed: int = 0,
@@ -230,6 +233,15 @@ def train_torch(
     model.train()
     optim = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
 
+    def _lr_at(step: int) -> float:
+        """Linear warmup over warmup_steps, then optional cosine decay to 10% of peak."""
+        if warmup_steps and step < warmup_steps:
+            return lr * (step + 1) / warmup_steps
+        if cosine_decay and n_steps > warmup_steps:
+            progress = (step - warmup_steps) / max(1, n_steps - warmup_steps)
+            return lr * (0.1 + 0.9 * 0.5 * (1.0 + math.cos(math.pi * min(1.0, progress))))
+        return lr
+
     chars = list(corpus_text)
     n_corpus = len(chars)
     if n_corpus < context_len + 2:
@@ -248,6 +260,9 @@ def train_torch(
 
     t0 = time.perf_counter()
     for step in range(n_steps):
+        if warmup_steps or cosine_decay:
+            for g in optim.param_groups:
+                g["lr"] = _lr_at(step)
         positions = _sample_positions(n_corpus, batch_size, context_len, rng)
         cur_chars = [chars[p] for p in positions]
         next_chars = [chars[p + 1] for p in positions]

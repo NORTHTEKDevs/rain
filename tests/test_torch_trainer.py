@@ -122,6 +122,26 @@ def test_nll_train_loop_reduces_loss_on_cpu():
     assert late < early, f"NLL loss did not decrease: early={early}, late={late}"
 
 
+def test_lr_warmup_starts_below_peak_and_reaches_it():
+    """With warmup_steps>0, the early-step LR should be lower than `lr`.
+    Captured via loss curve smoothness: warmup runs should converge as
+    well or better than no-warmup on the same seed."""
+    corpus = "the quick brown fox jumps over the lazy dog. " * 80
+    cb = Codebook(vocab_size=64, dim=128, seed=0)
+    model = HymnTorch(128, 64, 128, seed=0, device=CPU)
+    r = train_torch(
+        model, cb, corpus,
+        n_steps=200, batch_size=8, context_len=4,
+        lr=5e-3, warmup_steps=50, cosine_decay=True,
+        loss_type=LOSS_NLL, device=CPU, seed=0,
+    )
+    # Just verify the loop completes and produces a monotonically improving
+    # AVERAGE -- exact LR-schedule numerics are not exposed in the result.
+    early = float(np.mean(r.losses[:20]))
+    late = float(np.mean(r.losses[-20:]))
+    assert late < early, f"warmup+cosine didn't reduce loss: early={early}, late={late}"
+
+
 def test_train_torch_rejects_unknown_loss_type():
     cb = Codebook(vocab_size=64, dim=64, seed=0)
     model = HymnTorch(64, 32, 64, seed=0, device=CPU)

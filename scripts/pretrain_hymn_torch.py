@@ -43,6 +43,10 @@ def main() -> None:
     p.add_argument("--lr", type=float, default=1e-3)
     p.add_argument("--weight-decay", type=float, default=0.0,
                    help="AdamW L2 regularization; helps NLL overfitting at higher step counts")
+    p.add_argument("--warmup-steps", type=int, default=0,
+                   help="Linear LR warmup from 0 over these steps; lets us use higher peak LR safely")
+    p.add_argument("--cosine-decay", action="store_true",
+                   help="After warmup, cosine-decay LR to 10% of peak over the rest of training")
     p.add_argument("--loss", choices=[LOSS_MSE, LOSS_NLL], default=LOSS_MSE,
                    help="mse = HV-MSE (v0 reference); nll = real cross-entropy via codebook softmax")
     p.add_argument("--in-dim", type=int, default=1024)
@@ -76,6 +80,8 @@ def main() -> None:
         context_len=args.context_len,
         lr=args.lr,
         weight_decay=args.weight_decay,
+        warmup_steps=args.warmup_steps,
+        cosine_decay=args.cosine_decay,
         loss_type=args.loss,
         device=dev,
         seed=args.seed,
