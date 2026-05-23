@@ -87,6 +87,8 @@ credentials/
 checkpoints/
 data/cache/
 data/raw/
+data/corpora/
+data/checkpoints/
 logs/
 
 # Model artifacts (too large for git, use LFS or external storage)
