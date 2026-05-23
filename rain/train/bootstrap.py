@@ -38,6 +38,7 @@ from rain.routing.beam import BeamSteeringAdapter
 from rain.routing.mapper import RoutingMapper
 from rain.tokenize.bpe import BPETokenizer
 from rain.train.warm_start import warm_start_from_vectors
+from rain.train.warm_start_chars import warm_start_chars
 
 
 @dataclass
@@ -79,6 +80,7 @@ def bootstrap_phase1(
     corpus_texts: list[str],
     kb_jsonl_path: str | None = None,
     warm_start_vectors: dict[str, np.ndarray] | None = None,
+    warm_start_method: str | None = None,
     *,
     D: int = 10000,
     vocab_size: int = 256,
@@ -116,6 +118,17 @@ def bootstrap_phase1(
     codebook = Codebook(vocab_size=vocab_size, dim=D, seed=seed)
     if warm_start_vectors:
         warm_start_from_vectors(codebook, warm_start_vectors)
+    elif warm_start_method == "chars":
+        warm_start_chars(codebook, "\n".join(corpus_texts), seed=seed)
+    elif warm_start_method == "minilm":
+        # Heavy optional import; only loaded when explicitly requested.
+        from rain.train.warm_start_minilm import warm_start_chars_minilm
+
+        warm_start_chars_minilm(codebook, "\n".join(corpus_texts))
+    elif warm_start_method is not None:
+        raise ValueError(
+            f"unknown warm_start_method={warm_start_method!r} (use 'chars', 'minilm', or None)"
+        )
 
     # 1.2 KB
     kb = ShardedKB(num_shards=num_shards, dim=D, seed=seed)
@@ -168,12 +181,20 @@ def main() -> None:
     parser.add_argument("--vocab", type=int, default=256)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--summary-out", type=str, default="bootstrap_summary.json")
+    parser.add_argument(
+        "--warm-start",
+        choices=["chars", "minilm", "none"],
+        default="none",
+        help="Codebook warm-start method: 'chars' (feature, fast, recommended for char "
+        "vocabs), 'minilm' (sentence-transformers, for BPE), or 'none'.",
+    )
     args = parser.parse_args()
 
     corpus_text = Path(args.corpus).read_text(encoding="utf-8")
     boot = bootstrap_phase1(
         corpus_texts=[corpus_text],
         kb_jsonl_path=args.kb,
+        warm_start_method=None if args.warm_start == "none" else args.warm_start,
         D=args.D,
         vocab_size=args.vocab,
         seed=args.seed,

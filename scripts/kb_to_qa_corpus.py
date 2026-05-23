@@ -55,10 +55,10 @@ def main() -> int:
     p = argparse.ArgumentParser(description="Render KB JSONL -> Q/A char corpus")
     p.add_argument("--in", dest="in_path", required=True)
     p.add_argument("--out", required=True)
-    p.add_argument("--n-phrasings", type=int, default=3,
-                   help="number of phrasings per fact (1..5)")
-    p.add_argument("--shuffle", action="store_true",
-                   help="shuffle the output so similar facts don't cluster")
+    p.add_argument("--n-phrasings", type=int, default=3, help="number of phrasings per fact (1..5)")
+    p.add_argument(
+        "--shuffle", action="store_true", help="shuffle the output so similar facts don't cluster"
+    )
     p.add_argument("--rng-seed", type=int, default=0)
     args = p.parse_args()
 
@@ -84,10 +84,14 @@ def main() -> int:
     if args.shuffle:
         rng.shuffle(rendered)
 
-    out_path.write_text("".join(rendered), encoding="utf-8")
+    # Join with blank lines so paragraph-level chunkers (compose_corpus,
+    # shuffle pipelines) can split on `\n\n` cleanly.
+    out_path.write_text("\n\n".join(s.rstrip() for s in rendered) + "\n", encoding="utf-8")
     chars = sum(len(r) for r in rendered)
-    print(f"wrote {out_path}: {n_facts} facts -> {len(rendered)} Q/A pairs "
-          f"({chars:,} chars, {len(set(out_path.read_text(encoding='utf-8'))):,} unique chars)")
+    print(
+        f"wrote {out_path}: {n_facts} facts -> {len(rendered)} Q/A pairs "
+        f"({chars:,} chars, {len(set(out_path.read_text(encoding='utf-8'))):,} unique chars)"
+    )
     return 0
 
 

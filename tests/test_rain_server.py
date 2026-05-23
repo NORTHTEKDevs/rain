@@ -106,6 +106,37 @@ class TestSampleWithoutSampler(_ServerCase):
             assert resp.status == 503
 
 
+class _ContinualServerCase(AioHTTPTestCase):
+    """Same fixture but with enable_continual=True so the agent ships cognitive_signals."""
+
+    async def get_application(self) -> web.Application:
+        self.agent = ConsciousAgent(dim=128, num_shards=4, seed=0, enable_continual=True)
+        self.agent.tell("lion", "lives_in", "savanna")
+        app = web.Application()
+        app.add_routes(
+            _make_routes(self.agent, sampler=None, judge=None, args=_args(enable_continual=True))
+        )
+        return app
+
+
+class TestAskWithCognitiveSignals(_ContinualServerCase):
+    async def test_ask_returns_cognitive_signals(self):
+        async with self.client.request(
+            "POST",
+            "/ask",
+            json={"subject": "lion", "relation": "lives_in"},
+        ) as resp:
+            assert resp.status == 200
+            data = await resp.json()
+            assert "cognitive_signals" in data
+            cs = data["cognitive_signals"]
+            assert "cognitive_agreement" in cs
+            assert 0.0 <= cs["cognitive_agreement"] <= 1.0
+            assert "fep_cos" in cs
+            assert "tsetlin_max_abs_vote" in cs
+            assert "lsm_state_l2" in cs
+
+
 class TestSnapshotAndSelf(_ServerCase):
     async def test_snapshot_returns_disabled_when_continual_off(self):
         async with self.client.request("GET", "/snapshot") as resp:
