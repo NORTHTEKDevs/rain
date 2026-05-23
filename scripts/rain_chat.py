@@ -39,6 +39,7 @@ from rain.data.kb_seed import seed_from_jsonl
 from rain.feedback.ollama_judge import OllamaJudge, build_triple_prompt
 from rain.train.checkpoint import load_checkpoint
 from rain.core.relational import Codebook
+from rain.cognition.rag import KbAugmentedSampler
 from scripts.sample_hymn import _hymn_forward, _sample_from_logits
 
 
@@ -239,6 +240,11 @@ def main() -> int:
     p.add_argument("--top-k", type=int, default=20)
     p.add_argument("--repetition-penalty", type=float, default=1.1,
                    help="repetition penalty for /sample (default 1.1, 1.0 disables)")
+    p.add_argument("--use-rag", action="store_true",
+                   help="wrap the HYMN sampler with KB-augmented retrieval "
+                        "(prepends 'Context: ...' facts to the prompt). Best "
+                        "with a Q/A-trained checkpoint.")
+    p.add_argument("--rag-max-facts", type=int, default=5)
     p.add_argument("--judge-model", default="",
                    help="if set, enables /judge command; e.g. llama3.2:3b")
     p.add_argument("--min-confidence", type=float, default=0.5,
@@ -263,7 +269,16 @@ def main() -> int:
                                   top_k=(args.top_k if args.top_k > 0 else None),
                                   seed=np.random.randint(0, 1 << 31),
                                   repetition_penalty=args.repetition_penalty)
-        agent.attach_hymn_sampler(_agent_sampler, n_tokens=args.sample_tokens)
+        if args.use_rag:
+            # Wrap the base HYMN sampler with KB-augmented retrieval. The
+            # outer sampler still has the same signature, so attach_hymn_sampler
+            # doesn't notice the difference.
+            rag = KbAugmentedSampler(agent.kb, _agent_sampler,
+                                     max_facts=args.rag_max_facts)
+            agent.attach_hymn_sampler(rag.sample, n_tokens=args.sample_tokens)
+            print(f"  RAG: KB-augmented sampling enabled (max_facts={args.rag_max_facts})")
+        else:
+            agent.attach_hymn_sampler(_agent_sampler, n_tokens=args.sample_tokens)
     judge = OllamaJudge(model=args.judge_model) if args.judge_model else None
 
     if args.noninteractive:
