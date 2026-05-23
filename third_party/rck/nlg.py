@@ -11,7 +11,6 @@ from __future__ import annotations
 
 import hashlib
 
-
 # Per-relation templates. {s} = subject, {o} = object.
 TEMPLATES: dict[str, list[str]] = {
     "color":     ["The {s} is {o}.", "{s} is {o} in color."],
@@ -48,7 +47,7 @@ def render(subject: str, relation: str, obj: str) -> str:
     if not candidates:
         return DEFAULT_TEMPLATE.format(s=subject, r=relation, o=obj)
     # Deterministic pick: hash chooses one of the templates.
-    key = f"{subject}|{relation}|{obj}".encode("utf-8")
+    key = f"{subject}|{relation}|{obj}".encode()
     idx = int.from_bytes(hashlib.blake2b(key, digest_size=1).digest(), "little") % len(candidates)
     return candidates[idx].format(s=subject, o=obj)
 

@@ -2,6 +2,7 @@
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 
 import numpy as np
+
 from rain.core.relational import Codebook
 from scripts.bootstrap_warm_start import warm_start_from_vectors
 

@@ -22,8 +22,8 @@ from dataclasses import dataclass
 
 import torch
 from torch import Tensor
-
-from vsa_core import bind, permute as vsa_permute, unbind
+from vsa_core import bind, unbind
+from vsa_core import permute as vsa_permute
 from vsa_core.cleanup import similarity
 from vsa_core.codebook import Codebook
 

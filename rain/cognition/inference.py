@@ -16,9 +16,10 @@ Returns an InferenceResult with .answer, .chain, .source ("direct" / "inherited"
 """
 
 from __future__ import annotations
-from dataclasses import dataclass, field
-from rain.core.knowledge_base import ShardedKB
 
+from dataclasses import dataclass, field
+
+from rain.core.knowledge_base import ShardedKB
 
 # Parent relations that propagate properties from ancestors to descendants
 PARENT_RELATIONS: tuple[str, ...] = (

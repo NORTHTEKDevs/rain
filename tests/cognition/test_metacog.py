@@ -1,7 +1,6 @@
 # CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
-import pytest
-from rain.cognition.metacog import CalibrationTally, classify_epistemic, Thresholds
+from rain.cognition.metacog import CalibrationTally, classify_epistemic
 
 
 def test_calibration_starts_at_prior_mean():

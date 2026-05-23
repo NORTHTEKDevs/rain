@@ -3,9 +3,10 @@
 """End-to-end Phase 1 + Phase 3 bootstrap integration test."""
 
 import json
+
 import numpy as np
-import pytest
-from rain.train.bootstrap import bootstrap_phase1, RainBootstrap
+
+from rain.train.bootstrap import RainBootstrap, bootstrap_phase1
 
 
 def test_bootstrap_composes_all_components(tmp_path):

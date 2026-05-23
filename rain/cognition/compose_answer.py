@@ -4,8 +4,9 @@
 """describe(entity) -> multi-sentence paragraph from stored facts."""
 
 from __future__ import annotations
-from rain.core.knowledge_base import ShardedKB
+
 from rain.cognition.nlg import render
+from rain.core.knowledge_base import ShardedKB
 
 
 def describe(kb: ShardedKB, entity: str, relations: list[str]) -> str:

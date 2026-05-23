@@ -27,8 +27,8 @@ fine-tuning, with O(1) insertion and exact compositional generalisation.
 """
 from __future__ import annotations
 
+from collections.abc import Hashable, Iterable
 from dataclasses import dataclass, field
-from typing import Hashable, Iterable
 
 import numpy as np
 
@@ -62,7 +62,7 @@ class RelationalMemory:
         # PROCESS-STABLE salt via hashlib. Built-in hash() is randomised
         # between processes which would make role HVs change between runs.
         import hashlib
-        key = f"rck-role-v1|{self.seed}|{name}".encode("utf-8")
+        key = f"rck-role-v1|{self.seed}|{name}".encode()
         salt = int.from_bytes(hashlib.blake2b(key, digest_size=4).digest(), "little")
         rng = np.random.default_rng(salt)
         return random_hv(self.dim, rng)
@@ -136,7 +136,7 @@ class RelationalMemory:
     def facts(self) -> list[dict[str, Hashable]]:
         return list(self._facts)
 
-    def merge(self, other: "RelationalMemory") -> None:
+    def merge(self, other: RelationalMemory) -> None:
         """Bundle another memory's contents into this one.
 
         This is the federated-learning superpower: two memories trained on

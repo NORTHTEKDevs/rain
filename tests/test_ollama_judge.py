@@ -8,9 +8,8 @@ break when the underlying model changes its output formatting.
 """
 
 from rain.feedback.ollama_judge import (
-    parse_judge_response,
     build_user_prompt,
-    Judgment,
+    parse_judge_response,
 )
 
 

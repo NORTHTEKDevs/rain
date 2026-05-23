@@ -28,7 +28,6 @@ from pathlib import Path
 
 from rck.knowledge_base import ShardedKnowledgeBase
 
-
 # (forward_relation, inverse_relation) -- bidirectional auto-storage.
 # We deliberately keep this conservative; entries here MUST be true
 # inverses, otherwise the KB gets polluted with false symmetries.

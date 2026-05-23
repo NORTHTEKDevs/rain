@@ -6,7 +6,6 @@ Drives the Phase-2 local-rule learners (LSM RLS, FEP rank-1, Tsetlin
 Type-I) off agent.tell() and verifies their weights actually evolve.
 """
 
-import numpy as np
 
 from rain.agent import ConsciousAgent
 

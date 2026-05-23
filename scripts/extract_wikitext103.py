@@ -13,8 +13,8 @@ Usage:
 """
 
 from __future__ import annotations
+
 import argparse
-import glob
 from pathlib import Path
 
 import pyarrow.parquet as pq

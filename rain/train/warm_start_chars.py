@@ -26,13 +26,13 @@ Empirical claim: warm-started training reaches the same NLL plateau in
 """
 
 from __future__ import annotations
+
 import unicodedata
 from collections import Counter
 
 import numpy as np
 
 from rain.core.relational import Codebook
-
 
 _VOWELS = set("aeiouAEIOU")
 

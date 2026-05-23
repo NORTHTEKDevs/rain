@@ -14,7 +14,6 @@ Two levels:
 """
 from __future__ import annotations
 
-
 # Relation aliases. Map any common phrasing to the canonical relation name
 # used in our KB schema.
 RELATION_ALIASES: dict[str, str] = {

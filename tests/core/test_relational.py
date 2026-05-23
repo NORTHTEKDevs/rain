@@ -3,7 +3,7 @@
 """Tests for bipolar 10K-dim VSA primitives."""
 
 import numpy as np
-import pytest
+
 from rain.core.relational import Codebook, bind, bundle, unbind
 
 D = 10000

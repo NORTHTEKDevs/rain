@@ -20,13 +20,13 @@ Treat it as offline-batch infrastructure, not a per-token feedback loop.
 """
 
 from __future__ import annotations
+
 import json
 import re
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Iterable
 
 import requests
-
 
 DEFAULT_OLLAMA_URL = "http://localhost:11434"
 DEFAULT_JUDGE_MODEL = "llama3.2:3b"

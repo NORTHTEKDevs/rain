@@ -4,11 +4,10 @@
 import numpy as np
 
 from evals.tier3_soundness.sofar_ablation import (
-    run_benchmark,
     _build_codebook_and_dirs,
     _val_mse,
+    run_benchmark,
 )
-from rain.routing.beam import BeamSteeringAdapter
 from scripts.pretrain_hymn import HymnSurrogate
 
 

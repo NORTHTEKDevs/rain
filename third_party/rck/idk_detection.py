@@ -26,8 +26,8 @@ context about what was tried.
 from __future__ import annotations
 
 import enum
+from collections.abc import Hashable, Iterable
 from dataclasses import dataclass, field
-from typing import Hashable, Iterable, Optional
 
 from rck.knowledge_base import ShardedKnowledgeBase
 
@@ -53,14 +53,14 @@ class IDKPolicy:
 @dataclass
 class EpistemicAnswer:
     state: EpistemicState
-    top_symbol: Optional[Hashable] = None
+    top_symbol: Hashable | None = None
     top_score: float = 0.0
     alternatives: list[tuple[Hashable, float]] = field(default_factory=list)
     explanation: str = ""
     # When the agent layer compares this episode against history,
     # `drift_from_prior` is set to a brief description if state/answer
     # changed vs the most recent prior episode of the same signature.
-    drift_from_prior: Optional[str] = None
+    drift_from_prior: str | None = None
     queried_path: str = "direct"
 
     def verbalize(self) -> str:

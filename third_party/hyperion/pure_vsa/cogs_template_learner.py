@@ -23,9 +23,8 @@ separately from training (same way the per-construction handlers learned it).
 from __future__ import annotations
 
 import re
-from collections import Counter, defaultdict
+from collections import defaultdict
 from dataclasses import dataclass
-
 
 PROPER_RE = re.compile(r"^[A-Z][a-z]+$")
 FUNCTION_WORDS = {"a", "the", "A", "The", "was", "by", "that", "to",
@@ -150,7 +149,7 @@ class COGSTemplateLearner:
     def _fit_recursive_metadata(self, examples: list[tuple[str, str]]) -> None:
         """Learn the auxiliary maps used by the recursive-structure fallback."""
         # Import lazily to avoid circular imports
-        from pure_vsa.cogs_recursive import learn_intrans_role, learn_ditrans_verbs
+        from pure_vsa.cogs_recursive import learn_ditrans_verbs, learn_intrans_role
         self.intrans_role = learn_intrans_role(examples, self.past_to_inf)
         self.ditrans_verbs = learn_ditrans_verbs(examples, self.past_to_inf)
 

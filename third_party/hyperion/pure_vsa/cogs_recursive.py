@@ -12,8 +12,6 @@ from the same training set used by the template learner.
 from __future__ import annotations
 
 import re
-from collections import defaultdict
-
 
 PROPER_RE = re.compile(r"^[A-Z][a-z]+$")
 PREPS = {"in", "on", "beside"}

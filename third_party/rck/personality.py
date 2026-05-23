@@ -14,7 +14,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-
 # Phrase banks per tone for the "I know it's X" pattern.
 KNOW_PHRASE = {
     "formal":   "It is established that {x}.",

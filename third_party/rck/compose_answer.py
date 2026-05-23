@@ -14,7 +14,6 @@ from __future__ import annotations
 from rck.knowledge_base import ShardedKnowledgeBase
 from rck.nlg import render
 
-
 # Relations we consider "describable" -- they tell you something useful
 # about an entity when listed together.
 DESCRIBE_RELATIONS = [

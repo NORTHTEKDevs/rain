@@ -22,7 +22,7 @@ agents alongside its own world model.
 """
 from __future__ import annotations
 
-from typing import Hashable
+from collections.abc import Hashable
 
 from rck.knowledge_base import ShardedKnowledgeBase
 

@@ -3,7 +3,6 @@
 """Integration tests for the RAIN HTTP server (no live HYMN / judge)."""
 
 import argparse
-import pytest
 
 from aiohttp import web
 from aiohttp.test_utils import AioHTTPTestCase
@@ -13,15 +12,15 @@ from scripts.rain_server import _make_routes
 
 
 def _args(**overrides) -> argparse.Namespace:
-    base = dict(
-        kb=None, checkpoint=None, corpus=None,
-        dim=128, num_shards=4, rng_seed=0,
-        enable_continual=False, use_rag=False, rag_max_facts=3,
-        sample_tokens=20, temperature=0.8, top_k=10,
-        repetition_penalty=1.0,
-        judge_model="", min_confidence=0.5,
-        host="127.0.0.1", port=0,
-    )
+    base = {
+        "kb": None, "checkpoint": None, "corpus": None,
+        "dim": 128, "num_shards": 4, "rng_seed": 0,
+        "enable_continual": False, "use_rag": False, "rag_max_facts": 3,
+        "sample_tokens": 20, "temperature": 0.8, "top_k": 10,
+        "repetition_penalty": 1.0,
+        "judge_model": "", "min_confidence": 0.5,
+        "host": "127.0.0.1", "port": 0,
+    }
     base.update(overrides)
     return argparse.Namespace(**base)
 

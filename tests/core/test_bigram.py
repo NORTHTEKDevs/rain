@@ -1,8 +1,7 @@
 # CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
-import numpy as np
-from rain.core.relational import Codebook
 from rain.core.bigram import BigramMemory
+from rain.core.relational import Codebook
 
 
 def test_add_and_query_finds_added_bigram():

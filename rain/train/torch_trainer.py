@@ -21,6 +21,7 @@ Auto-detects DirectML if `torch_directml` is importable; otherwise CPU.
 """
 
 from __future__ import annotations
+
 import math
 import time
 from dataclasses import dataclass, field
@@ -35,17 +36,16 @@ from torch.nn import functional as F
 from rain.core.relational import Codebook
 from rain.train.checkpoint import (
     HymnCheckpointMetadata,
-    save_checkpoint,
     load_checkpoint,
+    save_checkpoint,
 )
-
 
 # Loss types accepted by train_torch.
 LOSS_MSE = "mse"   # MSE on bipolar hypervector targets (v0 reference, matches numpy)
 LOSS_NLL = "nll"   # Cross-entropy over codebook-projected logits (real LM loss)
 
 
-def auto_device() -> "torch.device":
+def auto_device() -> torch.device:
     """Return the best available training device on this machine.
 
     Order: directml (AMD iGPU/dGPU on Windows) -> cuda -> mps -> cpu.
@@ -64,7 +64,7 @@ def auto_device() -> "torch.device":
     return torch.device("cpu")
 
 
-def device_name(dev: "torch.device | Any") -> str:
+def device_name(dev: torch.device | Any) -> str:
     """Human-readable device label for logging."""
     try:
         import torch_directml as _dml
@@ -90,7 +90,7 @@ class HymnTorch(nn.Module):
         hidden_dim: int,
         out_dim: int,
         seed: int = 42,
-        device: "torch.device | None" = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__()
         self.in_dim = in_dim
@@ -115,9 +115,9 @@ class HymnTorch(nn.Module):
     @classmethod
     def from_checkpoint(
         cls,
-        path: "str | Path",
-        device: "torch.device | None" = None,
-    ) -> tuple["HymnTorch", HymnCheckpointMetadata]:
+        path: str | Path,
+        device: torch.device | None = None,
+    ) -> tuple[HymnTorch, HymnCheckpointMetadata]:
         """Load weights + metadata from a numpy checkpoint into a HymnTorch."""
         W1, W2, meta = load_checkpoint(path)
         model = cls(meta.in_dim, meta.hidden_dim, meta.out_dim, seed=meta.seed, device=device)
@@ -136,7 +136,7 @@ class HymnTorch(nn.Module):
 
 
 def _codebook_lookup_batch(
-    codebook: Codebook, chars: list[str], device: "torch.device"
+    codebook: Codebook, chars: list[str], device: torch.device
 ) -> torch.Tensor:
     """Materialize a (batch, D) float32 tensor from a list of chars."""
     arr = np.stack([codebook.vector(c).astype(np.float32) for c in chars])
@@ -144,7 +144,7 @@ def _codebook_lookup_batch(
 
 
 def build_char_vocab(
-    corpus_text: str, codebook: Codebook, device: "torch.device"
+    corpus_text: str, codebook: Codebook, device: torch.device
 ) -> tuple[list[str], dict[str, int], torch.Tensor]:
     """Build the stable char-vocab + codebook matrix needed by NLL loss.
 
@@ -212,7 +212,7 @@ def train_torch(
     cosine_decay: bool = False,
     grad_clip: float = 0.0,
     loss_type: str = LOSS_MSE,
-    device: "torch.device | None" = None,
+    device: torch.device | None = None,
     seed: int = 0,
     log_every: int = 0,
 ) -> TorchTrainResult:
@@ -373,7 +373,7 @@ def train_torch(
 
 def save_torch_checkpoint(
     model: HymnTorch,
-    path: "str | Path",
+    path: str | Path,
     *,
     n_steps: int,
     lr: float,
@@ -385,7 +385,7 @@ def save_torch_checkpoint(
     context_len: int = 0,
     carry_steps: int = 0,
     batch_size: int = 1,
-    codebook: "Codebook | None" = None,
+    codebook: Codebook | None = None,
     corpus_text: str | None = None,
 ) -> tuple[Path, Path]:
     """Detach weights + write the numpy checkpoint format.

@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 
 try:
-    from rain.spine import HymnModel, _RUST_AVAILABLE
+    from rain.spine import _RUST_AVAILABLE, HymnModel
 except ImportError:
     _RUST_AVAILABLE = False
 

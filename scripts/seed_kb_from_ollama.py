@@ -30,6 +30,7 @@ with a per-batch count printed.
 """
 
 from __future__ import annotations
+
 import argparse
 import json
 import re
@@ -37,10 +38,8 @@ import sys
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Iterable
 
 import requests
-
 
 DEFAULT_OLLAMA_URL = "http://localhost:11434"
 DEFAULT_TIMEOUT = 180  # 30B model + 30 triples can take a minute

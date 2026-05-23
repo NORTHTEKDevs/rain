@@ -27,6 +27,7 @@ warm-start). Override via CLI flags.
 """
 
 from __future__ import annotations
+
 import argparse
 import json
 import time
@@ -34,12 +35,15 @@ from pathlib import Path
 
 from rain.core.relational import Codebook
 from rain.train.bootstrap import bootstrap_phase1
-from rain.train.warm_start_chars import warm_start_chars
 from rain.train.torch_trainer import (
-    HymnTorch, auto_device, device_name,
-    train_torch, save_torch_checkpoint,
     LOSS_NLL,
+    HymnTorch,
+    auto_device,
+    device_name,
+    save_torch_checkpoint,
+    train_torch,
 )
+from rain.train.warm_start_chars import warm_start_chars
 
 
 def main() -> int:

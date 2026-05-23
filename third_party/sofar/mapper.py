@@ -24,15 +24,14 @@ minimum loss.
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, field, asdict
-from datetime import datetime, timezone
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 import numpy as np
 import torch
 from torch import nn
-
 
 # ---------------------------------------------------------------------------
 # Data structures
@@ -77,7 +76,7 @@ class LayerChannels:
     def __hash__(self) -> int:  # numpy arrays aren't hashable
         return id(self)
 
-    def top_k(self, k: int) -> "LayerChannels":
+    def top_k(self, k: int) -> LayerChannels:
         """Return a new LayerChannels keeping only the top-``k`` directions.
 
         Negative ``k`` is rejected loudly: pre-R29 ``top_k(-1)`` was
@@ -123,7 +122,7 @@ class ChannelMap:
     d_model: int
     layers: list[LayerChannels] = field(default_factory=list)
     created_at: str = field(
-        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+        default_factory=lambda: datetime.now(UTC).isoformat()
     )
     scoring_formula: str = "default/v0"
 
@@ -189,7 +188,7 @@ class ChannelMap:
         target.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
     @classmethod
-    def load(cls, path: str | Path) -> "ChannelMap":
+    def load(cls, path: str | Path) -> ChannelMap:
         """Load a ChannelMap previously saved with :meth:`save`."""
         import base64
 

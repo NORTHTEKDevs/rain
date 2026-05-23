@@ -1,11 +1,14 @@
-from .field import ToroidalField, FieldConfig
-from .update import LocalUpdateRule
-from .deq import tbptt_forward, deq_forward, AndersonState
-from .model import HYMNMini, HYMNConfig
+from .deq import AndersonState, deq_forward, tbptt_forward
+from .field import FieldConfig, ToroidalField
+from .model import HYMNConfig, HYMNMini
 from .readout import (
-    BindQueryHead, ContextConditionedHead, HopfieldCleanup,
-    SuperposCleanup, VSACleanupHead,
+    BindQueryHead,
+    ContextConditionedHead,
+    HopfieldCleanup,
+    SuperposCleanup,
+    VSACleanupHead,
 )
+from .update import LocalUpdateRule
 
 __all__ = [
     "ToroidalField",

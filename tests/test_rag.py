@@ -2,8 +2,8 @@
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Tests for the KB-augmented sampler (no HYMN model required)."""
 
-from rain.core.knowledge_base import ShardedKB
 from rain.cognition.rag import KbAugmentedSampler
+from rain.core.knowledge_base import ShardedKB
 
 
 def _kb_with_facts(facts: list[tuple[str, str, str]]) -> ShardedKB:

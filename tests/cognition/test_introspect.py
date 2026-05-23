@@ -1,6 +1,6 @@
 # CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
-from rain.cognition.introspect import Introspector, Broadcast
+from rain.cognition.introspect import Introspector
 
 
 def test_record_and_recent():

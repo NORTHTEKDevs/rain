@@ -3,8 +3,8 @@
 """Tests for the SOFAR-on-VSA Walsh-Hadamard band encoder."""
 
 import numpy as np
-import pytest
-from rain.routing.encoder import encode, reconstruct, FrequencyBands
+
+from rain.routing.encoder import FrequencyBands, encode, reconstruct
 
 
 def test_encode_returns_three_bands_with_correct_shape():

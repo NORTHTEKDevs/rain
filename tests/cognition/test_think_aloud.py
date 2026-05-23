@@ -1,7 +1,7 @@
 # CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
-from rain.cognition.think_aloud import narrate
 from rain.cognition.inference import InferenceResult
+from rain.cognition.think_aloud import narrate
 
 
 def test_narrate_direct():

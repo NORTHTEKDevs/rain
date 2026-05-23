@@ -20,22 +20,24 @@ gradient pre-train which runs separately via scripts/pretrain_hymn.py.
 """
 
 from __future__ import annotations
+
 import json
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+
 import numpy as np
 
-from rain.core.relational import Codebook
-from rain.core.knowledge_base import ShardedKB
-from rain.core.tsetlin import TsetlinMachine
-from rain.core.liquid_state import LiquidStateMachine
 from rain.core.fep import LowRankA
-from rain.routing.mapper import RoutingMapper
+from rain.core.knowledge_base import ShardedKB
+from rain.core.liquid_state import LiquidStateMachine
+from rain.core.relational import Codebook
+from rain.core.tsetlin import TsetlinMachine
+from rain.data.kb_seed import seed_from_jsonl
 from rain.routing.beam import BeamSteeringAdapter
+from rain.routing.mapper import RoutingMapper
 from rain.tokenize.bpe import BPETokenizer
 from rain.train.warm_start import warm_start_from_vectors
-from rain.data.kb_seed import seed_from_jsonl
 
 
 @dataclass

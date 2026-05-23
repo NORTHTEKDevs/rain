@@ -22,16 +22,14 @@ from __future__ import annotations
 
 import argparse
 import time
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Iterable
 
 import torch
-
 from pure_vsa.reasoner import PureVSAReasoner
 from vsa_core import bind, unbind
 from vsa_core.cleanup import similarity
 from vsa_core.codebook import Codebook
-
 
 # 80 unique action stems for the sweep.
 MAX_ACTION_STEMS = [

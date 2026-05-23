@@ -11,6 +11,7 @@ gives an exact online least-squares update for W_out.
 """
 
 from __future__ import annotations
+
 import numpy as np
 
 

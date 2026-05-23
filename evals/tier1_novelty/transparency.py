@@ -18,14 +18,13 @@ a stored triple by construction.
 """
 
 from __future__ import annotations
+
 import argparse
 import json
-from dataclasses import dataclass, asdict, field
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any
 
 from rain.agent import ConsciousAgent
-
 
 # 100 facts across 5 domains (20 each)
 SEED_FACTS: list[tuple[str, str, str]] = [

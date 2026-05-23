@@ -13,13 +13,10 @@ import random
 from dataclasses import dataclass
 from pathlib import Path
 
-import pytest
-
 from scripts.run_phase2_feedback import (
-    _read_facts,
-    _normalize_triple,
     _build_probes,
-    run,
+    _normalize_triple,
+    _read_facts,
 )
 
 

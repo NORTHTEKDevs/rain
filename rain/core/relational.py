@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import hashlib
+
 import numpy as np
 
 DEFAULT_DIM = 10000

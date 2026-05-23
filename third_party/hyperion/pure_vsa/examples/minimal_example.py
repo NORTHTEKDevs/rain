@@ -7,7 +7,6 @@ from __future__ import annotations
 
 from pure_vsa import Example, HyperionConfig, HyperionReasoner
 
-
 # Toy vocabulary indices.
 # Verbs:    walk=0, jump=1, swim=2  (input symbols)
 # Modifier: twice=3                  (input symbol)

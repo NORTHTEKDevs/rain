@@ -13,9 +13,11 @@ so switching between FOCUS/SWEEP/TRACK doesn't dilute or amplify the state.
 """
 
 from __future__ import annotations
+
 import enum
-import numpy as np
 from dataclasses import dataclass
+
+import numpy as np
 
 from rain.routing.mapper import RoutingDirections
 

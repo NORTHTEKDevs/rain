@@ -18,9 +18,7 @@ from pathlib import Path
 
 import numpy as np
 import torch
-
-from hymn import HYMNMini, HYMNConfig
-
+from hymn import HYMNConfig, HYMNMini
 
 HERE = Path(__file__).parent.resolve()
 
@@ -72,7 +70,7 @@ def evaluate_split(
         # gold output = tokens after SEP, up to first EOS or first PAD
         gold = []
         for t in seq[sep_pos + 1:]:
-            if t == eos_id or t == pad_id:
+            if t in (eos_id, pad_id):
                 break
             gold.append(t)
 
@@ -85,7 +83,7 @@ def evaluate_split(
         # excluding any final EOS.
         pred = []
         for t in full_list[sep_pos + 1:]:
-            if t == eos_id or t == pad_id:
+            if t in (eos_id, pad_id):
                 break
             pred.append(t)
 

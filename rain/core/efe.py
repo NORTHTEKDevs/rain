@@ -17,19 +17,21 @@ See docs/design/multi-signal-efe-decoder.md for the full math.
 """
 
 from __future__ import annotations
+
 import enum
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Callable
+
 import numpy as np
 
-from rain.core.relational import Codebook
-from rain.core.knowledge_base import ShardedKB
-from rain.core.liquid_state import LiquidStateMachine
 from rain.core.bigram import BigramMemory
 from rain.core.fep import LowRankA
+from rain.core.knowledge_base import ShardedKB
+from rain.core.liquid_state import LiquidStateMachine
+from rain.core.relational import Codebook
 
 
-class EpistemicClass(str, enum.Enum):
+class EpistemicClass(enum.StrEnum):
     KNOW = "know"
     THINK = "think"
     GUESS = "guess"
@@ -213,7 +215,7 @@ class MultiSignalEFEDecoder:
 
         # Fuse: total score per token = sum_src(weight[src] * rank_norm[tok, src])
         fused: dict[str, float] = {}
-        source_contributions: dict[str, float] = {src: 0.0 for src in raw}
+        source_contributions: dict[str, float] = dict.fromkeys(raw, 0.0)
         for src, items in normalized.items():
             w = self.weights.get(src, 0.0)
             for tok, score in items:

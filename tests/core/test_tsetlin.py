@@ -4,6 +4,7 @@
 
 import numpy as np
 import pytest
+
 from rain.core.tsetlin import TsetlinMachine
 
 

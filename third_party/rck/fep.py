@@ -26,8 +26,8 @@ repetition_penalty against recent emissions.
 from __future__ import annotations
 
 from collections import Counter, deque
+from collections.abc import Hashable
 from dataclasses import dataclass, field
-from typing import Hashable
 
 import numpy as np
 
@@ -108,7 +108,7 @@ class ActiveInference:
         if signals is None:
             signals = {"fep": self.predict(s_t)}
         if signal_weights is None:
-            signal_weights = {k: 1.0 for k in signals}
+            signal_weights = dict.fromkeys(signals, 1.0)
         # Pre-normalize signal vectors for cosine.
         sig_units: dict[str, np.ndarray] = {}
         for k, v in signals.items():

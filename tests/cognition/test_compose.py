@@ -1,7 +1,7 @@
 # CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
-from rain.core.relational import Codebook
 from rain.cognition.compose import CompositionalReasoner
+from rain.core.relational import Codebook
 
 
 def test_compose_and_extract_roundtrips():

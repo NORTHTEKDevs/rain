@@ -35,19 +35,17 @@ from collections import defaultdict
 from dataclasses import dataclass
 
 import torch
-from torch import Tensor
-
-from vsa_core import bind, permute as vsa_permute, unbind
-from vsa_core.cleanup import similarity
-from vsa_core.codebook import Codebook
-
 from pure_vsa.scan_runner import (
+    VERBS,
     Atom,
     Clause,
     ParsedSCAN,
-    VERBS,
 )
-
+from torch import Tensor
+from vsa_core import bind, unbind
+from vsa_core import permute as vsa_permute
+from vsa_core.cleanup import similarity
+from vsa_core.codebook import Codebook
 
 # Symbol index layout (chosen to make math obvious):
 #   0..4    : verbs (walk, look, run, jump, turn)
@@ -431,13 +429,7 @@ class SCANHyperion:
             if atom.direction is None or atom.spatial is not None:
                 continue
             # `verb DIR` shape: position 0 is the turn token for this direction
-            if atom.verb == "turn" and len(exp_out) >= 1:
-                try:
-                    if atom.direction not in self.dir_to_turn_token:
-                        self.dir_to_turn_token[atom.direction] = self._symbol_idx(exp_out[0])
-                except ValueError:
-                    pass
-            elif atom.verb != "turn" and len(exp_out) >= 2:
+            if atom.verb == "turn" and len(exp_out) >= 1 or atom.verb != "turn" and len(exp_out) >= 2:
                 try:
                     if atom.direction not in self.dir_to_turn_token:
                         self.dir_to_turn_token[atom.direction] = self._symbol_idx(exp_out[0])

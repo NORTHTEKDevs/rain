@@ -6,9 +6,9 @@ import numpy as np
 
 from rain.core.relational import Codebook
 from rain.train.warm_start_chars import (
-    warm_start_chars,
     _char_features,
     _projection_matrix,
+    warm_start_chars,
 )
 
 

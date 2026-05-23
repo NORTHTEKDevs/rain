@@ -17,27 +17,26 @@ distinguish RAIN from LLMs.
 """
 
 from __future__ import annotations
+
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any, Callable
 
 import numpy as np
 
-from rain.core.relational import Codebook
-from rain.core.knowledge_base import ShardedKB
-from rain.core.liquid_state import LiquidStateMachine
-from rain.core.fep import LowRankA
-from rain.core.tsetlin import TsetlinMachine
+from rain.cognition.compose_answer import describe as describe_fn
 from rain.cognition.dialogue import DialogueContext
+from rain.cognition.explain import explain
+from rain.cognition.inference import InferenceResult, infer
 from rain.cognition.introspect import Introspector
+from rain.cognition.metacog import CalibrationTally, classify_epistemic
 from rain.cognition.self_model import SelfModel
 from rain.cognition.theory_of_mind import TheoryOfMind
-from rain.cognition.metacog import CalibrationTally, classify_epistemic
-from rain.cognition.inference import infer, InferenceResult
-from rain.cognition.explain import explain
 from rain.cognition.think_aloud import narrate
-from rain.cognition.compose_answer import describe as describe_fn
-from rain.cognition.nlg import render as nlg_render
-
+from rain.core.fep import LowRankA
+from rain.core.knowledge_base import ShardedKB
+from rain.core.liquid_state import LiquidStateMachine
+from rain.core.relational import Codebook
+from rain.core.tsetlin import TsetlinMachine
 
 # Callable signature: (prompt: str, n_tokens: int) -> str.
 # Lets us attach any HYMN sampler (or any other fallback generator) without

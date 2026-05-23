@@ -16,16 +16,10 @@ moves out of the bundle.
 from __future__ import annotations
 
 import time
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Iterable
 
 import torch
-
-from pure_vsa.reasoner import PureVSAReasoner
-from vsa_core import bind, unbind
-from vsa_core.cleanup import similarity
-from vsa_core.codebook import Codebook
-
 from pure_vsa.capacity_study import (
     MODIFIERS,
     N_MAX_OUT,
@@ -34,6 +28,10 @@ from pure_vsa.capacity_study import (
     _build_dataset,
     _encode_output,
 )
+from pure_vsa.reasoner import PureVSAReasoner
+from vsa_core import bind, unbind
+from vsa_core.cleanup import similarity
+from vsa_core.codebook import Codebook
 
 
 @dataclass

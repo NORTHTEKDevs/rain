@@ -23,10 +23,8 @@ the chain of facts that produced it.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Hashable
 
 from rck.knowledge_base import ShardedKnowledgeBase
-
 
 # Relations that inherit DOWNWARD along `isa`:
 #   if X isa Y and Y has Z, then X has Z.

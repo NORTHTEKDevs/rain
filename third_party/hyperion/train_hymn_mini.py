@@ -18,10 +18,8 @@ from pathlib import Path
 
 import numpy as np
 import torch
+from hymn import HYMNConfig, HYMNMini
 from torch.utils.data import DataLoader, Dataset
-
-from hymn import HYMNMini, HYMNConfig
-
 
 HERE = Path(__file__).parent.resolve()
 

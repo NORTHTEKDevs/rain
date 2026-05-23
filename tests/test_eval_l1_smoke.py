@@ -6,10 +6,11 @@ ABOVE threshold (random init doesn't pass), so pass=False -- that is correct
 scaffold behavior."""
 
 import json
+
 import numpy as np
-from pathlib import Path
+
+from evals.tier2_llm_parity.tiny_shakespeare import L1_PASS_THRESHOLD_HV_MSE, evaluate
 from rain.train.checkpoint import HymnCheckpointMetadata, save_checkpoint
-from evals.tier2_llm_parity.tiny_shakespeare import evaluate, L1_PASS_THRESHOLD_HV_MSE
 
 
 def test_l1_runs_end_to_end_on_random_init(tmp_path):

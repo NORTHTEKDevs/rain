@@ -4,11 +4,11 @@
 
 import numpy as np
 import pytest
-from rain.routing.mapper import (
-    compute_routing_directions,
-    RoutingMapper,
-)
 
+from rain.routing.mapper import (
+    RoutingMapper,
+    compute_routing_directions,
+)
 
 D = 256  # toy dim for fast tests
 K = 16

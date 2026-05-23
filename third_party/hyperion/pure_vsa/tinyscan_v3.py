@@ -30,12 +30,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 import torch
+from pure_vsa.tinyscan import ACTION_TO_OUT, ACTIONS, symbol_index
 from torch import Tensor
-
-from pure_vsa.tinyscan import ACTIONS, ACTION_TO_OUT, symbol_index
 from vsa_core import permute as vsa_permute
 from vsa_core.codebook import Codebook
-
 
 MODIFIERS_V3 = ["twice", "thrice"]
 MAX_OUTPUT_LEN = 6
@@ -140,9 +138,7 @@ def make_dataset_v3(held_out_action: str = "swim") -> tuple[
         # any other use of held_out_action -> held out
         if ex.clause1_verb == held_out_action and ex.clause1_mod is not None:
             return True
-        if ex.clause2_verb == held_out_action:
-            return True
-        return False
+        return ex.clause2_verb == held_out_action
 
     # single-clause examples (with optional modifier)
     for v in actions:

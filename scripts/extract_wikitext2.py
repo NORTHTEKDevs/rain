@@ -15,6 +15,7 @@ Default in/out paths match `scripts/download_corpora.sh`.
 """
 
 from __future__ import annotations
+
 import argparse
 from pathlib import Path
 

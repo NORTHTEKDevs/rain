@@ -22,14 +22,14 @@ Acceptance: retention >= 0.50. Kill criterion: retention < 0.40.
 """
 
 from __future__ import annotations
+
 import argparse
 import json
 import random
-from dataclasses import dataclass, asdict, field
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 from rain.agent import ConsciousAgent
-
 
 _ANIMALS = [
     "lion", "tiger", "wolf", "bear", "fox", "eagle", "shark", "dolphin",
@@ -87,9 +87,7 @@ def _is_correct(answer_text: str, citations: list, expected_object: str) -> bool
     target = expected_object.lower()
     if target in (answer_text or "").lower():
         return True
-    if target in str(citations).lower():
-        return True
-    return False
+    return target in str(citations).lower()
 
 
 @dataclass

@@ -12,11 +12,14 @@ to the Rust model via Task 2.4's checkpoint format.
 """
 
 from __future__ import annotations
+
 import argparse
-import numpy as np
 from pathlib import Path
+
+import numpy as np
+
 from rain.core.relational import Codebook
-from rain.train.checkpoint import HymnCheckpointMetadata, save_checkpoint, freeze_checkpoint
+from rain.train.checkpoint import HymnCheckpointMetadata, freeze_checkpoint, save_checkpoint
 
 
 class HymnSurrogate:

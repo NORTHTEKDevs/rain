@@ -3,10 +3,12 @@
 """BPE tokenizer via SentencePiece. Default vocab 32K, configurable."""
 
 from __future__ import annotations
+
 import io
 import os
 import tempfile
 from pathlib import Path
+
 import sentencepiece as spm
 
 

@@ -21,6 +21,7 @@ fires in the predicted state, for clauses of that polarity.
 """
 
 from __future__ import annotations
+
 import numpy as np
 
 

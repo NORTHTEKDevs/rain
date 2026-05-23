@@ -1,8 +1,8 @@
 # CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 
-import pytest
 from rain.tokenize.bpe import BPETokenizer
+
 
 def test_train_and_encode():
     tok = BPETokenizer(vocab_size=512)

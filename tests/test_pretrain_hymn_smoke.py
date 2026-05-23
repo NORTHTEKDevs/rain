@@ -3,7 +3,7 @@
 """Smoke test for HYMN bootstrap pre-training: loss decreases over 10 steps on toy corpus."""
 
 import numpy as np
-import pytest
+
 from rain.core.relational import Codebook
 from scripts.pretrain_hymn import HymnSurrogate, train_steps
 

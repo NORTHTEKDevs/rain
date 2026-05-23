@@ -8,8 +8,10 @@ codebook nearest-neighbor lookup. Vectorized for fast batch query.
 """
 
 from __future__ import annotations
+
 import numpy as np
-from rain.core.relational import Codebook, bind, bundle
+
+from rain.core.relational import Codebook, bind
 
 
 class BigramMemory:

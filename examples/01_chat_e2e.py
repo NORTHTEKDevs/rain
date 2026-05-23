@@ -8,9 +8,10 @@ Prints to stdout. No external dependencies beyond the rain package.
 """
 
 from __future__ import annotations
+
 from rain.agent import ConsciousAgent
-from rain.cognition.theory_of_mind import TheoryOfMind
 from rain.cognition.compose import CompositionalReasoner
+from rain.cognition.theory_of_mind import TheoryOfMind
 from rain.core.relational import Codebook
 
 
@@ -44,15 +45,15 @@ def demo_n5_grounded_transparency():
     agent.tell("shakespeare", "wrote", "hamlet")
     agent.tell("hamlet", "isa", "play")
     ans = agent.ask("shakespeare", "wrote")
-    print(f"Q: shakespeare wrote ?")
+    print("Q: shakespeare wrote ?")
     print(f"   text:         {ans.text}")
     print(f"   citations:    {ans.citations}")
     # Unanswerable
     ans2 = agent.ask("shakespeare", "born_in")
-    print(f"\nQ: shakespeare born_in ?  (not taught)")
+    print("\nQ: shakespeare born_in ?  (not taught)")
     print(f"   text:         {ans2.text}")
     print(f"   epistemic:    {ans2.epistemic}")
-    print(f"   -> RAIN refuses rather than hallucinating.")
+    print("   -> RAIN refuses rather than hallucinating.")
 
 
 def demo_n4_theory_of_mind():
@@ -81,8 +82,8 @@ def demo_n3_compositional_generalization():
     color = reasoner.extract(composite, "color", candidates=["red", "green", "blue", "magenta", "yellow"])
     shape = reasoner.extract(composite, "shape", candidates=["circle", "square", "triangle", "hexagon"])
     size = reasoner.extract(composite, "size", candidates=["small", "medium", "large", "tiny"])
-    print(f"Composed: (color=magenta, shape=hexagon, size=tiny)")
-    print(f"Extracted from one composite HV:")
+    print("Composed: (color=magenta, shape=hexagon, size=tiny)")
+    print("Extracted from one composite HV:")
     print(f"   color: {color}")
     print(f"   shape: {shape}")
     print(f"   size:  {size}")

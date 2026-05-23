@@ -16,7 +16,6 @@ from dataclasses import dataclass, field
 
 from rck.tokenizer import tokenize
 
-
 # Words that indicate the entity should be inherited from the previous turn.
 PRONOUNS = {"it", "they", "them", "that", "this", "those", "these"}
 

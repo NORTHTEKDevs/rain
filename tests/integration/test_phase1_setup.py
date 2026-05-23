@@ -3,10 +3,12 @@
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 
 import numpy as np
-from rain.core.relational import Codebook
+
 from rain.core.knowledge_base import ShardedKB
+from rain.core.relational import Codebook
 from rain.tokenize.bpe import BPETokenizer
 from scripts.bootstrap_warm_start import warm_start_from_vectors
+
 
 def test_end_to_end_phase1_setup():
     tok = BPETokenizer(vocab_size=256)

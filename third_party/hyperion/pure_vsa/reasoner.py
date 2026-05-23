@@ -13,14 +13,12 @@ against a token codebook.
 from __future__ import annotations
 
 import torch
+from pure_vsa.composer import RuleComposer
+from pure_vsa.memory import AssociativeMemory
 from torch import Tensor
-
 from vsa_core import bind, unbind
 from vsa_core.cleanup import cleanup, similarity
 from vsa_core.codebook import Codebook
-
-from pure_vsa.composer import RuleComposer
-from pure_vsa.memory import AssociativeMemory
 
 
 class PureVSAReasoner:

@@ -4,6 +4,7 @@
 
 import numpy as np
 import pytest
+
 from rain.core.fep import LowRankA
 
 

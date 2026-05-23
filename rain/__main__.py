@@ -3,6 +3,7 @@
 """RAIN CLI entry point. Currently routes to the demo script."""
 
 from __future__ import annotations
+
 import sys
 
 

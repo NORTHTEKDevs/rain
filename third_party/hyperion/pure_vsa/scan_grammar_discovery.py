@@ -27,7 +27,7 @@ how well the parser-free version can substitute for the hand-written parser.
 
 from __future__ import annotations
 
-from collections import Counter, defaultdict
+from collections import Counter
 from dataclasses import dataclass
 
 

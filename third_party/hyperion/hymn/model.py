@@ -14,12 +14,11 @@ from dataclasses import dataclass
 
 import torch
 from torch import Tensor, nn
-
 from vsa_core import Codebook, permute
 
+from .deq import deq_forward, tbptt_forward
 from .field import FieldConfig, ToroidalField
 from .update import LocalUpdateRule
-from .deq import tbptt_forward, deq_forward
 
 
 @dataclass
@@ -152,7 +151,7 @@ class HYMNMini(nn.Module):
             g = torch.Generator(device="cpu").manual_seed(cfg.codebook_seed + 17)
             raw = torch.randint(0, 2, (cfg.kv_max_positions, cfg.d),
                                  generator=g, dtype=torch.int8)
-            self.position_keys = nn.Parameter((raw.float() * 2 - 1))
+            self.position_keys = nn.Parameter(raw.float() * 2 - 1)
         else:
             self.register_buffer("position_keys", torch.empty(0))
 
@@ -169,8 +168,11 @@ class HYMNMini(nn.Module):
         self.readout_needs_query = False
         if cfg.readout != "default":
             from .readout import (
-                BindQueryHead, ContextConditionedHead, HopfieldCleanup,
-                SuperposCleanup, VSACleanupHead,
+                BindQueryHead,
+                ContextConditionedHead,
+                HopfieldCleanup,
+                SuperposCleanup,
+                VSACleanupHead,
             )
             if cfg.readout == "vsa_cleanup":
                 self.readout_head = VSACleanupHead(cfg.vocab_size, cfg.d)

@@ -19,16 +19,15 @@ Acceptance:
 """
 
 from __future__ import annotations
+
 import argparse
 import json
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 from itertools import product
 from pathlib import Path
 
-import numpy as np
-
-from rain.core.relational import Codebook
 from rain.cognition.compose import CompositionalReasoner
+from rain.core.relational import Codebook
 
 
 @dataclass

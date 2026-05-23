@@ -78,8 +78,27 @@ target-version = "py311"
 line-length = 100
 
 [tool.ruff.lint]
-select = ["E", "F", "W", "I", "N", "B", "UP", "S", "C4", "T20", "SIM", "ARG"]
-ignore = ["E501", "S101", "T201"]
+select = ["E", "F", "W", "I", "B", "UP", "C4", "T20", "SIM"]
+# This is an ML / scientific codebase. We deliberately use math-convention
+# names (W1/W2 weight matrices, U/V/S SVD factors, D dim, K window) and
+# numpy random isn't for cryptography. Relax the corresponding rules so
+# the lint catches real problems instead of stylistic noise.
+ignore = [
+    "E501",   # line too long; we wrap by convention not by rule
+    "E701", "E702",  # multiple statements on one line -- used in compact ML code
+    "S101",   # assert use is fine in tests + invariant guards
+    "T201",   # print() is fine in CLI scripts
+    "B007",   # unused loop variable (often intentional in numpy iter)
+    "B905",   # zip() without strict -- we don't always want it
+    "F841",   # unused local var (we leave them as breadcrumbs sometimes)
+    "SIM108", # ternary-vs-if-else stylistic
+    "SIM102", # nested if collapsing -- nested form is often clearer
+    "SIM105", # contextlib.suppress vs try/except -- both fine
+    "E741",   # ambiguous var name; S/R/O are subject/relation/object semantic
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["ARG", "N", "B017", "S", "T20"]   # tests can use camelCase, ignore security/print rules
 
 [tool.black]
 line-length = 100

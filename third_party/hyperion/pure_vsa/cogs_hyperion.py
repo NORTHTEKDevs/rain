@@ -19,16 +19,9 @@ would require handling 20+ more constructions and is left for future work.
 from __future__ import annotations
 
 import re
-from collections import defaultdict
 from dataclasses import dataclass
 
-import torch
-from torch import Tensor
-
-from vsa_core import bind, permute as vsa_permute, unbind
-from vsa_core.cleanup import similarity
 from vsa_core.codebook import Codebook
-
 
 PROPER_NOUN_RE = re.compile(r"^[A-Z][a-z]+$")
 

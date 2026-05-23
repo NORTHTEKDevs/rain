@@ -26,83 +26,113 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Hashable
 
 from rck.actions import ActionRegistry, make_default_registry
 from rck.agent import RCKAgent
+from rck.analogy import AnalogyResult, solve_analogy
+from rck.belief_revision import ResolutionPlan, resolve_all
 from rck.bulk_ingest import inverse_relation
+from rck.chain_cache import ChainCache
+from rck.chain_discover import Goal, discover_chains
+from rck.chain_induction import (
+    InducedFact,
+    InductionPolicy,
+    induce_from_chain,
+)
+from rck.chain_walker import Hop, walk_chain
 from rck.compose_answer import describe as compose_describe
+from rck.confidence_calibration import (
+    CalibratedAnswer,
+    calibrated_lookup,
+)
+from rck.confidence_propagation import PropagationConfig
+from rck.contradiction import (
+    Conflict,
+    ContradictionPolicy,
+    detect_conflicts,
+)
 from rck.corrections import detect_correction
 from rck.dialogue import DialogueContext
-from rck.personality import Personality
-from rck.generative import GenerativeRCK, parse_question, _extract_simple_facts
+from rck.episodic_consolidate import (
+    ConsolidationReport,
+)
+from rck.episodic_consolidate import (
+    consolidate as _consolidate_episodes,
+)
+from rck.explain_why import ExplanationNode
+from rck.explain_why import explain as _explain_why
+from rck.gap_detection import Gap
+from rck.gap_detection import find_gaps as _find_gaps
+from rck.generative import parse_question
+from rck.idk_detection import (
+    EpistemicAnswer,
+    IDKPolicy,
+    ask_with_idk,
+)
 from rck.inference import (
-    boolean as kb_boolean, compare as kb_compare,
-    enumerate_subjects, infer,
+    boolean as kb_boolean,
+)
+from rck.inference import (
+    compare as kb_compare,
+)
+from rck.inference import (
+    enumerate_subjects,
+    infer,
 )
 from rck.introspect import IntrospectionBuffer, think
 from rck.knowledge_base import ShardedKnowledgeBase
 from rck.metacog import CalibrationTally, epistemic_category, verbalize
 from rck.multistep import two_step
-from rck.negation import negate_boolean
-from rck.nlg import render, render_chain, render_enumeration
-from rck.numbers import evaluate_arithmetic
-from rck.open_ie import extract_triples_from_text
-from rck.self_model import (
-    SELF_NAME, install_self_model, self_describe,
-)
-from rck.analogy import AnalogyResult, solve_analogy
-from rck.chain_discover import Goal, discover_chains
-from rck.confidence_calibration import (
-    CalibratedAnswer, calibrated_lookup,
-)
-from rck.idk_detection import (
-    EpistemicAnswer, EpistemicState, IDKPolicy, ask_with_idk,
-)
-from rck.episodic_consolidate import (
-    ConsolidationReport, consolidate as _consolidate_episodes,
-)
-from rck.gap_detection import Gap, find_gaps as _find_gaps
-from rck.skill_clustering import (
-    SkillFamily, cluster_skills_by_prefix,
-)
-from rck.skill_promotion import (
-    PromotionPolicy, promote_families as _promote_families,
+from rck.negation_propagation import (
+    PropagatedNegation,
 )
 from rck.negation_propagation import (
-    PropagatedNegation, propagate_negations as _propagate_negations,
+    propagate_negations as _propagate_negations,
 )
 from rck.negative_facts import (
     deny as _deny_fact,
+)
+from rck.negative_facts import (
     filter_against_negatives as _filter_negatives,
 )
-from rck.query_memory import QueryMemory
-from rck.chain_cache import ChainCache
-from rck.belief_revision import ResolutionPlan, resolve_all
-from rck.explain_why import ExplanationNode, explain as _explain_why
-from rck.contradiction import (
-    Conflict, ContradictionPolicy, detect_conflicts,
-)
-from rck.set_reasoning import (
-    SetCandidate, intersect_queries, union_queries,
-)
+from rck.nlg import render, render_chain, render_enumeration
+from rck.numbers import evaluate_arithmetic
+from rck.open_ie import extract_triples_from_text
+from rck.personality import Personality
 from rck.provenance import ProvenanceStore
-from rck.chain_induction import (
-    InducedFact, InductionPolicy, induce_from_chain,
-)
-from rck.chain_walker import Hop, walk_chain
+from rck.query_memory import QueryMemory
 from rck.rule_cascade import RuleCascadeResult, cascade_instantiate
 from rck.rule_composition import compose_all
 from rck.rule_extraction import Rule, RuleStore, extract_rules
 from rck.rule_instantiation import InstantiatedFact, instantiate_all
-from rck.confidence_propagation import PropagationConfig
-from rck.shard_sizing import recommend_shards
-from rck.skills import SkillLibrary
+from rck.self_model import (
+    install_self_model,
+    self_describe,
+)
 from rck.self_verify import verify as _verify_kb
+from rck.set_reasoning import (
+    SetCandidate,
+    intersect_queries,
+    union_queries,
+)
+from rck.shard_sizing import recommend_shards
+from rck.skill_clustering import (
+    SkillFamily,
+    cluster_skills_by_prefix,
+)
+from rck.skill_promotion import (
+    PromotionPolicy,
+)
+from rck.skill_promotion import (
+    promote_families as _promote_families,
+)
+from rck.skills import SkillLibrary
 from rck.synonyms import canonical_entity, canonical_relation
 from rck.temporal import temporal_answer
 from rck.theory_of_mind import (
-    make_belief_kb, store_belief, what_does_x_think,
+    make_belief_kb,
+    store_belief,
+    what_does_x_think,
 )
 from rck.think_aloud import narrate, narrate_no_match
 from rck.tokenizer import sentences, tokenize
@@ -302,7 +332,8 @@ class ConsciousAgent:
         Returns (abstractions_list, n_committed). With commit=True, the
         new parent-level facts are stored with source="abstracted"."""
         from rck.hierarchical_abstraction import (
-            commit_abstractions, find_abstractions,
+            commit_abstractions,
+            find_abstractions,
         )
         found = find_abstractions(
             self.knowledge, min_support=min_support,

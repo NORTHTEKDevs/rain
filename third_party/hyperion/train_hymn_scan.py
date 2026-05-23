@@ -18,12 +18,10 @@ from pathlib import Path
 
 import numpy as np
 import torch
+from eval_scan import evaluate_split
+from hymn import HYMNConfig, HYMNMini
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
-
-from hymn import HYMNMini, HYMNConfig
-from eval_scan import evaluate_split
-
 
 HERE = Path(__file__).parent.resolve()
 

@@ -14,7 +14,9 @@ for backwards compatibility.
 """
 
 from __future__ import annotations
+
 import json
+
 from rain.core.knowledge_base import ShardedKB
 
 

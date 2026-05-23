@@ -31,9 +31,8 @@ import math
 from dataclasses import dataclass
 
 import torch
-from torch import nn
 import torch.nn.functional as F
-
+from torch import nn
 
 # ---------------------------------------------------------------------------
 # Band encoders
@@ -169,7 +168,7 @@ def fuse_bands(
     low: torch.Tensor,
     mid: torch.Tensor,
     high: torch.Tensor,
-    gate_params: "BandGate | None" = None,
+    gate_params: BandGate | None = None,
 ) -> torch.Tensor:
     """Merge the three frequency bands into a single fused embedding.
 

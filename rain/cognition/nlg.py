@@ -7,8 +7,8 @@ render(subject, relation, object) -> sentence. Deterministic template
 selection: same triple always produces the same sentence (hash-based)."""
 
 from __future__ import annotations
-import hashlib
 
+import hashlib
 
 # Relation -> list of template strings with {s} and {o} slots
 RELATION_TEMPLATES: dict[str, list[str]] = {

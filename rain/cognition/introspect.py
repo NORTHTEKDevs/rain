@@ -8,6 +8,7 @@ answer, learning event, refusal, tool call. The ring buffer stores recent
 broadcasts so the agent can narrate 'what just happened in my head'."""
 
 from __future__ import annotations
+
 from collections import deque
 from dataclasses import dataclass, field
 from typing import Any

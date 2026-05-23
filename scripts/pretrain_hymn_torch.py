@@ -18,18 +18,19 @@ existing L1 Tier-2 benchmark consumes it without modification.
 """
 
 from __future__ import annotations
+
 import argparse
 from pathlib import Path
 
 from rain.core.relational import Codebook
 from rain.train.torch_trainer import (
+    LOSS_MSE,
+    LOSS_NLL,
     HymnTorch,
     auto_device,
     device_name,
-    train_torch,
     save_torch_checkpoint,
-    LOSS_MSE,
-    LOSS_NLL,
+    train_torch,
 )
 from rain.train.warm_start_chars import warm_start_chars
 

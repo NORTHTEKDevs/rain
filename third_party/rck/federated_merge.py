@@ -34,8 +34,8 @@ class MergeReport:
     kb_facts_merged: int = 0
 
 
-def merge_agents(target: "ConsciousAgent",
-                 source: "ConsciousAgent") -> MergeReport:
+def merge_agents(target: ConsciousAgent,
+                 source: ConsciousAgent) -> MergeReport:
     """Fold `source`'s state into `target`.
 
     The target agent is mutated. The source is read-only.

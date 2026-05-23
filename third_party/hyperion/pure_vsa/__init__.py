@@ -4,10 +4,10 @@ Composition by VSA algebra (bind / unbind / bundle), retrieval by codebook
 cleanup, learning by outer-product memory accumulation only.
 """
 
-from pure_vsa.memory import AssociativeMemory
 from pure_vsa.composer import RuleComposer
+from pure_vsa.hyperion import Example, HyperionConfig, HyperionReasoner
+from pure_vsa.memory import AssociativeMemory
 from pure_vsa.reasoner import PureVSAReasoner
-from pure_vsa.hyperion import HyperionReasoner, HyperionConfig, Example
 
 __all__ = [
     # High-level API (recommended for new code).

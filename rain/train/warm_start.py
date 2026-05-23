@@ -10,7 +10,9 @@ for backwards compatibility.
 """
 
 from __future__ import annotations
+
 import numpy as np
+
 from rain.core.relational import Codebook
 
 

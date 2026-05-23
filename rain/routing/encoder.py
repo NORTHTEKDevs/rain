@@ -17,8 +17,10 @@ the natural spectral basis for sign-valued signals.
 """
 
 from __future__ import annotations
-import numpy as np
+
 from dataclasses import dataclass
+
+import numpy as np
 
 
 def _next_pow2(n: int) -> int:

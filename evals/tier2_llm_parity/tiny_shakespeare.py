@@ -24,14 +24,15 @@ Usage:
 """
 
 from __future__ import annotations
+
 import argparse
 import json
 from pathlib import Path
+
 import numpy as np
 
 from rain.core.relational import Codebook
 from rain.train.checkpoint import load_checkpoint, load_codebook
-
 
 # HV-MSE threshold calibrated for the HYMN surrogate's hypervector MSE output.
 L1_PASS_THRESHOLD_HV_MSE = 0.5

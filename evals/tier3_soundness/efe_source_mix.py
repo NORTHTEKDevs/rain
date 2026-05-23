@@ -9,18 +9,20 @@ fused-score across the 100 prompts (excluding HYMN which is a future hookup
 point — for v0 we exclude it from the bar but still measure)."""
 
 from __future__ import annotations
+
 import argparse
 import json
-from dataclasses import dataclass, asdict, field
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
+
 import numpy as np
 
-from rain.core.relational import Codebook
+from rain.core.bigram import BigramMemory
+from rain.core.efe import MultiSignalEFEDecoder
+from rain.core.fep import LowRankA
 from rain.core.knowledge_base import ShardedKB
 from rain.core.liquid_state import LiquidStateMachine
-from rain.core.bigram import BigramMemory
-from rain.core.fep import LowRankA
-from rain.core.efe import MultiSignalEFEDecoder
+from rain.core.relational import Codebook
 
 
 @dataclass
@@ -97,7 +99,7 @@ def run_benchmark(n_prompts: int = 100, seed: int = 0) -> A1Result:
         crystal_recall_fn=crystal_recall_fn,
     )
 
-    totals: dict[str, float] = {k: 0.0 for k in ("hymn", "kb", "lsm", "bigram", "fep", "tsetlin", "crystal")}
+    totals: dict[str, float] = dict.fromkeys(("hymn", "kb", "lsm", "bigram", "fep", "tsetlin", "crystal"), 0.0)
     grand_total = 0.0
     for i in range(n_prompts):
         state = cb.vector(vocab[i % 32]).astype(np.float32) * (1.0 + 0.01 * rng.standard_normal(D))
@@ -111,7 +113,7 @@ def run_benchmark(n_prompts: int = 100, seed: int = 0) -> A1Result:
         return A1Result(
             benchmark="A1_efe_source_mix",
             n_prompts=n_prompts,
-            source_contribution_pct={k: 0.0 for k in totals},
+            source_contribution_pct=dict.fromkeys(totals, 0.0),
             overall_pass=False,
         )
 

@@ -2,9 +2,8 @@
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Tests for sharded HRR knowledge base."""
 
-import numpy as np
-import pytest
 from rain.core.knowledge_base import ShardedKB
+
 
 def test_write_then_read():
     kb = ShardedKB(num_shards=8, dim=10000, seed=0)

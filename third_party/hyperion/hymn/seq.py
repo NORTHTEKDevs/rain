@@ -24,7 +24,6 @@ from dataclasses import dataclass
 
 import torch
 from torch import Tensor, nn
-
 from vsa_core import Codebook, permute
 from vsa_core.ops import bind
 
@@ -71,7 +70,7 @@ class MemoryBank(nn.Module):
         g = torch.Generator(device="cpu").manual_seed(cfg.pos_key_seed)
         raw = torch.randint(0, 2, (cfg.max_positions, cfg.d),
                              generator=g, dtype=torch.int8)
-        self.position_keys = nn.Parameter((raw.float() * 2 - 1))
+        self.position_keys = nn.Parameter(raw.float() * 2 - 1)
 
     def write(self, token_hvs: Tensor) -> Tensor:
         """Build the memory bank from a sequence of token HVs.
@@ -84,7 +83,7 @@ class MemoryBank(nn.Module):
           slots: (B, T, D) bipolar-ish memory bank.
         """
         B, T, D = token_hvs.shape
-        assert T <= self.cfg.max_positions, (
+        assert self.cfg.max_positions >= T, (
             f"sequence length {T} exceeds max_positions {self.cfg.max_positions}")
         keys = self.position_keys[:T].unsqueeze(0).expand(B, T, D)
         return torch.tanh(self.cfg.beta * bind(token_hvs, keys))
@@ -152,7 +151,7 @@ class CrossAttendDecoder(nn.Module):
         g = torch.Generator(device="cpu").manual_seed(cfg.pos_key_seed + 31)
         raw = torch.randint(0, 2, (cfg.max_positions, cfg.d),
                              generator=g, dtype=torch.int8)
-        self.dec_pos_embed = nn.Parameter((raw.float() * 2 - 1))
+        self.dec_pos_embed = nn.Parameter(raw.float() * 2 - 1)
         # Logit scale for cleanup.
         self.log_logit_scale = nn.Parameter(
             torch.tensor(cfg.init_log_logit_scale))

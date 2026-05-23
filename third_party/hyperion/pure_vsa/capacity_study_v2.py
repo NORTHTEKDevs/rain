@@ -14,16 +14,10 @@ used only for bare-verb lookup at test time.
 from __future__ import annotations
 
 import time
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Iterable
 
 import torch
-
-from pure_vsa.reasoner import PureVSAReasoner
-from vsa_core import bind, unbind
-from vsa_core.cleanup import similarity
-from vsa_core.codebook import Codebook
-
 
 # reuse the v1 dataset builder via import
 from pure_vsa.capacity_study import (
@@ -35,6 +29,10 @@ from pure_vsa.capacity_study import (
     _encode_input_pair,
     _encode_output,
 )
+from pure_vsa.reasoner import PureVSAReasoner
+from vsa_core import bind, unbind
+from vsa_core.cleanup import similarity
+from vsa_core.codebook import Codebook
 
 
 @dataclass

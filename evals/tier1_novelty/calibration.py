@@ -18,14 +18,14 @@ Acceptance: ECE <= 0.05.
 """
 
 from __future__ import annotations
+
 import argparse
 import json
 import random
-from dataclasses import dataclass, asdict, field
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 from rain.agent import ConsciousAgent
-
 
 # 14 relation types, ~75 facts each ~= 1000 facts total
 RELATION_TYPES = [

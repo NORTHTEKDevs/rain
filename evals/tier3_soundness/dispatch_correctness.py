@@ -20,7 +20,7 @@ from pathlib import Path
 
 import numpy as np
 
-from rain.spine import HymnModel, _RUST_AVAILABLE, _python_reference_forward
+from rain.spine import _RUST_AVAILABLE, HymnModel, _python_reference_forward
 
 
 @dataclass

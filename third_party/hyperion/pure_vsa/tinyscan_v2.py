@@ -24,11 +24,10 @@ from dataclasses import dataclass
 
 # reuse v1 symbols
 from pure_vsa.tinyscan import (
-    ACTIONS,
     ACTION_TO_OUT,
+    ACTIONS,
     symbol_index,
 )
-
 
 # additional role for the second verb in a conjunction
 ROLE_VERB1 = 0  # alias of ROLE_VERB for clarity in v2

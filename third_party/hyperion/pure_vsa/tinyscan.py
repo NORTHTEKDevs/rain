@@ -21,7 +21,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-
 # token symbols (input vocabulary)
 ACTIONS = ["walk", "jump", "run", "swim", "look"]
 MODIFIERS = ["twice", "thrice", "left", "right"]

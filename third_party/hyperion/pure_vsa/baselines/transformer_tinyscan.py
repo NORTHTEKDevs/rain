@@ -17,8 +17,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 import torch
-from torch import Tensor, nn
-
 from pure_vsa.tinyscan import (
     ACTIONS,
     MODIFIERS,
@@ -26,7 +24,7 @@ from pure_vsa.tinyscan import (
     TinySCANExample,
     make_dataset,
 )
-
+from torch import Tensor, nn
 
 # Vocabulary: input tokens, output tokens, plus special tokens.
 SPECIAL_TOKENS = ["<pad>", "<bos>", "<sep>", "<eos>"]
@@ -34,7 +32,7 @@ PAD, BOS, SEP, EOS = 0, 1, 2, 3
 INPUT_TOKENS = ACTIONS + MODIFIERS
 ALL_TOKENS = SPECIAL_TOKENS + INPUT_TOKENS + OUTPUT_TOKENS
 TOKEN_TO_ID = {t: i for i, t in enumerate(ALL_TOKENS)}
-ID_TO_TOKEN = {i: t for i, t in enumerate(ALL_TOKENS)}
+ID_TO_TOKEN = dict(enumerate(ALL_TOKENS))
 VOCAB_SIZE = len(ALL_TOKENS)
 
 

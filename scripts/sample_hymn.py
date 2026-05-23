@@ -19,6 +19,7 @@ seen during training). All inference math is numpy -- no torch dep.
 """
 
 from __future__ import annotations
+
 import argparse
 import sys
 from pathlib import Path

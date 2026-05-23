@@ -4,6 +4,7 @@
 """Chain-of-thought narration: emit the reasoning trace before the answer."""
 
 from __future__ import annotations
+
 from rain.cognition.inference import InferenceResult
 
 

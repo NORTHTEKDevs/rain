@@ -22,7 +22,7 @@ decision left for the user.
 
 from __future__ import annotations
 
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import torch
@@ -239,7 +239,7 @@ def run_fidelity(
     model_name: str,
     seed: int,
     samples: int | None = None,  # accepted for API uniformity; fidelity is deterministic
-) -> "SuiteResult":
+) -> SuiteResult:
     del samples
     from sofar.benchmarks import SuiteResult
     from sofar.benchmarks.needle import _resolve_tokenizer

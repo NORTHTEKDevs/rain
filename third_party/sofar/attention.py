@@ -30,7 +30,7 @@ integrate into an arbitrary HuggingFace model.
 from __future__ import annotations
 
 import math
-from enum import Enum
+from enum import StrEnum
 
 import numpy as np
 import torch
@@ -39,13 +39,12 @@ from torch import nn
 from sofar.encoder import FrequencyLayeredEncoder
 from sofar.mapper import ChannelMap, _unwrap_distributed
 
-
 # ---------------------------------------------------------------------------
 # Modes
 # ---------------------------------------------------------------------------
 
 
-class BeamMode(str, Enum):
+class BeamMode(StrEnum):
     """Beam operational mode."""
 
     FOCUS = "focus"
@@ -327,7 +326,7 @@ class BeamSteeringAdapter(nn.Module):
         self._envelope_cache = cache
         return env
 
-    def train(self, mode: bool = True) -> "BeamSteeringAdapter":
+    def train(self, mode: bool = True) -> BeamSteeringAdapter:
         """Toggle train mode AND manage the eval-time caches.
 
         Entering eval mode (``mode=False``) eagerly pre-populates
@@ -506,7 +505,7 @@ class _AdapterHook:
 
     __slots__ = ("adapter",)
 
-    def __init__(self, adapter: "BeamSteeringAdapter") -> None:
+    def __init__(self, adapter: BeamSteeringAdapter) -> None:
         self.adapter = adapter
 
     def _transform(self, h: torch.Tensor) -> torch.Tensor:

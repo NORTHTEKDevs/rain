@@ -6,18 +6,16 @@ import pytest
 import torch
 
 from rain.core.relational import Codebook
+from rain.train.checkpoint import load_checkpoint
 from rain.train.torch_trainer import (
+    LOSS_NLL,
     HymnTorch,
-    train_torch,
-    save_torch_checkpoint,
     build_char_vocab,
     codebook_logits,
-    LOSS_MSE,
-    LOSS_NLL,
+    save_torch_checkpoint,
+    train_torch,
 )
-from rain.train.checkpoint import load_checkpoint
 from scripts.pretrain_hymn import HymnSurrogate
-
 
 CPU = torch.device("cpu")
 

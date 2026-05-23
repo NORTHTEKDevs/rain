@@ -12,18 +12,20 @@ Acceptance: >= 1 champion-displacing promotion per 100 generations
 (>= 10 total over 1000 gens)."""
 
 from __future__ import annotations
+
 import argparse
 import json
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 from pathlib import Path
+
 import numpy as np
 
 from rain.train.evolve import (
-    non_dominated_sort,
-    crowding_distance,
-    crossover,
-    mutate,
     ChampionState,
+    crossover,
+    crowding_distance,
+    mutate,
+    non_dominated_sort,
     should_promote,
 )
 

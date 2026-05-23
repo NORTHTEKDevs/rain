@@ -26,8 +26,8 @@ would break.
 from __future__ import annotations
 
 import hashlib
+from collections.abc import Hashable, Iterable
 from dataclasses import dataclass, field
-from typing import Hashable, Iterable
 
 from rck.codebook import Codebook
 from rck.relational import RelationalMemory
@@ -35,7 +35,7 @@ from rck.relational import RelationalMemory
 
 def _shard_index(subject: str, relation: str, n_shards: int) -> int:
     """Stable hash-based routing key."""
-    key = f"{subject}\x00{relation}".encode("utf-8")
+    key = f"{subject}\x00{relation}".encode()
     digest = hashlib.blake2b(key, digest_size=4).digest()
     return int.from_bytes(digest, "little") % n_shards
 

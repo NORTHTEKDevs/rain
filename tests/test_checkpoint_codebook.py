@@ -8,8 +8,12 @@ without persisting the codebook = mismatched codebook at inference.
 
 import numpy as np
 
-from rain.core.relational import Codebook
-from rain.train.checkpoint import save_checkpoint, load_checkpoint, load_codebook, HymnCheckpointMetadata
+from rain.train.checkpoint import (
+    HymnCheckpointMetadata,
+    load_checkpoint,
+    load_codebook,
+    save_checkpoint,
+)
 
 
 def _meta(in_dim=64, hidden_dim=32, out_dim=64) -> HymnCheckpointMetadata:

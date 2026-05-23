@@ -14,11 +14,11 @@ Output: a single flat text file the existing pretrain drivers consume.
 """
 
 from __future__ import annotations
+
 import argparse
 import json
 import random
 from pathlib import Path
-
 
 _QUESTION_TEMPLATES = [
     "Q: What is the {r} of {s}?\nA: {o}.\n",

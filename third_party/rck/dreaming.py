@@ -20,7 +20,6 @@ from __future__ import annotations
 
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
-from typing import Hashable
 
 from rck.knowledge_base import ShardedKnowledgeBase
 from rck.memory_hierarchy import EpisodicMemory, consolidate_episodic_to_semantic
@@ -58,7 +57,7 @@ def detect_contradictions(kb: ShardedKnowledgeBase,
         SINGLE_VALUED = {"capital", "color", "version", "atomic_number",
                          "symbol", "founded_year", "year"}
         if r in SINGLE_VALUED:
-            distinct = set(o for o, _ in values)
+            distinct = {o for o, _ in values}
             if len(distinct) >= 2:
                 contradictions.append({
                     "subject": s, "relation": r,

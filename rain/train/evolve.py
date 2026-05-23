@@ -14,10 +14,11 @@ configurable credible-interval threshold (default p_win >= 0.6).
 """
 
 from __future__ import annotations
-import math
-from dataclasses import dataclass, field
-import numpy as np
 
+import math
+from dataclasses import dataclass
+
+import numpy as np
 
 # ---------- NSGA-II core ----------
 
@@ -65,9 +66,9 @@ def crowding_distance(population: list[list[float]], front: list[int]) -> dict[i
     if not front:
         return {}
     if len(front) <= 2:
-        return {i: math.inf for i in front}
+        return dict.fromkeys(front, math.inf)
     n_obj = len(population[front[0]])
-    distance: dict[int, float] = {i: 0.0 for i in front}
+    distance: dict[int, float] = dict.fromkeys(front, 0.0)
     for m in range(n_obj):
         sorted_front = sorted(front, key=lambda idx: population[idx][m])
         distance[sorted_front[0]] = math.inf

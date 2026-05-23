@@ -2,10 +2,9 @@
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Tests for the KB -> Q/A corpus renderer."""
 
-import json
 import random
 
-from scripts.kb_to_qa_corpus import _render_fact, _deunderscore, _capitalize_first
+from scripts.kb_to_qa_corpus import _capitalize_first, _deunderscore, _render_fact
 
 
 def test_deunderscore_handles_basic_cases():

@@ -4,8 +4,8 @@
 """Structural self-model: a small KB of facts about RAIN itself."""
 
 from __future__ import annotations
-from rain.core.knowledge_base import ShardedKB
 
+from rain.core.knowledge_base import ShardedKB
 
 DEFAULT_SELF_FACTS: list[tuple[str, str, str]] = [
     ("rain", "is_a", "generative_ai"),

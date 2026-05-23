@@ -19,10 +19,10 @@ Usage:
 """
 
 from __future__ import annotations
-from typing import Callable
+
+from collections.abc import Callable
 
 from rain.core.knowledge_base import ShardedKB
-
 
 # Same signature as the HymnSamplerFn alias in rain.agent.
 HymnSamplerFn = Callable[[str, int], str]

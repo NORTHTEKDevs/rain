@@ -15,17 +15,18 @@ ECE drift <= 0.10.
 """
 
 from __future__ import annotations
+
 import argparse
 import json
 import random
-from dataclasses import dataclass, asdict, field
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 import numpy as np
 
 from rain.agent import ConsciousAgent
-from rain.core.liquid_state import LiquidStateMachine
 from rain.core.fep import LowRankA
+from rain.core.liquid_state import LiquidStateMachine
 from rain.core.tsetlin import TsetlinMachine
 
 

@@ -7,9 +7,9 @@ Bipolar {-1,+1}^D hypervectors. Composition via:
   cleanup = cosine argmax against a codebook
 """
 
-from vsa_core.ops import bind, unbind, bundle, bundle_soft, permute, recursive_bind
-from vsa_core.codebook import Codebook, fpe_positions
 from vsa_core.cleanup import cleanup, similarity
+from vsa_core.codebook import Codebook, fpe_positions
+from vsa_core.ops import bind, bundle, bundle_soft, permute, recursive_bind, unbind
 from vsa_core.ste import sign_ste, soft_binarize
 
 __all__ = [

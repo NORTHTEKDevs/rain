@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import torch
 from torch import Tensor
-
 from vsa_core import bind, unbind
 from vsa_core.cleanup import cleanup, similarity
 

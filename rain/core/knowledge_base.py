@@ -10,15 +10,14 @@ an index for exact retrieval by cosine nearest-neighbour against the codebook.
 from __future__ import annotations
 
 import hashlib
-from typing import Optional
 
 import numpy as np
 
-from rain.core.relational import Codebook, bind, bundle, unbind
+from rain.core.relational import Codebook, bind, unbind
 
 
 def _shard_index(subject: str, relation: str, num_shards: int) -> int:
-    key = f"{subject}||{relation}".encode("utf-8")
+    key = f"{subject}||{relation}".encode()
     digest = hashlib.blake2b(key, digest_size=4).digest()
     return int.from_bytes(digest, "little") % num_shards
 
@@ -40,7 +39,7 @@ class _Shard:
         self._count += 1
         self._obj_vocab[o_str] = o_hv
 
-    def query(self, s_hv: np.ndarray, r_hv: np.ndarray) -> Optional[str]:
+    def query(self, s_hv: np.ndarray, r_hv: np.ndarray) -> str | None:
         if self._count == 0:
             return None
         # probe = unbind acc by S*R
@@ -51,7 +50,7 @@ class _Shard:
         # nearest-neighbour cleanup over known object vocab
         # TODO v0.5 (task #18-adjacent): replace linear scan with approx NN
         # (random projection LSH) when V per shard > 1K. O(VD) per query at scale.
-        best_sym: Optional[str] = None
+        best_sym: str | None = None
         best_sim: float = -1.0
         for sym, hv in self._obj_vocab.items():
             sim = float(np.dot(probe, hv)) / self.dim
@@ -88,7 +87,7 @@ class ShardedKB:
         self._shards[idx].write(s_hv, r_hv, obj, o_hv)
         self._exact[(subject, relation)] = obj
 
-    def query(self, subject: str, relation: str) -> Optional[str]:
+    def query(self, subject: str, relation: str) -> str | None:
         # Exact index takes precedence: returns the last-written value
         key = (subject, relation)
         if key in self._exact:

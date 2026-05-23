@@ -21,12 +21,12 @@ The audit-v1.1 fixes that this module respects:
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field as dc_field
-from typing import Callable
+from collections.abc import Callable
+from dataclasses import dataclass
+from dataclasses import field as dc_field
 
 import torch
 from torch import Tensor
-
 
 # ----------------------------------------------------------------------------
 # Phase 1: truncated backprop through K unrolled steps.

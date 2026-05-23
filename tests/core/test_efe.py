@@ -2,9 +2,9 @@
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 
 import numpy as np
-import pytest
+
+from rain.core.efe import DEFAULT_WEIGHTS, EpistemicClass, MultiSignalEFEDecoder, _rank_normalize
 from rain.core.relational import Codebook
-from rain.core.efe import MultiSignalEFEDecoder, EpistemicClass, DEFAULT_WEIGHTS, _rank_normalize
 
 
 def test_rank_normalize_orders_correctly():

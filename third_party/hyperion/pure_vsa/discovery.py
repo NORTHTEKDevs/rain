@@ -13,8 +13,6 @@ from collections import defaultdict
 from collections.abc import Iterable
 
 
-
-
 def group_by_modifier(
     examples: Iterable[tuple[dict[int, int], dict[int, int]]],
     modifier_role: int,

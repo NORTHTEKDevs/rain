@@ -4,7 +4,9 @@
 """Hallucination-free explanation: every claim cites the KB fact it came from."""
 
 from __future__ import annotations
+
 from dataclasses import dataclass
+
 from rain.cognition.inference import InferenceResult
 
 

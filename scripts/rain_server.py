@@ -33,21 +33,19 @@ curl -s -X POST http://localhost:8721/ask -H "Content-Type: application/json" \\
 """
 
 from __future__ import annotations
+
 import argparse
-import json
 import time
-from dataclasses import asdict
 from pathlib import Path
 
 import numpy as np
 from aiohttp import web
 
 from rain.agent import ConsciousAgent
+from rain.cognition.rag import KbAugmentedSampler
 from rain.data.kb_seed import seed_from_jsonl
 from rain.feedback.ollama_judge import OllamaJudge, build_triple_prompt
-from rain.cognition.rag import KbAugmentedSampler
 from scripts.rain_chat import _HymnSampler  # reuse the existing primitive
-
 
 _STARTED = time.time()
 
@@ -240,7 +238,7 @@ def main() -> int:
     app = web.Application()
     app.add_routes(_make_routes(agent, sampler, judge, args))
 
-    print(f"RAIN HTTP server")
+    print("RAIN HTTP server")
     print(f"  KB facts loaded: {n_loaded}")
     print(f"  HYMN checkpoint: {args.checkpoint or '(none)'}")
     print(f"  use_rag: {args.use_rag}")

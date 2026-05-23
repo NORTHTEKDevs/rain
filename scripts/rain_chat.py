@@ -26,20 +26,19 @@ Anything else is treated as a free-text HYMN prompt (autoregressive completion).
 """
 
 from __future__ import annotations
+
 import argparse
 import json
-import sys
-from dataclasses import asdict
 from pathlib import Path
 
 import numpy as np
 
 from rain.agent import ConsciousAgent
+from rain.cognition.rag import KbAugmentedSampler
+from rain.core.relational import Codebook
 from rain.data.kb_seed import seed_from_jsonl
 from rain.feedback.ollama_judge import OllamaJudge, build_triple_prompt
 from rain.train.checkpoint import load_checkpoint, load_codebook
-from rain.core.relational import Codebook
-from rain.cognition.rag import KbAugmentedSampler
 from scripts.sample_hymn import _hymn_forward, _sample_from_logits
 
 
@@ -131,7 +130,8 @@ def repl(agent: ConsciousAgent, sampler: _HymnSampler | None,
     print("RAIN v0 chat. /help for commands. /quit to exit.")
     if sampler:
         print(f"  HYMN: {Path(args.checkpoint).name}")
-        print(f"  KB:   {Path(args.kb).name}  ({len(list(_ for _ in open(args.kb)))} lines)")
+        with open(args.kb, encoding="utf-8") as fh:
+            print(f"  KB:   {Path(args.kb).name}  ({sum(1 for _ in fh)} lines)")
     print()
     while True:
         try:

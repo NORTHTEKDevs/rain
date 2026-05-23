@@ -19,7 +19,6 @@ from __future__ import annotations
 from collections import defaultdict
 from dataclasses import dataclass, field
 
-
 # Default confidence thresholds.
 THRESHOLD_KNOW = 0.20
 THRESHOLD_THINK = 0.10

@@ -27,16 +27,17 @@ test_routing_at_identity_init_is_noop).
 """
 
 from __future__ import annotations
+
 import argparse
 import json
-from dataclasses import dataclass, asdict, field
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 import numpy as np
 
 from rain.core.relational import Codebook
+from rain.routing.beam import BeamConfig, BeamMode, BeamSteeringAdapter
 from rain.routing.mapper import RoutingMapper
-from rain.routing.beam import BeamSteeringAdapter, BeamConfig, BeamMode
 from scripts.pretrain_hymn import HymnSurrogate
 
 
@@ -67,7 +68,7 @@ _DEFAULT_CORPUS = (
 
 def _build_codebook_and_dirs(
     dim: int, vocab_size: int, k: int, num_roles: int, seed: int
-) -> tuple[Codebook, "RoutingMapper", "BeamSteeringAdapter", np.ndarray, np.ndarray]:
+) -> tuple[Codebook, RoutingMapper, BeamSteeringAdapter, np.ndarray, np.ndarray]:
     """Codebook + role bank + routing mapper + beam adapter + source matrices."""
     cb = Codebook(vocab_size=vocab_size, dim=dim, seed=seed)
     rng = np.random.default_rng(seed + 1000)
@@ -92,7 +93,7 @@ def _val_mse(
     seed: int,
     *,
     route: bool = False,
-    beam: "BeamSteeringAdapter | None" = None,
+    beam: BeamSteeringAdapter | None = None,
     directions=None,
 ) -> float:
     """Mean MSE-on-HV across n_eval_steps random positions.

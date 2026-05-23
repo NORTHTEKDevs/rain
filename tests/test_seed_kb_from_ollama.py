@@ -9,8 +9,8 @@ lives outside the default suite.
 
 from scripts.seed_kb_from_ollama import (
     _extract_json_array,
-    _valid_triple,
     _normalize_token,
+    _valid_triple,
     build_user_prompt,
 )
 

@@ -31,8 +31,8 @@ from dataclasses import dataclass
 
 import torch
 from torch import Tensor
-
-from vsa_core import bind, permute as vsa_permute, unbind
+from vsa_core import bind, unbind
+from vsa_core import permute as vsa_permute
 from vsa_core.cleanup import similarity
 from vsa_core.codebook import Codebook
 
@@ -435,7 +435,7 @@ def parse_pcfg(src: str):
     return tree
 
 
-def evaluate_pcfg(tree, reasoner: "PCFGHyperion | None" = None) -> list[str]:
+def evaluate_pcfg(tree, reasoner: PCFGHyperion | None = None) -> list[str]:
     """Reference interpreter (oracle) for a parsed PCFG tree."""
     kind = tree[0]
     if kind == "PRIM":

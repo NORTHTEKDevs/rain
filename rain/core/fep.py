@@ -9,6 +9,7 @@ append-then-prune keeps rank bounded at R. O(D*R) memory and forward time.
 """
 
 from __future__ import annotations
+
 import numpy as np
 
 

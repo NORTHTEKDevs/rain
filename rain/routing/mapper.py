@@ -13,9 +13,11 @@ more than `rebuild_threshold` fraction of rows.
 """
 
 from __future__ import annotations
+
 import hashlib
-import numpy as np
 from dataclasses import dataclass
+
+import numpy as np
 
 
 @dataclass

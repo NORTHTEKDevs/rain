@@ -4,15 +4,15 @@
 
 import numpy as np
 import pytest
-from rain.routing.mapper import compute_routing_directions
-from rain.routing.beam import (
-    BeamMode,
-    BeamConfig,
-    BeamSteeringAdapter,
-    _envelope,
-    _energy_normalize,
-)
 
+from rain.routing.beam import (
+    BeamConfig,
+    BeamMode,
+    BeamSteeringAdapter,
+    _energy_normalize,
+    _envelope,
+)
+from rain.routing.mapper import compute_routing_directions
 
 D = 64
 K = 8

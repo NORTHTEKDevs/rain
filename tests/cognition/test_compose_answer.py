@@ -1,7 +1,7 @@
 # CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
-from rain.core.knowledge_base import ShardedKB
 from rain.cognition.compose_answer import describe
+from rain.core.knowledge_base import ShardedKB
 
 
 def test_describe_returns_multi_sentence():

@@ -1,7 +1,7 @@
 # CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
-from rain.core.knowledge_base import ShardedKB
 from rain.cognition.inference import infer
+from rain.core.knowledge_base import ShardedKB
 
 
 def test_direct_inference():

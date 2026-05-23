@@ -13,6 +13,6 @@ __version__ = "0.0.0"
 __author__ = "Kristian Baer / NORTHTEKDevs"
 __license__ = "Proprietary"
 
-from rain.agent import ConsciousAgent, Answer  # noqa: E402, F401
-from rain.core.relational import Codebook  # noqa: E402, F401
+from rain.agent import Answer, ConsciousAgent  # noqa: E402, F401
 from rain.core.knowledge_base import ShardedKB  # noqa: E402, F401
+from rain.core.relational import Codebook  # noqa: E402, F401

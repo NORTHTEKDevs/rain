@@ -7,12 +7,10 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
-import pytest
-
 from scripts.filter_seed_with_judge import (
-    _triple_from,
-    _format_question,
     _format_answer,
+    _format_question,
+    _triple_from,
     run,
 )
 

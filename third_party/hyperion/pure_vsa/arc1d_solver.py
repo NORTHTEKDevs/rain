@@ -32,7 +32,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-
 Grid = list[list[int]]  # 1xN grid; outer list always length 1 for 1D-ARC
 
 
@@ -401,7 +400,7 @@ def t_pcopy_same_color(row: list[int]) -> list[int] | None:
     runs = _runs(row)
     if len(runs) < 2:
         return None
-    colors = set(c for _, _, c in runs)
+    colors = {c for _, _, c in runs}
     if len(colors) != 1:
         return None
     longest = max(runs, key=lambda r: r[1] - r[0])
@@ -463,7 +462,7 @@ def t_padded_fill_pairs(row: list[int]) -> list[int] | None:
     nonzero = [(i, c) for i, c in enumerate(row) if c != 0]
     if len(nonzero) < 2 or len(nonzero) % 2 != 0:
         return None
-    colors = set(c for _, c in nonzero)
+    colors = {c for _, c in nonzero}
     if len(colors) != 1:
         return None
     color = next(iter(colors))

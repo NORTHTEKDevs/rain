@@ -2,14 +2,16 @@
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 
 import math
+
 import numpy as np
+
 from rain.train.evolve import (
-    dominates,
-    non_dominated_sort,
-    crowding_distance,
-    crossover,
-    mutate,
     ChampionState,
+    crossover,
+    crowding_distance,
+    dominates,
+    mutate,
+    non_dominated_sort,
     should_promote,
 )
 

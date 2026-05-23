@@ -22,8 +22,8 @@ the LSM-readout candidate and the n-gram candidate, then EFE breaks ties.
 from __future__ import annotations
 
 from collections import Counter
+from collections.abc import Hashable
 from dataclasses import dataclass, field
-from typing import Hashable
 
 import numpy as np
 

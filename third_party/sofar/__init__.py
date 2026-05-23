@@ -8,14 +8,21 @@
 # SOFAR (Signal-Optimized Frequency-Aligned Routing)
 """SOFAR: bio-inspired acoustic geometry routing for transformers."""
 
-from importlib.metadata import PackageNotFoundError, version as _pkg_version
+from importlib.metadata import PackageNotFoundError
+from importlib.metadata import version as _pkg_version
 
-from sofar.mapper import (
-    ChannelMap,
-    LayerChannels,
-    available_scoring_formulas,
-    map_channels,
-    score_channel,
+from sofar.attention import (
+    BeamMode,
+    BeamSteeringAdapter,
+    patch,
+    select_beam_mode,
+    unpatch,
+)
+from sofar.corpora import (
+    make_code_corpus,
+    make_legal_corpus,
+    make_medical_corpus,
+    make_mixed_corpus,
 )
 from sofar.encoder import (
     BandGate,
@@ -25,12 +32,13 @@ from sofar.encoder import (
     encode_bands,
     fuse_bands,
 )
-from sofar.attention import (
-    BeamMode,
-    BeamSteeringAdapter,
-    patch,
-    select_beam_mode,
-    unpatch,
+from sofar.export import export_bundle, from_pretrained
+from sofar.mapper import (
+    ChannelMap,
+    LayerChannels,
+    available_scoring_formulas,
+    map_channels,
+    score_channel,
 )
 from sofar.training import (
     CalibrationExample,
@@ -41,13 +49,6 @@ from sofar.training import (
     save_adapter_checkpoint,
     train_adapter,
 )
-from sofar.corpora import (
-    make_code_corpus,
-    make_legal_corpus,
-    make_medical_corpus,
-    make_mixed_corpus,
-)
-from sofar.export import export_bundle, from_pretrained
 
 # Single source of truth: pyproject.toml [project].version. Falls back
 # to a sentinel when running from an uninstalled checkout (no metadata

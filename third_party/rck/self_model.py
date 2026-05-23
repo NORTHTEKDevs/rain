@@ -15,7 +15,6 @@ from __future__ import annotations
 
 from rck.knowledge_base import ShardedKnowledgeBase
 
-
 # Canonical name the self-model uses to refer to itself.
 SELF_NAME = "rck"
 

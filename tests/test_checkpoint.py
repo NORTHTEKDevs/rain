@@ -3,13 +3,14 @@
 
 import numpy as np
 import pytest
+
 from rain.train.checkpoint import (
-    HymnCheckpointMetadata,
-    save_checkpoint,
-    load_checkpoint,
-    freeze_checkpoint,
-    assert_not_frozen,
     FrozenCheckpointError,
+    HymnCheckpointMetadata,
+    assert_not_frozen,
+    freeze_checkpoint,
+    load_checkpoint,
+    save_checkpoint,
 )
 
 

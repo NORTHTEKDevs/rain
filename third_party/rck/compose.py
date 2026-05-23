@@ -28,14 +28,13 @@ codebook surgery.
 """
 from __future__ import annotations
 
+from collections.abc import Hashable
 from dataclasses import dataclass, field
-from typing import Hashable, Sequence
 
 import numpy as np
 
 from rck.codebook import Codebook
 from rck.relational import RelationalMemory
-from rck.vsa import bind
 
 
 @dataclass
@@ -105,7 +104,7 @@ class CompositionalReasoner:
 
     # ---- federated bundling ------------------------------------------------
 
-    def merge(self, other: "CompositionalReasoner") -> None:
+    def merge(self, other: CompositionalReasoner) -> None:
         """Combine knowledge from `other` into self.
 
         Bundles the relational memories and unions the codebooks. The two

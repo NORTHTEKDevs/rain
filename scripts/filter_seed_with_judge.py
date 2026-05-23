@@ -25,11 +25,12 @@ On 2711 facts that's ~45 minutes wall time.
 """
 
 from __future__ import annotations
+
 import argparse
 import json
 import time
 from collections import Counter
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 from rain.feedback.ollama_judge import OllamaJudge

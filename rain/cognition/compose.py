@@ -11,7 +11,9 @@ finds the codebook nearest neighbor.
 This is the mechanism behind RCK v1.1's 100% SCAN compositional generalization."""
 
 from __future__ import annotations
+
 import numpy as np
+
 from rain.core.relational import Codebook, bind, bundle
 
 

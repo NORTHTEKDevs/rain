@@ -13,7 +13,9 @@ addressing.
 """
 
 from __future__ import annotations
+
 import hashlib
+
 from rain.core.knowledge_base import ShardedKB
 
 
