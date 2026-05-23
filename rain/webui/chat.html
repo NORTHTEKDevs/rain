@@ -179,6 +179,7 @@ function fmtCites(citations) {
 function fmtCognitive(signals) {
   if (!signals) return '';
   const parts = [];
+  if ('cognitive_agreement' in signals) parts.push(`agree ${signals.cognitive_agreement.toFixed(2)}`);
   if ('fep_cos' in signals) parts.push(`FEP-cos ${signals.fep_cos.toFixed(2)}`);
   if ('lsm_state_l2' in signals) parts.push(`LSM-l2 ${signals.lsm_state_l2.toFixed(2)}`);
   if ('tsetlin_max_abs_vote' in signals) parts.push(`Tsetlin-vote ${signals.tsetlin_max_abs_vote.toFixed(0)}`);
