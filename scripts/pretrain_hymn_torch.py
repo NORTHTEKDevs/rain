@@ -31,6 +31,7 @@ from rain.train.torch_trainer import (
     LOSS_MSE,
     LOSS_NLL,
 )
+from rain.train.warm_start_chars import warm_start_chars
 
 
 def main() -> None:
@@ -47,6 +48,9 @@ def main() -> None:
     p.add_argument("--grad-clip", type=float, default=0.0,
                    help="Max L2 norm for gradient clipping. Recommended for "
                         "carry-steps >= 4 to prevent BPTT explosion.")
+    p.add_argument("--warm-start-chars", action="store_true",
+                   help="Seed the codebook with feature-based char embeddings "
+                        "before training. Faster convergence to the same plateau.")
     p.add_argument("--lr", type=float, default=1e-3)
     p.add_argument("--weight-decay", type=float, default=0.0,
                    help="AdamW L2 regularization; helps NLL overfitting at higher step counts")
@@ -77,6 +81,9 @@ def main() -> None:
 
     corpus = Path(args.corpus).read_text(encoding="utf-8")
     cb = Codebook(vocab_size=256, dim=args.in_dim, seed=args.seed)
+    if args.warm_start_chars:
+        ws_stats = warm_start_chars(cb, corpus, seed=args.seed)
+        print(f"warm-start: {ws_stats}")
     model = HymnTorch(args.in_dim, args.hidden_dim, args.out_dim,
                       seed=args.seed, device=dev)
 
