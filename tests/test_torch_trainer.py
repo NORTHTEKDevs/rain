@@ -3,7 +3,8 @@
 
 import numpy as np
 import pytest
-import torch
+
+torch = pytest.importorskip("torch")
 
 from rain.core.relational import Codebook
 from rain.train.checkpoint import load_checkpoint
