@@ -43,15 +43,28 @@ def save_checkpoint(
     W2: np.ndarray,
     metadata: HymnCheckpointMetadata,
     losses: np.ndarray | None = None,
+    codebook_chars: list[str] | None = None,
+    codebook_matrix: np.ndarray | None = None,
 ) -> tuple[Path, Path]:
-    """Save .npz weights + .json sidecar. Returns (npz_path, json_path)."""
+    """Save .npz weights + .json sidecar. Returns (npz_path, json_path).
+
+    If `codebook_chars` and `codebook_matrix` are supplied, they're saved
+    alongside W1/W2 so inference reproduces the EXACT codebook the model
+    was trained against. Critical for warm-started training, where the
+    codebook is no longer a function of (seed, vocab_size, dim) alone.
+    """
     npz_path = Path(path).with_suffix(".npz")
     json_path = npz_path.with_suffix(".json")
     arrays = {"W1": W1.astype(np.float32), "W2": W2.astype(np.float32)}
     if losses is not None:
         arrays["losses"] = losses.astype(np.float32)
+    if codebook_matrix is not None:
+        arrays["codebook_matrix"] = codebook_matrix.astype(np.int16)
     np.savez(npz_path, **arrays)
-    json_path.write_text(json.dumps(asdict(metadata), indent=2))
+    meta_dict = asdict(metadata)
+    if codebook_chars is not None:
+        meta_dict["codebook_chars"] = codebook_chars
+    json_path.write_text(json.dumps(meta_dict, indent=2))
     return npz_path, json_path
 
 
@@ -71,6 +84,26 @@ def load_checkpoint(path: str | Path) -> tuple[np.ndarray, np.ndarray, HymnCheck
     filtered = {k: v for k, v in meta_dict.items() if k in known}
     metadata = HymnCheckpointMetadata(**filtered)
     return data["W1"], data["W2"], metadata
+
+
+def load_codebook(path: str | Path) -> tuple[list[str], np.ndarray] | None:
+    """Load the per-checkpoint codebook if it was saved.
+
+    Returns (chars_in_order, matrix) -- the deterministic vocab + the (V, D)
+    int16 bipolar matrix the training run used. None if the checkpoint
+    predates per-checkpoint codebook saving (in which case callers should
+    reconstruct via `Codebook(seed=meta.seed, dim=meta.in_dim)`).
+    """
+    npz_path = Path(path).with_suffix(".npz")
+    json_path = npz_path.with_suffix(".json")
+    data = np.load(npz_path)
+    if "codebook_matrix" not in data:
+        return None
+    meta_dict = json.loads(json_path.read_text())
+    chars = meta_dict.get("codebook_chars")
+    if not chars:
+        return None
+    return chars, data["codebook_matrix"]
 
 
 def freeze_checkpoint(path: str | Path) -> HymnCheckpointMetadata:

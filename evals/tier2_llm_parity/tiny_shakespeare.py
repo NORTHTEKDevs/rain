@@ -30,7 +30,7 @@ from pathlib import Path
 import numpy as np
 
 from rain.core.relational import Codebook
-from rain.train.checkpoint import load_checkpoint
+from rain.train.checkpoint import load_checkpoint, load_codebook
 
 
 # HV-MSE threshold calibrated for the HYMN surrogate's hypervector MSE output.
@@ -152,6 +152,13 @@ def evaluate(
     W1, W2, meta = load_checkpoint(checkpoint_path)
     corpus = Path(corpus_path).read_text(encoding="utf-8")
     cb = Codebook(vocab_size=256, dim=meta.in_dim, seed=meta.seed)
+    # If the checkpoint saved its codebook (warm-started runs), inject it
+    # so the eval uses the SAME vectors training saw.
+    saved = load_codebook(checkpoint_path)
+    if saved is not None:
+        saved_chars, saved_matrix = saved
+        for c, v in zip(saved_chars, saved_matrix):
+            cb._cache[c] = v
     effective_carry = carry_steps if carry_steps is not None else getattr(meta, "carry_steps", 0)
     base = {
         "benchmark": "L1_tiny_shakespeare",

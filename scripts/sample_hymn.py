@@ -26,7 +26,7 @@ from pathlib import Path
 import numpy as np
 
 from rain.core.relational import Codebook
-from rain.train.checkpoint import load_checkpoint
+from rain.train.checkpoint import load_checkpoint, load_codebook
 
 
 def _hymn_forward(state: np.ndarray, input_: np.ndarray,
@@ -84,13 +84,23 @@ def sample(
     repetition_window: int = 16,
 ) -> str:
     W1, W2, meta = load_checkpoint(checkpoint_path)
-    corpus = Path(corpus_path).read_text(encoding="utf-8")
-    vocab = sorted(set(corpus))
-    char_to_idx = {c: i for i, c in enumerate(vocab)}
-    cb = Codebook(vocab_size=256, dim=meta.in_dim, seed=meta.seed)
-    codebook_matrix = np.stack(
-        [cb.vector(c).astype(np.float32) for c in vocab]
-    )  # (V, D)
+    saved = load_codebook(checkpoint_path)
+    if saved is not None:
+        vocab, cb_matrix_int = saved
+        char_to_idx = {c: i for i, c in enumerate(vocab)}
+        codebook_matrix = cb_matrix_int.astype(np.float32)
+        # Wrap into a Codebook for downstream API parity.
+        cb = Codebook(vocab_size=256, dim=meta.in_dim, seed=meta.seed)
+        for c, v in zip(vocab, cb_matrix_int):
+            cb._cache[c] = v
+    else:
+        corpus = Path(corpus_path).read_text(encoding="utf-8")
+        vocab = sorted(set(corpus))
+        char_to_idx = {c: i for i, c in enumerate(vocab)}
+        cb = Codebook(vocab_size=256, dim=meta.in_dim, seed=meta.seed)
+        codebook_matrix = np.stack(
+            [cb.vector(c).astype(np.float32) for c in vocab]
+        )
 
     rng = np.random.default_rng(seed)
     state = np.zeros(meta.in_dim, dtype=np.float32)

@@ -111,6 +111,7 @@ def main() -> None:
         losses=result.losses,
         loss_type=args.loss, context_len=args.context_len,
         carry_steps=args.carry_steps, batch_size=args.batch_size,
+        codebook=cb, corpus_text=corpus,
     )
     print(f"saved {npz_path} + {json_path}")
     print(

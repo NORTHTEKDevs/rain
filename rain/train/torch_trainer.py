@@ -385,6 +385,8 @@ def save_torch_checkpoint(
     context_len: int = 0,
     carry_steps: int = 0,
     batch_size: int = 1,
+    codebook: "Codebook | None" = None,
+    corpus_text: str | None = None,
 ) -> tuple[Path, Path]:
     """Detach weights + write the numpy checkpoint format.
 
@@ -408,7 +410,20 @@ def save_torch_checkpoint(
         carry_steps=carry_steps,
         batch_size=batch_size,
     )
+    codebook_chars = None
+    codebook_matrix = None
+    if codebook is not None and corpus_text is not None:
+        # Persist the exact codebook entries for every char in the corpus
+        # so inference reproduces what training saw -- essential for
+        # warm-started training where the codebook isn't a pure function
+        # of (seed, dim).
+        codebook_chars = sorted(set(corpus_text))
+        codebook_matrix = np.stack(
+            [codebook.vector(c).astype(np.int16) for c in codebook_chars]
+        )
     return save_checkpoint(
         path, W1, W2, meta,
         losses=np.asarray(losses, dtype=np.float32) if losses else None,
+        codebook_chars=codebook_chars,
+        codebook_matrix=codebook_matrix,
     )
