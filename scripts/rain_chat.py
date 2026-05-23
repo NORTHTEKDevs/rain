@@ -36,7 +36,7 @@ import numpy as np
 
 from rain.agent import ConsciousAgent
 from rain.data.kb_seed import seed_from_jsonl
-from rain.feedback.ollama_judge import OllamaJudge
+from rain.feedback.ollama_judge import OllamaJudge, build_triple_prompt
 from rain.train.checkpoint import load_checkpoint
 from rain.core.relational import Codebook
 from scripts.sample_hymn import _hymn_forward, _sample_from_logits
@@ -150,8 +150,15 @@ def repl(agent: ConsciousAgent, sampler: _HymnSampler | None,
             if judge is None:
                 print("(no judge configured; pass --judge-model to enable)")
                 continue
-            q = f"What is the {relation} of {subject}?"
-            verdict = judge.judge(q, ans.text)
+            # Use the clean-form judge prompt so the verdict tracks the
+            # underlying fact, not RAIN's surface "I know that ... directly
+            # from a stored fact" framing or snake_case formatting.
+            stored_obj = ans.citations[0][2] if ans.citations else None
+            if stored_obj is None:
+                print("(no citation -- nothing to judge)")
+                continue
+            q, judge_answer = build_triple_prompt(subject, relation, stored_obj)
+            verdict = judge.judge(q, judge_answer)
             if verdict is None:
                 print("(judge returned unparseable verdict)")
                 continue
