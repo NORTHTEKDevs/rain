@@ -39,6 +39,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `scripts/seed_kb_from_ollama.py` -- distillation driver. Calls a local Ollama model via HTTP, asks for N (subject, relation, object) triples per topic, schema-validates each (lowercased, underscored, non-empty), writes JSONL compatible with `rain.data.kb_seed.seed_from_jsonl`. Built-in 50-topic baseline; `--topics-file` for custom lists. Resilient JSON extractor balances unclosed `]` and drops half-written final triples (a known llama3.2:3b failure mode).
 - `tests/test_seed_kb_from_ollama.py` -- 10 tests covering token normalization, schema validation, JSON extraction across bare/prose/fenced inputs, and recovery from truncated arrays.
 - Smoke run validated against the live Ollama daemon (llama3.2:3b, 3 topics x 12 triples = 36 facts in 15.3 seconds, 0 rejected). Bigger overnight runs queued for qwen3-coder-30B with the full default topic list.
+- `rain/data/kb_seed.py` now accepts both the original short `{s, r, o}` and the long `{subject, relation, object}` shape (the one written by `scripts/seed_kb_from_ollama.py`), and silently skips lines lacking a complete triple. Two new tests in `tests/test_seed_kb.py` cover both branches.
+- End-to-end Track 2 validation: 36 llama3.2:3b-distilled facts loaded into a `ConsciousAgent`; `agent.ask(lion, lives_in)` returns "savanna" with epistemic="think" and inference_source="direct"; unseeded facts correctly return epistemic="unknown".
+- **qwen3-coder-30B as KB-seed model: scrapped.** Even at temperature=0, the model returns empty content for the structured-extraction prompts that work cleanly on llama3.2:3b. Likely tokenizer / instruction-tuning mismatch in the abliterated build. Default seeder model switched to llama3.2:3b for the broke-mode plan.
 
 ### Fixed
 - M-NEW-1: Removed `continue-on-error: true` from CI install-deps step; maturin/Rust build failures now hard-fail the job.

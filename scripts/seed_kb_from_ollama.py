@@ -318,8 +318,11 @@ def run(args: argparse.Namespace) -> SeedRunStats:
 
 def main() -> None:
     p = argparse.ArgumentParser(description="Seed RAIN KB from local Ollama LLM")
-    p.add_argument("--model", default="huihui_ai/qwen3-coder-abliterated:30b",
-                   help="Ollama model name (defaults to qwen3-coder-30B)")
+    p.add_argument("--model", default="llama3.2:3b",
+                   help="Ollama model name. Default llama3.2:3b: small, fast, reliable JSON output. "
+                        "Larger models like qwen3-coder-30B can be faster per-fact when they work, but "
+                        "the abliterated qwen3 build silently returns empty content on this prompt -- "
+                        "test any new model with a 3-topic smoke run before kicking off the full sweep.")
     p.add_argument("--topics-file", default=None,
                    help="Optional path to a topic list (one per line). "
                         "Default: built-in 50-topic baseline.")
