@@ -41,6 +41,8 @@ def main() -> None:
     p.add_argument("--context-len", type=int, default=0,
                    help="0 = no context (matches numpy ref); K>0 bundles previous K chars")
     p.add_argument("--lr", type=float, default=1e-3)
+    p.add_argument("--weight-decay", type=float, default=0.0,
+                   help="AdamW L2 regularization; helps NLL overfitting at higher step counts")
     p.add_argument("--loss", choices=[LOSS_MSE, LOSS_NLL], default=LOSS_MSE,
                    help="mse = HV-MSE (v0 reference); nll = real cross-entropy via codebook softmax")
     p.add_argument("--in-dim", type=int, default=1024)
@@ -73,6 +75,7 @@ def main() -> None:
         batch_size=args.batch_size,
         context_len=args.context_len,
         lr=args.lr,
+        weight_decay=args.weight_decay,
         loss_type=args.loss,
         device=dev,
         seed=args.seed,

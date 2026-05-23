@@ -204,6 +204,7 @@ def train_torch(
     batch_size: int = 32,
     context_len: int = 0,
     lr: float = 1e-3,
+    weight_decay: float = 0.0,
     loss_type: str = LOSS_MSE,
     device: "torch.device | None" = None,
     seed: int = 0,
@@ -227,7 +228,7 @@ def train_torch(
     if device is None:
         device = next(model.parameters()).device
     model.train()
-    optim = torch.optim.Adam(model.parameters(), lr=lr)
+    optim = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
 
     chars = list(corpus_text)
     n_corpus = len(chars)
