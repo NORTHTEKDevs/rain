@@ -61,6 +61,38 @@ WikiText-2 self-eval NLL (carry=16 30K, DirectML, 11 min): **1.72**.
 
 Negative finding worth recording: dim=2048 with the dim=1024-tuned hyperparameters underperforms (1.88 vs 1.54). The L=5e-4 / weight_decay=1e-4 / grad_clip=1.0 settings were tuned for the smaller model. Bigger HYMN needs a smaller LR and probably longer training. Standard Chinchilla-style scaling -- the lever isn't "more capacity", it's "the right hyperparameters for the architecture choice". dim=1024 stays the v0 sweet spot until a follow-up shift retunes for dim=2048.
 
+### Track 2 (filter) + Track 3 (RLAIF) comparison
+
+The 2711-fact expanded seed was filtered through the same llama3.2:3b
+judge (2.24 hours wall on the iGPU): **2399 kept (88.5%), 312 rejected
+(11.5%), 8 parse failures.** The rejected set is mostly judge-pedantic
+"too general" verdicts on `kind`/`is_a`/`isa` relations (e.g., "owl kind
+bird" rejected as "an owl is not a type of bird, but rather a specific
+class of birds" -- absurd).
+
+Phase-2 RLAIF run with seed=0, n_probes=50 on each KB:
+
+| KB | facts | judge says correct | calibration drop on `lives_in` |
+|---|---|---|---|
+| unfiltered | 2711 | 0/50 | 0.500 -> 0.111 |
+| filtered   | 2399 | 0/50 | 0.500 -> 0.091 |
+
+**Filtering did not help RLAIF outcomes.** The reason is structural:
+the filter judges raw triples in the form "The lives_in of lion is
+savanna. Is this correct?", while Phase-2 RLAIF judges RAIN's surface
+answer in the form "I know that lion lives in savanna directly from a
+stored fact. Is this correct?". The two prompts elicit different
+judgments. Inspecting Phase-2 failure modes shows the judge rejecting
+based on surface artifacts (snake_case subjects, the "directly from a
+stored fact" suffix, the literal interpretation of "has_property" as a
+property name), not on the underlying factual content.
+
+Next-shift follow-up: (a) strip the "I know that ... directly from a
+stored fact" framing in agent.explain to give the judge a cleaner
+sentence; (b) deunderscore subjects before they reach the judge prompt;
+(c) consider a more lenient judge prompt that focuses on factual core
+rather than form.
+
 The lever was **sequence-carry (RNN-style teacher-forced) training** + matched eval mode + cross-entropy on codebook-projected logits. Architecture itself unchanged (same 2-weight tanh-MLP HYMN as the numpy reference).
 
 ### Added (shift rain-v0-12h)
