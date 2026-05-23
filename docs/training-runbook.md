@@ -37,6 +37,35 @@
 - Design-plan target: 1.55 nats/char (uniform-random baseline is 4.17 on
   Tiny Shakespeare's 65-char vocab).
 
+### Loss = NLL with sequence-carry (RNN-style, the one that PASSES L1)
+**This is the recipe that crossed the 1.55 design-plan threshold.**
+- `--loss nll`
+- `--carry-steps 16` (W=16 chars of teacher-forced state evolution)
+- `--grad-clip 1.0` (REQUIRED at W >= 4 to prevent BPTT explosion)
+- `--lr 5e-4`
+- `--weight-decay 1e-4`
+- `--batch-size 64`
+- `--in-dim 1024 --hidden-dim 512 --out-dim 1024`
+- L1 eval picks `eval_carry_steps=16` automatically from the checkpoint sidecar.
+
+Measured results on Tiny Shakespeare:
+| carry | steps | wall | train (last 2K) | L1 val NLL |
+|---|---|---|---|---|
+|  0 | 100K | 559s CPU | 2.70 | 2.92 |
+|  4 |   5K |  48s CPU | 2.47 | 2.34 |
+|  8 |  30K | 483s CPU | 1.84 | 1.72 |
+| 16 |  30K | 833s CPU | 1.64 | **1.5359**  pass=true |
+
+Cumulative reduction: 47% in one shift. The lever is sequence-carry training,
+not the architecture or more steps.
+
+Note on the bootstrap bug to avoid: the naive RNN loop that decodes the raw
+codebook vector at step 1 (before any HYMN forward) produces loss ~250 nats/char
+because the codebook vector dot-products to ITSELF with overwhelming preference.
+The correct order is `state = HYMN(state, codebook(char_t)); decode(state)` --
+HYMN before decode at every step, including the first. See
+`train_torch.carry_steps>0` path.
+
 ## Throughput (this workstation, dim=1024, batch=64, context=8)
 
 | Backend | Steps / sec | Wall for 50K |
