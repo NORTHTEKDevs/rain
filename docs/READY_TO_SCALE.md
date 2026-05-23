@@ -11,6 +11,7 @@
 |---|---|---|
 | HYMN char-level LM | DONE | L1 NLL 1.47 on Tiny Shakespeare, passes 1.55 target |
 | HYMN trained on WikiText-2 | DONE | self-eval NLL 1.72 (carry=16 30K, 11 min DirectML) |
+| HYMN trained on WikiText-103 | DONE | self-eval NLL 2.04 (carry=8 100K, 20 min DirectML) -- 4979-char vocab, uniform baseline 8.51, so 24% of uniform |
 | Sequence-carry training | DONE | the lever that unlocked L1 |
 | AdamW + warmup + cosine + grad_clip | DONE | tuned defaults in runbook |
 | NLL loss via codebook softmax | DONE | replaces v0 MSE-on-HV reference |
