@@ -41,9 +41,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 |---|---|---|---|
 | 10K, lr=5e-4, ctx=8, no wd, DirectML | 65s | 2.71 | 3.39 |
 | 50K, lr=5e-4, ctx=16, wd=1e-4, CPU | 286s | 2.51 | 2.97 |
-| 100K, lr=1e-3 + warmup=2K + cosine, ctx=16, wd=5e-5, CPU | 559s | 2.70 | **2.92** |
+| 100K, lr=1e-3 + warmup=2K + cosine, ctx=16, wd=5e-5, CPU | 559s | 2.70 | 2.92 |
+| 5K, lr=5e-4, **carry=4**, grad_clip=1.0, wd=1e-4, CPU | 48s | 2.47 | **2.34** |
+| 30K, lr=5e-4, **carry=8**, grad_clip=1.0, wd=1e-4, CPU | 483s | 1.84 | **1.72** |
 
-Best L1 to date: **2.92 nats/char** (best so far in real cross-entropy units). The design-plan threshold of 1.55 is still distant; we've established that the lever is no longer hyperparameters but the architecture itself + corpus scale. WikiText-2 + sequence-carry training are queued.
+Best L1 to date: **1.72 nats/char** (carry=8, 30K steps, 8 min CPU). 60% of the gap from the prior 2.92 baseline to the 1.55 design-plan target closed in one shift via sequence-carry (RNN-style) training. Architecture is no longer the bottleneck at v0; we're now genuinely in striking distance of the target. WikiText-2 carry=8 + carry=16 Tiny Shakespeare runs queued.
 
 ### Added (Track 3 - LLM-as-judge feedback)
 

@@ -92,3 +92,35 @@ SHIFTS:
     - Step 2: wire WikiText-2 (parquet) as a corpus + train HYMN on it.
     - In parallel: 30K-step carry=8 training is running in background,
       will produce an even sharper L1 NLL number.
+  ---
+  step: 2
+  date: 2026-05-23T03:46:00Z
+  status: complete
+  tag: shift/rain-v0-12h/2 (pending push)
+  commit: 6cdb6bc + 71325fb
+  summary: |
+    WikiText-2 extractor + Phase-2 RLAIF driver shipped. The big news is
+    the 30K-step carry=8 training run that finished mid-step: L1 NLL
+    dropped to 1.72 nats/char (8 min wall on CPU). Closes 60% of the
+    gap from the prior 2.92 baseline to the 1.55 design-plan target.
+  files:
+    - scripts/extract_wikitext2.py (new)
+    - scripts/run_phase2_feedback.py (new)
+    - tests/test_run_phase2_feedback.py (new, 6 tests)
+    - data/corpora/wikitext2_train.txt (extracted, 10.9 MB)
+  results:
+    - carry=4 5K  CPU NLL: L1 val 2.34
+    - carry=8 30K CPU NLL: L1 val **1.72**  <-- new best, 60% of gap closed
+    - Phase-2 stub-judge run: 6/6 tests pass, in-process live run
+      against llama3.2:3b correctly fires negative calibration deltas
+    - 180 tests passing total
+    - expanded KB seed in flight at 2665 facts (~80% through 200 topics)
+  blockers: none
+  background_running:
+    - wikitext2 carry=8 20K DirectML (data/checkpoints/hymn_wikitext2_carry8_20k.npz)
+    - carry=16 30K CPU on Tiny Shakespeare (data/checkpoints/hymn_carry16_30k.npz)
+    - llama3.2 expanded seed (data/kb_seed/llama3b_expanded.jsonl)
+  next:
+    - When carry=16 30K finishes: eval L1, see if it pushes below 1.72.
+    - When WikiText-2 carry=8 20K finishes: eval L1-style val, report L2 number.
+    - When expanded seed finishes: run Phase-2 feedback at scale (100 probes).
