@@ -58,7 +58,9 @@ class _HymnSampler:
         self._cb = cb
 
     def sample(self, prompt: str, n_tokens: int, temperature: float,
-               top_k: int | None, seed: int) -> str:
+               top_k: int | None, seed: int,
+               repetition_penalty: float = 1.1,
+               repetition_window: int = 16) -> str:
         rng = np.random.default_rng(seed)
         state = np.zeros(self.meta.in_dim, dtype=np.float32)
         for c in prompt:
@@ -67,10 +69,18 @@ class _HymnSampler:
             state = _hymn_forward(state, self._cb.vector(c).astype(np.float32),
                                   self.W1, self.W2)
         out_chars: list[str] = []
+        recent_ids: list[int] = []
         for _ in range(n_tokens):
             logits = self.codebook_matrix @ state
-            idx = _sample_from_logits(logits, temperature, rng, top_k=top_k)
+            idx = _sample_from_logits(
+                logits, temperature, rng, top_k=top_k,
+                recent_ids=recent_ids,
+                repetition_penalty=repetition_penalty,
+            )
             out_chars.append(self.vocab[idx])
+            recent_ids.append(idx)
+            if len(recent_ids) > repetition_window:
+                recent_ids = recent_ids[-repetition_window:]
             state = _hymn_forward(state, self.codebook_matrix[idx], self.W1, self.W2)
         return "".join(out_chars)
 
@@ -134,7 +144,8 @@ def repl(agent: ConsciousAgent, sampler: _HymnSampler | None,
             text = sampler.sample(prompt, n_tokens=args.sample_tokens,
                                   temperature=args.temperature,
                                   top_k=(args.top_k if args.top_k > 0 else None),
-                                  seed=np.random.randint(0, 1 << 31))
+                                  seed=np.random.randint(0, 1 << 31),
+                                  repetition_penalty=args.repetition_penalty)
             print(f"[HYMN, temp={args.temperature}, top-k={args.top_k}]")
             print(prompt + text)
             continue
@@ -220,6 +231,8 @@ def main() -> int:
     p.add_argument("--sample-tokens", type=int, default=120)
     p.add_argument("--temperature", type=float, default=0.8)
     p.add_argument("--top-k", type=int, default=20)
+    p.add_argument("--repetition-penalty", type=float, default=1.1,
+                   help="repetition penalty for /sample (default 1.1, 1.0 disables)")
     p.add_argument("--judge-model", default="",
                    help="if set, enables /judge command; e.g. llama3.2:3b")
     p.add_argument("--min-confidence", type=float, default=0.5,
