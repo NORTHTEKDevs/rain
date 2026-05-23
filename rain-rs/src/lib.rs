@@ -14,15 +14,20 @@
 // implementation phase. See VENDORED.md for source-of-truth porting plan.
 
 #![warn(unsafe_code)]
-#![warn(missing_docs)]
+// missing_docs demoted to allow for v0 -- we will re-enable once the
+// public Rust API stabilizes. Tracked in docs/READY_TO_SCALE.md.
+#![allow(missing_docs)]
+// Numeric kernels intentionally use integer-index loops (HYMN MLP, SVD,
+// Tsetlin clauses). enumerate() would obscure the mathematical structure.
+#![allow(clippy::needless_range_loop)]
 
 //! RAIN Rust hot-kernels crate.
 
-pub mod vsa;
 pub mod hymn;
-pub mod tsetlin;
-pub mod sofar;
 pub mod nsga2;
+pub mod sofar;
+pub mod tsetlin;
+pub mod vsa;
 
 #[cfg(feature = "python")]
 pub mod ffi_python;
