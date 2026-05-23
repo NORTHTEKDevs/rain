@@ -18,7 +18,7 @@ distinguish RAIN from LLMs.
 
 from __future__ import annotations
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Callable
 from rain.core.relational import Codebook
 from rain.core.knowledge_base import ShardedKB
 from rain.cognition.dialogue import DialogueContext
@@ -31,6 +31,12 @@ from rain.cognition.explain import explain
 from rain.cognition.think_aloud import narrate
 from rain.cognition.compose_answer import describe as describe_fn
 from rain.cognition.nlg import render as nlg_render
+
+
+# Callable signature: (prompt: str, n_tokens: int) -> str.
+# Lets us attach any HYMN sampler (or any other fallback generator) without
+# pulling a torch dep into rain.agent.
+HymnSamplerFn = Callable[[str, int], str]
 
 
 @dataclass
@@ -53,6 +59,24 @@ class ConsciousAgent:
         self.self_model = SelfModel(dim=dim, num_shards=8, seed=seed + 1)
         self.tom = TheoryOfMind(dim=dim, num_shards=8, seed=seed + 2)
         self.calibration = CalibrationTally()
+        # Optional HYMN sampling fallback for ask() on KB-miss. Set via
+        # attach_hymn_sampler(); kept off by default so the structural-KB
+        # behavior remains the v0 reference.
+        self._hymn_sampler: HymnSamplerFn | None = None
+        self._hymn_n_tokens: int = 120
+
+    def attach_hymn_sampler(self, sampler: HymnSamplerFn, n_tokens: int = 120) -> None:
+        """Wire a trained-HYMN sampler as the KB-miss fallback for ask().
+
+        sampler(prompt, n_tokens) -> str. When ask() can't resolve a fact via
+        the KB, it asks the sampler for a continuation and returns it with
+        epistemic='guess' and inference_source='hymn'. The calibration tally
+        for the relation is NOT updated automatically -- HYMN guesses are
+        weaker than KB facts and Phase-2 feedback should evaluate them
+        explicitly.
+        """
+        self._hymn_sampler = sampler
+        self._hymn_n_tokens = n_tokens
 
     def tell(self, subject: str, relation: str, object_: str) -> None:
         """Teach a new fact. Records introspection + updates dialogue context."""
@@ -78,6 +102,24 @@ class ConsciousAgent:
         epistemic = classify_epistemic(confidence, relation_calibration=cal)
 
         if result.answer is None:
+            # KB miss. If a HYMN sampler is attached, use it as the fallback;
+            # otherwise refuse cleanly. Either way, we DON'T pretend the
+            # answer is grounded -- epistemic stays at the conservative end.
+            if self._hymn_sampler is not None:
+                prompt = f"{subject_r} {relation_r.replace('_', ' ')} "
+                hymn_text = self._hymn_sampler(prompt, self._hymn_n_tokens)
+                text = prompt + hymn_text
+                self.introspect.record("hymn_guess", topic=f"{subject_r}.{relation_r}")
+                self.dialogue.remember(entity=subject_r, relation=relation_r)
+                self.dialogue.record_turn("user", f"ask({subject_r}, {relation_r})")
+                self.dialogue.record_turn("rain", text)
+                return Answer(
+                    text=text,
+                    epistemic="guess",
+                    citations=[],
+                    confidence=0.3,
+                    inference_source="hymn",
+                )
             text = "I don't know that yet."
             self.introspect.record("refuse", reason="no fact / no chain")
         elif think_aloud:

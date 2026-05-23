@@ -90,7 +90,11 @@ def _help() -> None:
 
 
 def _handle_ask(agent: ConsciousAgent, line: str) -> bool:
-    """Try to parse `<subject> <relation>`. Return True if handled."""
+    """Try to parse `<subject> <relation>`. Return True if handled.
+
+    Tag the printed source clearly: [KB] for citation-grounded answers,
+    [HYMN-guess] for fallback completions (epistemic=guess, no citations).
+    """
     tokens = line.strip().split()
     if len(tokens) < 2:
         return False
@@ -100,8 +104,10 @@ def _handle_ask(agent: ConsciousAgent, line: str) -> bool:
     if ans.inference_source is None:
         return False  # let caller fall back to HYMN sampling
     cal = agent.calibration.calibration(relation)
-    print(f"[KB] {ans.text}")
-    print(f"     citations: {ans.citations}")
+    tag = "[HYMN-guess]" if ans.inference_source == "hymn" else "[KB]"
+    print(f"{tag} {ans.text}")
+    if ans.citations:
+        print(f"     citations: {ans.citations}")
     print(f"     epistemic: {ans.epistemic}  "
           f"confidence: {ans.confidence:.2f}  "
           f"relation calibration: {cal:.3f}")
@@ -248,6 +254,16 @@ def main() -> int:
     sampler = (_HymnSampler(args.checkpoint, args.corpus)
                if args.checkpoint and Path(args.checkpoint).is_file()
                else None)
+    # If we have a sampler, also attach it to the agent so agent.ask itself
+    # gains the HYMN-fallback behavior (used by integrations beyond this REPL).
+    if sampler is not None:
+        def _agent_sampler(prompt: str, n_tokens: int) -> str:
+            return sampler.sample(prompt, n_tokens=n_tokens,
+                                  temperature=args.temperature,
+                                  top_k=(args.top_k if args.top_k > 0 else None),
+                                  seed=np.random.randint(0, 1 << 31),
+                                  repetition_penalty=args.repetition_penalty)
+        agent.attach_hymn_sampler(_agent_sampler, n_tokens=args.sample_tokens)
     judge = OllamaJudge(model=args.judge_model) if args.judge_model else None
 
     if args.noninteractive:
