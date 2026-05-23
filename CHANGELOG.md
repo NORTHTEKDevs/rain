@@ -35,6 +35,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - LR-too-high finding logged: lr=2e-3 with NLL on DirectML diverges after ~step 2000 (loss climbs from 3.8 back to 5.2). Default LR for NLL kept at 5e-4 in the CLI; MSE LR unchanged at 1e-3.
 - Switched optimizer to AdamW + added `--weight-decay` flag (default 0). AdamW's decoupled weight-decay fights the train/val gap seen on Tiny Shakespeare NLL runs at 10K+ steps. Tests unchanged (all 9 torch tests still pass).
 
+### Added (Track 3 - LLM-as-judge feedback)
+- `rain/feedback/ollama_judge.py`: `OllamaJudge`, `Judgment`, `parse_judge_response`, and a high-level `judge_agent_session()` that runs a `ConsciousAgent` through a list of questions, asks a local Ollama model whether each answer is correct, and feeds the verdict back through `agent.feedback(relation, was_correct)` to update the per-relation Bayesian calibration tally. This is the no-paid-RLHF Phase-2 feedback loop.
+- `tests/test_ollama_judge.py`: 8 parser tests covering bare/prose/fenced JSON, confidence clamping, missing-key rejection, non-dict top-level, and garbage input.
+- Live smoke against llama3.2:3b: judge correctly returns `correct=True, conf=1.0` for "Paris" answering "capital of France", `correct=False, conf=0.0` for "Berlin", and even surfaces edge cases (flagged "lion lives in savanna" with reasoning that not all lions live in savannas).
+
 ### Added (Track 2 - Ollama KB distillation)
 - `scripts/seed_kb_from_ollama.py` -- distillation driver. Calls a local Ollama model via HTTP, asks for N (subject, relation, object) triples per topic, schema-validates each (lowercased, underscored, non-empty), writes JSONL compatible with `rain.data.kb_seed.seed_from_jsonl`. Built-in 50-topic baseline; `--topics-file` for custom lists. Resilient JSON extractor balances unclosed `]` and drops half-written final triples (a known llama3.2:3b failure mode).
 - `tests/test_seed_kb_from_ollama.py` -- 10 tests covering token normalization, schema validation, JSON extraction across bare/prose/fenced inputs, and recovery from truncated arrays.
