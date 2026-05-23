@@ -56,3 +56,12 @@ def test_kb_miss_still_returns_cognitive_signals():
     assert ans.cognitive_signals is not None
     assert ans.cognitive_signals["fep_cos"] == 0.0  # no answer to compare
     assert ans.cognitive_signals["lsm_state_l2"] >= 0.0
+
+
+def test_cognitive_agreement_in_unit_interval():
+    """The blended `cognitive_agreement` score stays in [0, 1]."""
+    agent = ConsciousAgent(dim=128, num_shards=4, seed=0, enable_continual=True)
+    agent.tell("lion", "lives_in", "savanna")
+    ans = agent.ask("lion", "lives_in")
+    score = ans.cognitive_signals["cognitive_agreement"]
+    assert 0.0 <= score <= 1.0

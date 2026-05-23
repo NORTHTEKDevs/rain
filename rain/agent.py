@@ -284,6 +284,14 @@ class ConsciousAgent:
             out["tsetlin_max_abs_vote"] = float(max_vote)
         except Exception:
             out["tsetlin_max_abs_vote"] = 0.0
+        # Single derived 0..1 agreement score: blend the three surface signals
+        # into one consumer-facing summary. Useful for downstream
+        # gating without forcing callers to interpret three raw signals.
+        # Weighting is heuristic; calibration loop can tune later.
+        fep_agree = max(0.0, min(1.0, (out.get("fep_cos", 0.0) + 1.0) / 2.0))
+        tsetlin_norm = min(1.0, out.get("tsetlin_max_abs_vote", 0.0) / 16.0)
+        lsm_active = 1.0 if out.get("lsm_state_l2", 0.0) > 0.0 else 0.0
+        out["cognitive_agreement"] = 0.5 * fep_agree + 0.3 * tsetlin_norm + 0.2 * lsm_active
         return out
 
     def describe(self, entity: str, relations: list[str] | None = None) -> str:

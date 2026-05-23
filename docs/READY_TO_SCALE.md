@@ -80,28 +80,29 @@ LR-vs-dim relationship.
 **Estimated effort:** running now; finishes in ~30 min. Lands the
 empirical scaling rule.
 
-### 5. Integrate cognitive primitives during inference
+### 5. Integrate cognitive primitives during inference -- DONE except SOFAR LoRA
 
 The LSM / Tsetlin / FEP / SOFAR modules are TRAINED and TESTED in
 isolation (Tier-3 A1-A5 all wired). Inference-path integration:
 
 - LSM: per-turn state update from token embeddings -> reservoir state
-  -> RLS readout. **WRITE SIDE DONE** in agent.tell when
-  `enable_continual=True`. Read side (use LSM.predict in ask) not yet.
+  -> RLS readout. **DONE.** Write side in `agent.tell`; read side
+  exposes `lsm_state_l2` on every Answer when `enable_continual=True`.
 - Tsetlin: per-relation clause votes -> additional epistemic signal.
-  **WRITE SIDE DONE** -- Type-I feedback on every tell. Read side
-  (vote during ask) not yet.
+  **DONE.** Type-I feedback on every tell; `tsetlin_max_abs_vote`
+  exposed on every Answer.
 - FEP rank-1 A matrix: low-rank update of the generative model after
-  each turn (Phase 2 continual learning). **WRITE SIDE DONE.**
+  each turn. **DONE.** `fep_cos` exposed on every Answer.
+- Blended `cognitive_agreement` score (0..1) derived from the three
+  signals. Exposed on Answer.cognitive_signals for downstream gating.
+  **DONE.**
 - SOFAR beam adapter: trained LoRA weights focus state on relevant
   routing directions. This is what unlocks the A2 ablation kill-trigger
   (currently 0.08% improvement; design target >=3%). **NOT STARTED.**
 
-**Estimated effort remaining:** 1 week for read-side cognitive
-integration (use signals during ask). Several days for SOFAR LoRA
-training. The write side ("continual learning by construction") works
-end-to-end through agent.tell + the HTTP /tell endpoint -- LSM W_out,
-FEP U, Tsetlin clauses all evolve per fact.
+**Status:** 4/5 signals live with 6 passing tests in
+`tests/test_agent_cognitive_signals.py`. Only SOFAR LoRA training
+remains (several days of training + ablation re-runs).
 
 ### 6. Train on conversational data so HYMN can actually chat
 
