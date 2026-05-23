@@ -1,0 +1,60 @@
+TICKET: rain-v0-12h
+TITLE:  12-hour autonomous push to a working v0 of RAIN
+GOAL:   Close as much of the gap to a credible v0 RAIN model as possible
+        on the local Corsair AI Workstation 300 with no cloud-GPU spend.
+        Specifically: push L1 NLL meaningfully below the current 2.92
+        nats/char floor, ship sequence-carry training, exercise the
+        full Tracks-1+2+3 stack on WikiText-2 + a large Ollama-seeded
+        KB, and surface every honest finding (good or bad) into
+        CHANGELOG, the training runbook, and a wrap-shift report.
+DONE-WHEN:
+  - L1 NLL <= 2.50 nats/char on Tiny Shakespeare (vs current 2.92).
+  - WikiText-2 corpus downloaded + at least one HYMN pretrain run + L1-style
+    val number reported.
+  - Sequence-carry training implemented (state evolves across positions
+    instead of single-char independent samples) and benchmarked vs the
+    per-position baseline.
+  - Ollama KB seed expanded to >= 3000 facts, loaded into a demo agent,
+    queried with non-trivial recall.
+  - Phase-2 judge-driven feedback loop runs end-to-end and actually fires
+    calibration updates (not gated out by safety threshold).
+  - Full test suite still green at wrap time (currently 178 tests).
+  - Wrap report written summarizing every measurement and decision.
+INVARIANTS (must never break):
+  - 178+ existing tests stay green at every checkpoint.
+  - No "PATENT PENDING" language reintroduced anywhere.
+  - Numpy reference HymnSurrogate stays bit-compat with HymnTorch at the
+    same seed (test_init_matches_numpy_reference + test_forward_matches_numpy_reference).
+  - Checkpoint format stays consumable by the existing L1 driver.
+  - No fudged numbers in CHANGELOG -- if L1 doesn't move, that's a real
+    finding, not something to hide.
+  - No paid cloud GPU rental. No new SaaS subscriptions.
+OUT-OF-SCOPE:
+  - Cloud GPU rentals (NSF/Schmidt/etc. queued for separate fundraising
+    track, not this shift).
+  - Architectural rewrites that break the design-doc spec.
+  - Public marketing / external comms / patent filings.
+  - Building UI surfaces (rain-chat Tauri app) -- Phase 8 work.
+  - Tier-2 baselines (RWKV/LFM2/Mamba/Pythia comparison) -- separate task.
+SHIFTS:
+  ---
+  shift: 0
+  date: 2026-05-23T01:00:00Z
+  engineer: claude
+  status: open
+  started: setup
+  branch: feature/phase-1-bootstrap
+  starting_commit: 8a01cd1
+  starting_state:
+    - feature/phase-1-bootstrap, PR #1 open, CI budget-blocked on NORTHTEKDevs
+    - Tier-1 surfaces N1-N5: 5/5 wired
+    - Tier-3 surfaces A1-A5: 5/5 wired
+    - Best L1 NLL: 2.92 nats/char (100K-step CPU run, lr=1e-3 + warmup + cosine, ctx=16, wd=5e-5)
+    - Best L1 MSE: 0.88 (5K-step DirectML, ctx=8)
+    - KB seed: data/kb_seed/llama3b_default.jsonl = 605 facts (27/50 topics)
+    - Ollama judge: working live, 8 parser tests green
+    - 178 tests green, ~7s wall
+  next:
+    - Run init.sh and confirm READY.
+    - Implement sequence-carry training (Phase A): state_{t+1} = HYMN(state_t, input_t)
+      backprop across a K-step window. Add --carry-steps CLI flag and tests.
