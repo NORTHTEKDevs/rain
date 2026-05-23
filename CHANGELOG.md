@@ -55,8 +55,11 @@ Best L1 to date: **1.72 nats/char** (carry=8, 30K steps, 8 min CPU). 60% of the 
 | **Carry=4**, lr=5e-4, grad_clip=1.0, wd=1e-4, CPU, 5K | 48s | 2.47 | 2.34 | no |
 | **Carry=8**, lr=5e-4, grad_clip=1.0, wd=1e-4, CPU, 30K | 483s | 1.84 | 1.72 | no |
 | **Carry=16**, lr=5e-4, grad_clip=1.0, wd=1e-4, CPU, 30K | 833s | 1.64 | **1.5359** | **YES** |
+| dim=2048 Carry=16, same other hparams, CPU, 30K | 2769s | 2.01 | 1.88 | no |
 
 WikiText-2 self-eval NLL (carry=16 30K, DirectML, 11 min): **1.72**.
+
+Negative finding worth recording: dim=2048 with the dim=1024-tuned hyperparameters underperforms (1.88 vs 1.54). The L=5e-4 / weight_decay=1e-4 / grad_clip=1.0 settings were tuned for the smaller model. Bigger HYMN needs a smaller LR and probably longer training. Standard Chinchilla-style scaling -- the lever isn't "more capacity", it's "the right hyperparameters for the architecture choice". dim=1024 stays the v0 sweet spot until a follow-up shift retunes for dim=2048.
 
 The lever was **sequence-carry (RNN-style teacher-forced) training** + matched eval mode + cross-entropy on codebook-projected logits. Architecture itself unchanged (same 2-weight tanh-MLP HYMN as the numpy reference).
 
