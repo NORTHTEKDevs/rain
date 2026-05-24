@@ -147,13 +147,46 @@ just gets perturbed into different Shakespeare-style text.
 This confirms finding #2 above: mechanism works, semantic grounding
 needs KB-shuffle training.
 
-### v3 plan
+### v3 + v4 results (KB-shuffle iterations)
 
-1. KB-shuffle during training (random replacement of K facts/step)
-2. Smaller model (dim=128, 3 layers) to avoid the v2 overfit
-3. Early stopping enabled by default
-4. Validate on `scripts.validate_v2_kb_grounding`: B should beat A
-   by >=5% NLL after the fix
+| Run | Recipe | Trained KB NLL | Random KB NLL | In-Dist KB NLL | KB effect |
+|---|---|---|---|---|---|
+| v2 (baseline) | no shuffle, zero W_o | 2.37 | 2.98 | 2.98 | **20% better with trained**, but new KB == random |
+| v3 | 10% shuffle every step, zero W_o | 3.60 | 3.60 | 3.60 | **0.09%** (KB completely ignored) |
+| v4 | 5% shuffle every 4 steps, W_o init gain 0.3 | 3.73 | 3.77 | 3.76 | **0.36%** (still essentially ignored) |
+
+### Architectural insight (the v5 lesson)
+
+The v2 → v3 → v4 progression revealed something important: **the
+validation setup is fundamentally mismatched.** KB-Attention is being
+tested on Tiny Shakespeare with KB content of "random bipolar vectors"
+or "noun-phrases-from-Shakespeare-as-hypervectors". Neither carries
+useful signal for predicting the next char in a Shakespeare passage --
+because Shakespeare is poetry, not fact-grounded text.
+
+The model correctly learns to ignore a KB that has no information
+relevant to its task.
+
+**v5 fix is at the data layer, not the architecture layer:**
+
+1. Train on a Q/A corpus (e.g., `data/corpora/hybrid_conversational_v1.txt`
+   which has Alpaca + KB-QA + Shakespeare blended) where answers come
+   from explicit facts
+2. Initialize KB with REAL fact-hypervectors from
+   `data/kb_seed/llama3b_expanded_filtered.jsonl` (s, r, o triples via
+   bind + bundle)
+3. KB-shuffle replaces entries with OTHER real facts, not random vectors
+4. Then the model has both REASON to use the KB (Q/A facts) and
+   STRUCTURE to learn (consistent fact-shaped content throughout training)
+
+If v5 shows in-distribution KB beating random by >=5%, the moat works
+end-to-end. If not, KB-Attention may need a different inductive bias
+(explicit retrieval supervision a la RETRO) or hard architectural
+changes (cross-attention over chunked retrieved text, not bound hypervectors).
+
+This is the honest research path. Document the negative findings,
+queue the targeted fix, don't claim the moat works until the right
+validation setup confirms it.
 
 **Headline:** the smaller v1 checkpoint that hit 1.25 on training generalizes
 to 2.77 on OOD WikiText-2 -- a real, honest number proving the architecture
