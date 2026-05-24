@@ -265,7 +265,7 @@ def main() -> int:
     )
     p.add_argument(
         "--arch",
-        choices=["hymn", "hymn_plus", "auto"],
+        choices=["hymn", "hymn_plus", "hymn_plus_v2", "auto"],
         default="auto",
         help="sampler architecture matching --checkpoint. 'auto' inspects "
         "the sidecar JSON's arch field.",
@@ -324,12 +324,30 @@ def main() -> int:
 
                 try:
                     meta = _json.loads(meta_path.read_text(encoding="utf-8"))
-                    arch = "hymn_plus" if meta.get("arch") == "hymn_plus_v1" else "hymn"
+                    raw = meta.get("arch", "")
+                    if raw == "hymn_plus_v2":
+                        arch = "hymn_plus_v2"
+                    elif raw == "hymn_plus_v1":
+                        arch = "hymn_plus"
+                    else:
+                        arch = "hymn"
                 except Exception:
                     arch = "hymn"
             else:
                 arch = "hymn"
-        if arch == "hymn_plus":
+        if arch == "hymn_plus_v2":
+            from rain.cognition.hymn_plus_v2_sampler import HymnPlusV2Sampler
+
+            sampler = HymnPlusV2Sampler.from_checkpoint(
+                args.checkpoint,
+                temperature=args.temperature,
+                top_k=(args.top_k if args.top_k > 0 else 0),
+            )
+
+            def _agent_sampler(prompt: str, n_tokens: int) -> str:
+                return sampler(prompt, n_tokens=n_tokens)
+
+        elif arch == "hymn_plus":
             from rain.cognition.hymn_plus_sampler import HymnPlusSampler
 
             sampler = HymnPlusSampler.from_checkpoint(

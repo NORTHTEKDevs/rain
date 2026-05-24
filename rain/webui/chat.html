@@ -227,6 +227,17 @@ async function handleLine(line) {
       const s = await get('/self');
       appendTurn('rain', s.text);
     }
+    else if (line.startsWith('/kb_attn ')) {
+      const prompt = line.slice(9);
+      const data = await post('/kb_attn', { prompt, top_k: 3 });
+      if (data.error) { appendTurn('system', 'error: ' + data.error); return; }
+      const rows = data.per_layer.map((layer, i) => {
+        const facts = layer.map(f => `#${f.fact_idx} (${f.weight.toFixed(3)})`).join(', ');
+        return `layer ${i}: ${facts}`;
+      }).join('<br>');
+      appendTurn('rain', `top facts attended for "${data.prompt}":`,
+        `<span class="badge kb">KB-ATTN</span><br>${rows}`);
+    }
     else {
       // Parse as <subject> <relation>
       const parts = line.trim().split(/\s+/);

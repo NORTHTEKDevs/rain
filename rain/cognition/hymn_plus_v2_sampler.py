@@ -130,3 +130,67 @@ class HymnPlusV2Sampler:
             )
         generated_ids = out[0, len(ids) :].tolist()
         return self.tokenizer.decode(generated_ids)
+
+    def attended_facts(self, prompt: str, *, top_k: int = 3) -> list[list[tuple[int, float]]]:
+        """For each KB-attention block, return the top-K (fact_idx, weight)
+        pairs that the model attended to when processing `prompt`. This is
+        the interpretability handle no LLM offers: literally which facts
+        contributed to the model's state for this prompt.
+
+        Returns one list per KB-attention block (in layer order). Each list
+        has top_k (index, weight) pairs sorted by weight, averaged across
+        the token positions in `prompt`.
+        """
+        import torch
+
+        ids = self.tokenizer.encode(prompt)
+        if not ids:
+            ids = [0]
+        x = torch.tensor([ids], dtype=torch.long)
+        out: list[list[tuple[int, float]]] = []
+        with torch.no_grad():
+            _, _, kb_attns = self.model(x, return_kb_attn=True)
+        for attn in kb_attns:
+            if attn is None:
+                continue
+            # attn: (B=1, T, N_facts). Average over T (mean attention
+            # weight per fact across the prompt).
+            mean_w = attn[0].mean(dim=0)  # (N_facts,)
+            v, idx = torch.topk(mean_w, min(top_k, mean_w.shape[0]))
+            out.append([(int(i.item()), float(w.item())) for i, w in zip(idx, v, strict=True)])
+        return out
+
+    def sample(
+        self,
+        prompt: str,
+        n_tokens: int,
+        *,
+        temperature: float | None = None,
+        top_k: int | None = None,
+        seed: int | None = None,
+        repetition_penalty: float = 1.0,
+    ) -> str:
+        """Legacy-compatible API matching the original _HymnSampler signature
+        used by rain_chat / rain_server / KbAugmentedSampler. Lets v2 drop
+        into any callsite that takes the old HYMN sampler.
+
+        temperature/top_k override the defaults set at construction; seed
+        seeds torch's global RNG; repetition_penalty is currently ignored
+        (the v2 model uses BPE + top-k which gives reasonable diversity
+        without an explicit penalty; future work).
+        """
+        import torch
+
+        if seed is not None:
+            torch.manual_seed(int(seed))
+
+        if temperature is not None or top_k is not None:
+            saved_t, saved_k = self.temperature, self.top_k
+            self.temperature = self.temperature if temperature is None else float(temperature)
+            self.top_k = self.top_k if top_k is None else int(top_k)
+            try:
+                return self(prompt, n_tokens)
+            finally:
+                self.temperature = saved_t
+                self.top_k = saved_k
+        return self(prompt, n_tokens)

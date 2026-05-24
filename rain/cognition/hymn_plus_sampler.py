@@ -111,3 +111,30 @@ class HymnPlusSampler:
             )
         generated = out[0, len(prompt_ids) :].tolist()
         return "".join(self.id_to_char[int(i)] for i in generated)
+
+    def sample(
+        self,
+        prompt: str,
+        n_tokens: int,
+        *,
+        temperature: float | None = None,
+        top_k: int | None = None,
+        seed: int | None = None,
+        repetition_penalty: float = 1.0,
+    ) -> str:
+        """Legacy-compatible API matching the numpy _HymnSampler signature
+        used by rain_chat / rain_server."""
+        import torch
+
+        if seed is not None:
+            torch.manual_seed(int(seed))
+        if temperature is not None or top_k is not None:
+            saved_t, saved_k = self.temperature, self.top_k
+            self.temperature = self.temperature if temperature is None else float(temperature)
+            self.top_k = self.top_k if top_k is None else int(top_k)
+            try:
+                return self(prompt, n_tokens)
+            finally:
+                self.temperature = saved_t
+                self.top_k = saved_k
+        return self(prompt, n_tokens)

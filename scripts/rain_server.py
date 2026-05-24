@@ -175,6 +175,29 @@ def _make_routes(
     async def self_describe(_: web.Request) -> web.Response:
         return web.json_response({"text": agent.self_describe()})
 
+    async def kb_attn(req: web.Request) -> web.Response:
+        """v2 only: return the top-K facts each KB-attn block attended to
+        for the given prompt. The interpretability handle no LLM offers."""
+        # Lazy-check: only HymnPlusV2Sampler has attended_facts
+        if sampler is None or not hasattr(sampler, "attended_facts"):
+            return web.json_response(
+                {"error": "kb_attn only available with hymn_plus_v2 checkpoint"}, status=503
+            )
+        body = await req.json()
+        prompt = body.get("prompt", "")
+        top_k = int(body.get("top_k", 3))
+        per_layer = sampler.attended_facts(prompt, top_k=top_k)
+        return web.json_response(
+            {
+                "prompt": prompt,
+                "top_k": top_k,
+                "per_layer": [
+                    [{"fact_idx": i, "weight": round(w, 4)} for i, w in layer]
+                    for layer in per_layer
+                ],
+            }
+        )
+
     async def ui(_: web.Request) -> web.Response:
         """Serve the built-in chat UI at GET /."""
         ui_path = Path(__file__).resolve().parents[1] / "rain" / "webui" / "chat.html"
@@ -193,6 +216,7 @@ def _make_routes(
         web.get("/tally", tally),
         web.get("/snapshot", snapshot),
         web.get("/self", self_describe),
+        web.post("/kb_attn", kb_attn),
     ]
 
 
@@ -205,7 +229,7 @@ def main() -> int:
     )
     p.add_argument(
         "--arch",
-        choices=["hymn", "hymn_plus", "auto"],
+        choices=["hymn", "hymn_plus", "hymn_plus_v2", "auto"],
         default="auto",
         help="which sampler architecture matches --checkpoint. "
         "'auto' inspects the .json sidecar's arch field.",
@@ -245,13 +269,32 @@ def main() -> int:
 
                 try:
                     meta = _json.loads(meta_path.read_text(encoding="utf-8"))
-                    arch = "hymn_plus" if meta.get("arch") == "hymn_plus_v1" else "hymn"
+                    raw = meta.get("arch", "")
+                    if raw == "hymn_plus_v2":
+                        arch = "hymn_plus_v2"
+                    elif raw == "hymn_plus_v1":
+                        arch = "hymn_plus"
+                    else:
+                        arch = "hymn"
                 except Exception:
                     arch = "hymn"
             else:
                 arch = "hymn"
 
-        if arch == "hymn_plus":
+        if arch == "hymn_plus_v2":
+            from rain.cognition.hymn_plus_v2_sampler import HymnPlusV2Sampler
+
+            hp_sampler = HymnPlusV2Sampler.from_checkpoint(
+                args.checkpoint,
+                temperature=args.temperature,
+                top_k=(args.top_k if args.top_k > 0 else 0),
+            )
+
+            def _agent_sampler(prompt: str, n_tokens: int) -> str:
+                return hp_sampler(prompt, n_tokens=n_tokens)
+
+            sampler = hp_sampler  # for diagnostics print at end of main()
+        elif arch == "hymn_plus":
             from rain.cognition.hymn_plus_sampler import HymnPlusSampler
 
             hp_sampler = HymnPlusSampler.from_checkpoint(
