@@ -24,7 +24,7 @@ of the random baseline).
 |---|---|---|
 | Non-Transformer generative LM that learns | HYMN-Plus v1 hits L1 NLL 1.47 (Tiny Shakespeare, same threshold as the design plan target) | **VERIFIED** by independent re-run of `evals.tier2_llm_parity.tiny_shakespeare` |
 | Architecture scales to large corpora | HYMN-Plus on WT-103: train NLL 1.16 (38 chars/param → memorization impossible) | **VERIFIED** from checkpoint metadata |
-| Generalizes to OOD text | WT-103-trained → WT-2 OOD NLL 1.638 (13% of uniform baseline) | **VERIFIED** by `eval_hymn_plus` re-run |
+| Generalizes to OOD text | WT-103-trained → WT-2 OOD NLL **1.135 nats/char** (13.3% of uniform 8.51 = 86.7% compression). Equivalent: 1.638 bits/char. | **VERIFIED** by `eval_hymn_plus` re-run |
 | Trained KB matters (model uses its KB) | v5 trained KB NLL 3.80 vs random 3.95 = ~4% improvement (statistically significant) | **VERIFIED** by fixed `validate_v2_kb_grounding` |
 | 322 tests pass | Full pytest re-run, 0 failures | **VERIFIED** |
 | Multi-modal hypervector encoders work | image / audio / timeseries → (D,) bipolar; image float-normalization bug FIXED | **VERIFIED** after fix |
@@ -64,7 +64,7 @@ What I will NOT do: claim a moat that the verification doesn't support.
 
 - **HYMN** — original v0 MLP-with-carry char-level LM. L1 NLL = 1.47 on Tiny Shakespeare.
 - **HYMN-Plus v1** (`rain.core.hymn_plus`) — selective gated recurrence + SwiGLU + pre-norm. L1 NLL 1.25 (-15%), OOD WT-2 NLL 2.77 (66% of uniform).
-- **HYMN-Plus v1 on WT-103** — full 543MB corpus, 30K steps CPU, train NLL **1.16**, OOD WT-2 NLL **1.638** (86.7% compression of uniform baseline).
+- **HYMN-Plus v1 on WT-103** — full 543MB corpus, 30K steps CPU, train NLL **1.16 nats/char**, OOD WT-2 NLL **1.135 nats/char = 1.638 bits/char** (86.7% compression of uniform baseline). I had earlier called the bits/char number the NLL — that was a unit confusion; the correct nats/char value is 1.135 and is what `scripts/eval_hymn_plus.py` reports as `nll_nats_per_char`.
 - **HYMN-Plus v2** (`rain.core.hymn_plus_v2`) — adds per-block KB-Attention + BPE tokenization. **The architectural moat lives here.**
 - **HYMN-Plus v5** — v2 trained on Q/A hybrid corpus with real-fact KB pool init + KB-shuffle. First checkpoint where the swappable-KB story works end-to-end. Tag: `arch/hymn-plus-v5-moat-validated`.
 

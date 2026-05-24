@@ -341,8 +341,9 @@ of WikiText-2 (no fine-tuning, no exposure during training):
 
 | Metric | Value |
 |---|---|
-| NLL (nats/char) | **1.638** |
+| NLL (nats/char) | **1.135** |
 | Bits/char | 1.638 |
+| _Note_ | _Earlier this table showed "NLL 1.638" — that was a unit confusion (bits/char read as nats/char). Corrected 2026-05-24 after audit re-run._ |
 | Perplexity | 5.14 |
 | Uniform baseline (4979-char vocab) | 8.51 |
 | % of uniform | **13.3%** |
