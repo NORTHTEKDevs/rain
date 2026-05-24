@@ -50,6 +50,24 @@ def test_same_input_deterministic():
     np.testing.assert_array_equal(hv1, hv2)
 
 
+def test_float_normalized_images_produce_different_hvs():
+    """Regression: previously the threshold was hardcoded 128.0, which
+    silently broke for float-normalized images (all-negative bipolar).
+    Two different float images must produce two different hypervectors."""
+    rng = np.random.default_rng(0)
+    a = rng.random((32, 32, 3)).astype(np.float32)  # values in [0, 1)
+    b = rng.random((32, 32, 3)).astype(np.float32)
+    hv_a = encode_image_patches(a, dim=128)
+    hv_b = encode_image_patches(b, dim=128)
+    # The hypervectors must DIFFER (the bug produced identical all-negative hvs)
+    assert not np.array_equal(
+        hv_a, hv_b
+    ), "float-normalized image encoder is broken (all-zero / all-same output)"
+    # And both must be proper bipolar
+    assert set(np.unique(hv_a).tolist()).issubset({-1.0, 1.0})
+    assert set(np.unique(hv_b).tolist()).issubset({-1.0, 1.0})
+
+
 def test_encode_modality_dispatches():
     img = (np.random.default_rng(0).random((16, 16, 3)) * 255).astype(np.uint8)
     spec = np.random.default_rng(0).random((10, 10)).astype(np.float32)

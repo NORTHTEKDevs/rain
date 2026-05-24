@@ -165,7 +165,11 @@ def train(
     model.to(device)
     model.train()
     opt = optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay, betas=(0.9, 0.95))
+    # Two independent RNGs: one for batch sampling, one for KB-shuffle.
+    # Using a single RNG meant that adding --kb-shuffle-frac silently changed
+    # the batch sequence even at the same --seed, confounding ablations.
     rng = np.random.default_rng(seed)
+    shuffle_rng = np.random.default_rng(seed + 9999)
     N = len(train_ids)
     losses = []
     val_hist = []
@@ -186,7 +190,7 @@ def train(
         # projections learn to handle arbitrary KB content, not just the
         # frozen init KB. Critical for tell()-changes-generation to work.
         if kb_shuffle_frac > 0.0 and (step % kb_shuffle_every == 0):
-            _kb_shuffle(model, kb_shuffle_frac, rng, device, fact_pool=fact_pool)
+            _kb_shuffle(model, kb_shuffle_frac, shuffle_rng, device, fact_pool=fact_pool)
 
         starts = rng.integers(0, N - seq_len - 1, size=batch_size)
         batch = np.stack([train_ids[s : s + seq_len + 1] for s in starts])

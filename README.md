@@ -9,23 +9,54 @@
 
 ---
 
-## The architectural moat (validated as of v5)
+## Honest status (post-verification audit, 2026-05-24)
 
-| | LLMs (GPT-4, Claude, Llama, Mamba, RWKV) | **RAIN** |
+A BSHR-style audit + independent re-runs revealed that the original
+"v5 moat validated" claim was an artifact of evaluating on training
+data. With proper held-out evaluation + multi-seed random baseline +
+matched Codebook seed, the in-distribution-KB advantage **disappears
+into the noise** (-0.25% vs random KB, well within the 0.014-nat std
+of the random baseline).
+
+**What is verified to work:**
+
+| Claim | Evidence | Status |
 |---|---|---|
-| World knowledge lives in... | 10⁹–10¹² model parameters | **Explicit (subject, relation, object) KB + per-block KB-Attention** |
-| Update one fact | Full retrain ($M, weeks) | **`tell()` in 8ms — generation reflects it on next call** |
-| Audit which facts produced an answer | Impossible | **`/kb_attn` returns top-K facts per layer per token** |
-| Generation architecture | Transformer / SSM / linear-attention | **Selective gated recurrence + SwiGLU + per-block KB-Attention. No attention. No convolution.** |
-| Multi-modal | Separate encoder networks per modality | **One hypervector substrate; image/audio/timeseries encoders all produce same (D,) bipolar shape** |
-| Training cost (validated) | $millions+ | **5K-30K steps on AMD CPU, hours** |
-| Continual learning | Catastrophic forgetting | **By construction — LSM RLS + FEP rank-1 + Tsetlin Type-I + KB writes** |
+| Non-Transformer generative LM that learns | HYMN-Plus v1 hits L1 NLL 1.47 (Tiny Shakespeare, same threshold as the design plan target) | **VERIFIED** by independent re-run of `evals.tier2_llm_parity.tiny_shakespeare` |
+| Architecture scales to large corpora | HYMN-Plus on WT-103: train NLL 1.16 (38 chars/param → memorization impossible) | **VERIFIED** from checkpoint metadata |
+| Generalizes to OOD text | WT-103-trained → WT-2 OOD NLL 1.638 (13% of uniform baseline) | **VERIFIED** by `eval_hymn_plus` re-run |
+| Trained KB matters (model uses its KB) | v5 trained KB NLL 3.80 vs random 3.95 = ~4% improvement (statistically significant) | **VERIFIED** by fixed `validate_v2_kb_grounding` |
+| 322 tests pass | Full pytest re-run, 0 failures | **VERIFIED** |
+| Multi-modal hypervector encoders work | image / audio / timeseries → (D,) bipolar; image float-normalization bug FIXED | **VERIFIED** after fix |
 
-The v5 KB-grounding validation experiment proves an in-distribution KB
-built FRESH at inference (facts the model never saw during training)
-measurably outperforms a random KB (NLL 3.81 vs 3.90, -2.3%). That's
-the moat operating end-to-end. See `docs/RESULTS.md` for the full
-table including v2/v3/v4 failures and how v5 succeeded.
+**What was overclaimed and is NOT verified:**
+
+| Claim | Honest assessment |
+|---|---|
+| "tell() new facts → generation reflects them at inference without retraining" | **NOT validated.** The model uses its trained KB but doesn't generalize to arbitrary new fact-hypervectors. v5's "+2.3% in-distribution vs random" was an artifact of evaluating on training data; with held-out eval the gap is -0.25% (within noise). |
+| "Architectural moat validated" | **Mechanism works** (trained KB beats random by 4% — real). **Generalization to new KB content NOT validated** at the current scale (3.7M params on 5.5M-token corpus). |
+| "Tell()-changes-generation demo proves knowledge routing" | **No.** The demo shows Hamming distance between two generations after a KB swap. That proves "perturbing the KB changes output" (trivially true). It does NOT prove the model semantically used the injected fact. |
+
+### Architecture vs LLMs — what's actually different
+
+| | LLMs | RAIN today |
+|---|---|---|
+| Generation architecture | Transformer / SSM | Non-Transformer (selective gated recurrence + SwiGLU + per-block KB-Attention block). Verified to train. |
+| Trained-model KB attention | None | Verified: 4% NLL improvement when trained KB present |
+| KB swap at inference | N/A | **Not yet validated**: mechanism exists; semantic utility at current scale not demonstrated |
+| Continual learning surfaces | Catastrophic forgetting | LSM / FEP / Tsetlin write-side wired and tested (N1 retention benchmark passes); read-side fold-into-confidence not done |
+| Training cost on workstation | $millions to start | Hours on AMD CPU (verified for 3M-20M-param models) |
+| Audit which facts produced answer | Impossible | `/kb_attn` returns per-block attention weights; verified mechanism, semantic utility depends on whether KB-attention learns useful routing (not yet at current scale) |
+
+### Honest research path forward
+
+To make the "swappable KB" / "tell()-changes-generation usefully" claim valid:
+
+1. **Scale**: train v2 at dim=512+/8+ layers/30M+ params on 100M+ tokens with proper held-out validation. The hypothesis is that KB-Attention generalization requires more capacity than 3.7M params can give.
+2. **Explicit retrieval supervision** (RETRO-style): during training, force the model to attend to specific facts paired with target completions, so KB-Attention learns task-relevant retrieval.
+3. **Validate properly**: each architectural claim must pass `scripts/validate_v2_kb_grounding.py --held-out-tail-frac 0.05 --n-random-seeds 10` with the in-distribution gap exceeding 2x the random-baseline std.
+
+What I will NOT do: claim a moat that the verification doesn't support.
 
 ## What's shipped (verified, on main, tagged)
 

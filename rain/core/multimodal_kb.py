@@ -53,14 +53,20 @@ def encode_image_patches(image: np.ndarray, dim: int, n_patches: int = 16) -> np
     rng = _seeded_rng(b"img-patch-role", dim)
     role = (rng.integers(0, 2, size=(n_patches * n_patches, dim)) * 2 - 1).astype(np.float32)
 
+    # Auto-detect threshold from the image range. uint8 images are [0,255];
+    # float-normalized ML-standard images are [0,1]. The previous fixed
+    # threshold 128.0 produced an all-negative bipolar for float images,
+    # making the hypervector identical regardless of image content.
+    img_max = float(image.max())
+    threshold = 0.5 if img_max <= 1.0 else 128.0
+
     acc = np.zeros(dim, dtype=np.float32)
     idx = 0
     for i in range(n_patches):
         for j in range(n_patches):
             patch = image[i * ph : (i + 1) * ph, j * pw : (j + 1) * pw]
-            mean = float(patch.mean())  # 0..1 (assuming normalized) or 0..255
-            # Bipolar value: positive if above-mean for image, negative otherwise
-            sign = 1.0 if mean >= 128.0 else -1.0
+            mean = float(patch.mean())
+            sign = 1.0 if mean >= threshold else -1.0
             acc += role[idx] * sign
             idx += 1
             if idx >= role.shape[0]:

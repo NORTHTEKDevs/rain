@@ -129,17 +129,61 @@ def _eval_nll(
     return total_loss / max(1, total_tokens)
 
 
+def _eval_with_random_kb(model, ids, kb_size, dim, *, batch_size, seq_len, n_seeds=10) -> dict:
+    """Multi-seed random-KB baseline. Returns mean, std, min, max NLL across N seeds.
+
+    Single-seed baselines hide noise. To claim "KB-attention is doing real
+    work", the improvement over the random-KB baseline must be larger than
+    the seed-to-seed variance of the random-KB baseline.
+    """
+    vals = []
+    for s in range(n_seeds):
+        rng = np.random.default_rng(1000 + s)
+        kb_rand = (rng.integers(0, 2, size=(kb_size, dim)) * 2 - 1).astype(np.float32)
+        model.set_kb(torch.as_tensor(kb_rand))
+        vals.append(_eval_nll(model, ids, batch_size=batch_size, seq_len=seq_len))
+    arr = np.array(vals)
+    return {
+        "mean": float(arr.mean()),
+        "std": float(arr.std(ddof=1)) if len(arr) > 1 else 0.0,
+        "min": float(arr.min()),
+        "max": float(arr.max()),
+        "n_seeds": n_seeds,
+    }
+
+
 def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--checkpoint", required=True)
     p.add_argument(
         "--train-corpus", required=True, help="corpus used to construct the 'in-distribution' KB"
     )
-    p.add_argument("--eval-corpus", required=True, help="held-out text to compute NLL on")
+    p.add_argument("--eval-corpus", required=True, help="text to compute NLL on")
     p.add_argument(
         "--ood-corpus", default=None, help="optional second corpus for the OOD KB condition"
     )
     p.add_argument("--n-eval-tokens", type=int, default=5000)
+    p.add_argument(
+        "--held-out-tail-frac",
+        type=float,
+        default=0.05,
+        help="evaluate on the LAST `tail_frac` of the eval corpus (held-out from training "
+        "with --val-split 0.05). Default 0.05 matches the pretrain --val-split default. "
+        "Set 0.0 to evaluate from the head (the BROKEN v5-era default that leaked training data).",
+    )
+    p.add_argument(
+        "--n-random-seeds",
+        type=int,
+        default=10,
+        help="number of random-bipolar KBs to average over (gives variance estimate)",
+    )
+    p.add_argument(
+        "--codebook-seed",
+        type=int,
+        default=0,
+        help="must match HymnPlusV2Sampler.set_kb_from_facts seed (default 0) for "
+        "fact-hypervectors to be in the same space as inference-time tell()",
+    )
     p.add_argument("--batch-size", type=int, default=8)
     p.add_argument("--seq-len", type=int, default=128)
     args = p.parse_args()
@@ -150,12 +194,25 @@ def main() -> int:
     kb_size = meta["kb_size"]
     print(f"loaded {ckpt.name} (dim={dim} layers={meta['n_layers']} kb_size={kb_size})")
 
-    # Encode eval text
+    # Encode eval text -- take the TAIL so we don't leak training data
     text = Path(args.eval_corpus).read_text(encoding="utf-8")
-    ids = np.array(tok.encode(text), dtype=np.int64)
-    if args.n_eval_tokens > 0:
-        ids = ids[: args.n_eval_tokens]
-    print(f"eval: {len(ids):,} tokens from {args.eval_corpus}")
+    all_ids = np.array(tok.encode(text), dtype=np.int64)
+    if args.held_out_tail_frac > 0.0:
+        tail_n = max(args.n_eval_tokens, int(len(all_ids) * args.held_out_tail_frac))
+        ids = all_ids[-tail_n:]
+        if args.n_eval_tokens > 0:
+            ids = ids[: args.n_eval_tokens]
+        print(
+            f"eval: {len(ids):,} tokens from TAIL of {args.eval_corpus} "
+            f"(--held-out-tail-frac={args.held_out_tail_frac}; safe vs --val-split 0.05 training)"
+        )
+    else:
+        ids = all_ids[: args.n_eval_tokens] if args.n_eval_tokens > 0 else all_ids
+        print(
+            f"WARNING: --held-out-tail-frac=0 -> evaluating from HEAD of {args.eval_corpus}. "
+            "If the model was trained on this corpus with --val-split>0, this is TRAINING DATA. "
+            "The reported NLL is train-set NLL, not generalization NLL."
+        )
     print()
 
     # Original KB (whatever was in the trained checkpoint)
@@ -164,24 +221,36 @@ def main() -> int:
         f"[trained]  KB from checkpoint     -> NLL {nll_trained:.4f}  PPL {math.exp(nll_trained):.2f}"
     )
 
-    # A) Random KB
-    rng = np.random.default_rng(99)
-    kb_rand = (rng.integers(0, 2, size=(kb_size, dim)) * 2 - 1).astype(np.float32)
-    model.set_kb(torch.as_tensor(kb_rand))
-    nll_random = _eval_nll(model, ids, batch_size=args.batch_size, seq_len=args.seq_len)
+    # A) Multi-seed random KB
+    rand_stats = _eval_with_random_kb(
+        model,
+        ids,
+        kb_size,
+        dim,
+        batch_size=args.batch_size,
+        seq_len=args.seq_len,
+        n_seeds=args.n_random_seeds,
+    )
+    nll_random = rand_stats["mean"]
     print(
-        f"[A]        random bipolar KB      -> NLL {nll_random:.4f}  PPL {math.exp(nll_random):.2f}"
+        f"[A]        random bipolar KB      -> NLL {nll_random:.4f}  PPL {math.exp(nll_random):.2f} "
+        f"(mean of {rand_stats['n_seeds']} seeds; std={rand_stats['std']:.4f}, "
+        f"range=[{rand_stats['min']:.4f}, {rand_stats['max']:.4f}])"
     )
 
-    # B) In-distribution KB
-    kb_id = _corpus_to_kb(Path(args.train_corpus), dim=dim, kb_size=kb_size, seed=7)
+    # B) In-distribution KB (use codebook_seed matching inference-time tell())
+    kb_id = _corpus_to_kb(
+        Path(args.train_corpus), dim=dim, kb_size=kb_size, seed=args.codebook_seed
+    )
     model.set_kb(torch.as_tensor(kb_id))
     nll_id = _eval_nll(model, ids, batch_size=args.batch_size, seq_len=args.seq_len)
     print(f"[B]        in-distribution KB     -> NLL {nll_id:.4f}  PPL {math.exp(nll_id):.2f}")
 
-    # C) OOD KB (optional)
+    # C) OOD KB (optional) -- also use codebook_seed for fair comparison
     if args.ood_corpus:
-        kb_ood = _corpus_to_kb(Path(args.ood_corpus), dim=dim, kb_size=kb_size, seed=13)
+        kb_ood = _corpus_to_kb(
+            Path(args.ood_corpus), dim=dim, kb_size=kb_size, seed=args.codebook_seed
+        )
         model.set_kb(torch.as_tensor(kb_ood))
         nll_ood = _eval_nll(model, ids, batch_size=args.batch_size, seq_len=args.seq_len)
         print(
@@ -193,19 +262,24 @@ def main() -> int:
     print()
     delta_id = nll_random - nll_id
     pct = delta_id / nll_random * 100 if nll_random > 0 else 0.0
-    print(f"verdict: in-distribution KB vs random KB: delta NLL = {delta_id:+.4f} ({pct:+.2f}%)")
-    if delta_id > 0.05 * nll_random:
-        print("  -> KB-attention IS using the KB. Architectural moat is functional.")
-    elif abs(delta_id) < 0.005 * nll_random:
+    # Statistical-significance check: is the gap larger than 2x the random-KB std?
+    sig = delta_id > 2 * rand_stats["std"]
+    print(
+        f"verdict: in-distribution KB vs random KB: delta NLL = {delta_id:+.4f} ({pct:+.2f}%)  "
+        f"vs random-KB std {rand_stats['std']:.4f}  (>=2x std for significance: {sig})"
+    )
+    if not sig:
         print(
-            "  -> KB has essentially no effect. KB-attention layer may be inert "
-            "(W_o still near zero after training); consider more training or "
-            "explicit init to non-zero W_o."
+            "  -> NOT statistically significant. Single-sample 'in-dist beats random' is "
+            "within the noise of the random-KB baseline. The architectural moat claim is "
+            "not supported by this evaluation."
         )
+    elif delta_id > 0.05 * nll_random:
+        print("  -> KB-attention IS using the KB. Architectural moat is functional.")
     else:
         print(
-            f"  -> Small effect ({pct:+.2f}%). KB-attention is being used but "
-            "the in-distribution facts don't help much vs random."
+            f"  -> Small but statistically significant effect ({pct:+.2f}%, "
+            f">{2 * rand_stats['std']:.4f} = 2*std). KB-attention is being used."
         )
     return 0
 

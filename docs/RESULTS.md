@@ -190,7 +190,45 @@ validation setup confirms it.
 
 ---
 
-## v5 -- THE ARCHITECTURAL MOAT VALIDATED
+## RETRACTION (2026-05-24) — v5 moat claim invalidated by audit
+
+The original "v5 architectural moat validated" section below was
+**wrong**. A BSHR-style audit + independent re-runs found three
+methodological errors in `scripts/validate_v2_kb_grounding.py` (now
+fixed in main):
+
+1. The eval data was the HEAD of the corpus, which is the TRAINING data
+   (training takes everything minus the val tail). The v5 "+2.30%" was
+   measured on the training set, not held-out.
+2. Random KB used a single seed (np.random.default_rng(99)) — no
+   variance estimate, so the gap couldn't be checked against noise.
+3. The Codebook seed in the eval differed from the inference-time
+   `set_kb_from_facts` (seed=7 vs seed=0) — different hypervector
+   spaces; comparison was not fair.
+
+After fixes (`--held-out-tail-frac 0.05 --n-random-seeds 10 --codebook-seed 0`):
+
+| Condition | NLL on held-out tail | vs random |
+|---|---|---|
+| Trained KB | **3.80** | -3.9% (real, model uses trained KB) |
+| Random KB (mean of 10 seeds) | 3.95 ± 0.014 (std) | baseline |
+| In-distribution KB (fresh, from same corpus) | **3.96** | **-0.25%** (within noise) |
+| OOD KB (WikiText-2) | 4.01 | +1.6% (slightly worse) |
+
+**Honest interpretation**: the trained KB matters (4% NLL improvement,
+statistically significant). The model has NOT learned to attend over
+arbitrary new fact-hypervectors at the v5 scale (3.7M params, 5.5M-token
+corpus). The "+2.3% in-distribution beats random" gap was a measurement
+artifact, not a model property. The `arch/hymn-plus-v5-moat-validated`
+tag remains in git but should not be cited as proof of the swappable-KB
+claim.
+
+The old v5 section is left below for the historical record of how the
+claim was originally framed and how the audit overturned it.
+
+---
+
+## v5 -- THE ARCHITECTURAL MOAT VALIDATED [SUPERSEDED 2026-05-24]
 
 **hymn_plus_v5_qa**: 5000 steps on hybrid Q/A corpus (5.5M BPE tokens),
 KB initialized from 2399 real fact-hypervectors, KB-shuffle drawing
