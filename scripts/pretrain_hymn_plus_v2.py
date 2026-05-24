@@ -69,6 +69,29 @@ def _eval_val(model, val_ids, *, batch_size, seq_len, device, max_windows=64):
     return total_loss / max(1, total_chars)
 
 
+def _kb_shuffle(model, frac: float, rng: np.random.Generator, device) -> None:
+    """v3: randomly replace `frac` of each KB-attention block's buffer with
+    fresh bipolar random vectors. Forces the W_q/W_k/W_v projections to
+    learn 'how to attend over any KB', not just the one frozen at init.
+    Without this, validate_v2_kb_grounding shows ~0% benefit from swapping
+    in real facts at inference time.
+    """
+    if frac <= 0.0:
+        return
+    for block in model.blocks:
+        if not block.use_kb_attn:
+            continue
+        kb = block.kb_attn.kb
+        n = kb.shape[0]
+        k_replace = max(1, int(n * frac))
+        idx = rng.choice(n, size=k_replace, replace=False)
+        new_rows = torch.as_tensor(
+            (rng.integers(0, 2, size=(k_replace, kb.shape[1])) * 2 - 1).astype(np.float32),
+            device=device,
+        )
+        kb[idx] = new_rows
+
+
 def train(
     model,
     train_ids,
@@ -87,6 +110,8 @@ def train(
     log_every,
     val_every,
     early_stop_patience,
+    kb_shuffle_frac: float = 0.0,
+    kb_shuffle_every: int = 1,
 ):
     model.to(device)
     model.train()
@@ -107,6 +132,12 @@ def train(
         cur_lr = _lr_schedule(step, n_steps, lr, warmup_steps, cosine_decay)
         for pg in opt.param_groups:
             pg["lr"] = cur_lr
+
+        # KB-shuffle (v3 fix): periodically replace some KB entries so the
+        # projections learn to handle arbitrary KB content, not just the
+        # frozen init KB. Critical for tell()-changes-generation to work.
+        if kb_shuffle_frac > 0.0 and (step % kb_shuffle_every == 0):
+            _kb_shuffle(model, kb_shuffle_frac, rng, device)
 
         starts = rng.integers(0, N - seq_len - 1, size=batch_size)
         batch = np.stack([train_ids[s : s + seq_len + 1] for s in starts])
@@ -202,6 +233,15 @@ def main() -> None:
     p.add_argument("--val-split", type=float, default=0.05)
     p.add_argument("--val-every", type=int, default=0)
     p.add_argument("--early-stop-patience", type=int, default=0)
+    p.add_argument(
+        "--kb-shuffle-frac",
+        type=float,
+        default=0.0,
+        help="v3: fraction of KB entries to randomly replace every "
+        "--kb-shuffle-every steps. 0.0 = disabled (v2 behavior); 0.1 = "
+        "10%% of facts replaced per shuffle (recommended for KB generalization).",
+    )
+    p.add_argument("--kb-shuffle-every", type=int, default=1)
     p.add_argument("--device", choices=["auto", "cpu"], default="cpu")
     p.add_argument("--log-every", type=int, default=500)
     p.add_argument("--seed", type=int, default=42)
@@ -278,6 +318,8 @@ def main() -> None:
         log_every=args.log_every,
         val_every=args.val_every,
         early_stop_patience=args.early_stop_patience,
+        kb_shuffle_frac=args.kb_shuffle_frac,
+        kb_shuffle_every=args.kb_shuffle_every,
     )
 
     # Save checkpoint
@@ -310,6 +352,8 @@ def main() -> None:
         "grad_clip": args.grad_clip,
         "weight_decay": args.weight_decay,
         "tie_weights": not args.no_tie_weights,
+        "kb_shuffle_frac": args.kb_shuffle_frac,
+        "kb_shuffle_every": args.kb_shuffle_every,
         "trainable_params": count_params(model),
         "wall_seconds": result["wall_seconds"],
         "initial_loss": result["initial_loss"],
