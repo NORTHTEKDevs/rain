@@ -69,12 +69,23 @@ def _eval_val(model, val_ids, *, batch_size, seq_len, device, max_windows=64):
     return total_loss / max(1, total_chars)
 
 
-def _kb_shuffle(model, frac: float, rng: np.random.Generator, device) -> None:
-    """v3: randomly replace `frac` of each KB-attention block's buffer with
-    fresh bipolar random vectors. Forces the W_q/W_k/W_v projections to
-    learn 'how to attend over any KB', not just the one frozen at init.
-    Without this, validate_v2_kb_grounding shows ~0% benefit from swapping
-    in real facts at inference time.
+def _kb_shuffle(
+    model,
+    frac: float,
+    rng: np.random.Generator,
+    device,
+    fact_pool: np.ndarray | None = None,
+) -> None:
+    """v3: randomly replace `frac` of each KB-attention block's buffer.
+
+    If `fact_pool` is provided (a (N, D) matrix of real fact-hypervectors
+    >= kb_size), replacements are drawn from the pool. This is v5: keeps
+    the KB "shaped like real facts" throughout training, so the model
+    learns to attend over real fact-content distributions rather than
+    learning to ignore noise.
+
+    If `fact_pool` is None, replacements are fresh random bipolar vectors
+    (v3 behavior).
     """
     if frac <= 0.0:
         return
@@ -85,11 +96,48 @@ def _kb_shuffle(model, frac: float, rng: np.random.Generator, device) -> None:
         n = kb.shape[0]
         k_replace = max(1, int(n * frac))
         idx = rng.choice(n, size=k_replace, replace=False)
-        new_rows = torch.as_tensor(
-            (rng.integers(0, 2, size=(k_replace, kb.shape[1])) * 2 - 1).astype(np.float32),
-            device=device,
-        )
+        if fact_pool is not None and len(fact_pool) >= k_replace:
+            pool_idx = rng.choice(len(fact_pool), size=k_replace, replace=False)
+            new_rows = torch.as_tensor(fact_pool[pool_idx], device=device, dtype=kb.dtype)
+        else:
+            new_rows = torch.as_tensor(
+                (rng.integers(0, 2, size=(k_replace, kb.shape[1])) * 2 - 1).astype(np.float32),
+                device=device,
+            )
         kb[idx] = new_rows
+
+
+def _build_fact_pool(jsonl_path: Path, dim: int, max_facts: int, seed: int) -> np.ndarray:
+    """Read a (subject, relation, object) JSONL and build (N, dim) bipolar
+    fact-hypervectors via Codebook + bind + bundle. Returns up to max_facts.
+    """
+    import json as _json
+
+    from rain.core.relational import Codebook, bind, bundle
+
+    cb = Codebook(vocab_size=16384, dim=dim, seed=seed)
+    rows: list[np.ndarray] = []
+    with jsonl_path.open(encoding="utf-8") as fh:
+        for line in fh:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                rec = _json.loads(line)
+            except _json.JSONDecodeError:
+                continue
+            s = rec.get("subject") or rec.get("s")
+            r = rec.get("relation") or rec.get("r")
+            o = rec.get("object") or rec.get("o")
+            if not (s and r and o):
+                continue
+            fact = bundle([bind(cb.vector(str(s)), cb.vector(str(r))), cb.vector(str(o))])
+            rows.append(fact.astype(np.float32))
+            if len(rows) >= max_facts:
+                break
+    if not rows:
+        return np.zeros((0, dim), dtype=np.float32)
+    return np.stack(rows, axis=0)
 
 
 def train(
@@ -112,6 +160,7 @@ def train(
     early_stop_patience,
     kb_shuffle_frac: float = 0.0,
     kb_shuffle_every: int = 1,
+    fact_pool: np.ndarray | None = None,
 ):
     model.to(device)
     model.train()
@@ -137,7 +186,7 @@ def train(
         # projections learn to handle arbitrary KB content, not just the
         # frozen init KB. Critical for tell()-changes-generation to work.
         if kb_shuffle_frac > 0.0 and (step % kb_shuffle_every == 0):
-            _kb_shuffle(model, kb_shuffle_frac, rng, device)
+            _kb_shuffle(model, kb_shuffle_frac, rng, device, fact_pool=fact_pool)
 
         starts = rng.integers(0, N - seq_len - 1, size=batch_size)
         batch = np.stack([train_ids[s : s + seq_len + 1] for s in starts])
@@ -243,6 +292,22 @@ def main() -> None:
     )
     p.add_argument("--kb-shuffle-every", type=int, default=1)
     p.add_argument(
+        "--kb-init-jsonl",
+        default=None,
+        help="v5: path to a (subject, relation, object) JSONL. Initial KB is "
+        "built from these facts via Codebook+bind+bundle. KB-shuffle then "
+        "draws replacements from this fact pool too -- the KB stays "
+        "'shaped like real facts' throughout training. Recommended when "
+        "training on Q/A corpus where the model can actually benefit from "
+        "fact retrieval.",
+    )
+    p.add_argument(
+        "--kb-fact-pool-size",
+        type=int,
+        default=0,
+        help="how many facts to load into the shuffle pool (0 = use 4x kb_size)",
+    )
+    p.add_argument(
         "--kb-w-o-init-gain",
         type=float,
         default=0.0,
@@ -292,6 +357,20 @@ def main() -> None:
         train_ids = ids
         val_ids = None
 
+    # v5: build a fact pool from JSONL if requested
+    fact_pool = None
+    init_kb = None
+    if args.kb_init_jsonl:
+        pool_size = args.kb_fact_pool_size if args.kb_fact_pool_size > 0 else args.kb_size * 4
+        fact_pool = _build_fact_pool(
+            Path(args.kb_init_jsonl), dim=args.dim, max_facts=pool_size, seed=args.seed
+        )
+        print(f"loaded {len(fact_pool)} fact-hypervectors from {args.kb_init_jsonl}")
+        if len(fact_pool) >= args.kb_size:
+            init_kb = fact_pool[: args.kb_size]
+        else:
+            print(f"  warning: only {len(fact_pool)} facts; KB will be partly random")
+
     cfg = HymnPlusV2Config(
         vocab_size=actual_vocab,
         dim=args.dim,
@@ -303,6 +382,7 @@ def main() -> None:
         kb_top_k=args.kb_top_k,
         kb_attn_in_layers=tuple(args.kb_attn_in_layers) if args.kb_attn_in_layers else None,
         kb_w_o_init_gain=args.kb_w_o_init_gain,
+        init_kb=init_kb,
         seed=args.seed,
     )
     model = HymnPlusV2(cfg)
@@ -331,6 +411,7 @@ def main() -> None:
         early_stop_patience=args.early_stop_patience,
         kb_shuffle_frac=args.kb_shuffle_frac,
         kb_shuffle_every=args.kb_shuffle_every,
+        fact_pool=fact_pool,
     )
 
     # Save checkpoint

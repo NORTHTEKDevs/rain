@@ -18,7 +18,9 @@ class BPETokenizer:
         self._sp: spm.SentencePieceProcessor | None = None
 
     def train(self, texts: list[str]) -> None:
-        with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
+        # Force utf-8 -- Windows defaults to cp1252 which chokes on any
+        # non-ASCII in the corpus (Alpaca, KB-QA, anything with smart quotes).
+        with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False, encoding="utf-8") as f:
             for t in texts:
                 f.write(t + "\n")
             path = f.name
