@@ -16,6 +16,7 @@ L1's pass threshold per the design plan is **NLL <= 1.55 nats/char**.
 | hymn_dim2048_carry16_30k_lr2e4 | 30,000 | 16 | 16 | 2048 | 2e-4 | features | NLL | ~30 min | 1.92 | 1.92 | dim=2048 still worse than dim=1024 at this corpus size. Negative finding. |
 | hymn_ts_minilm_smoke | 3,000 | 8 | 16 | 1024 | 1e-3 | MiniLM | NLL | 28.5 s | 2.73 | -- | MiniLM warm-start, cosine within-letter 0.48 / across 0.46 -- no category prior. |
 | hymn_ts_features_smoke | 3,000 | 8 | 16 | 1024 | 1e-3 | features | NLL | 27.8 s | 2.40 | -- | A/B vs MiniLM. Features win for char-level. |
+| **hymn_plus_v1_5k** | **5,000** | **n/a (full attention-free recurrence)** | **16** | **256** (4 layers, 4M params) | **3e-4** | **features** | **NLL** | **14.5 min CPU** | **1.25** | **1.25** | **BREAKTHROUGH: non-Transformer (Mamba-class selective recurrence + SwiGLU + pre-norm + residuals) beats HYMN-MLP by 15% with 10x fewer steps and 4x smaller dim. Generates plausible Shakespearean dialogue at temperature=0.7.** |
 
 ## L2 -- WikiText-X self-eval NLL
 
