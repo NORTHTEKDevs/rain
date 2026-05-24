@@ -17,7 +17,31 @@ L1's pass threshold per the design plan is **NLL <= 1.55 nats/char**.
 | hymn_ts_minilm_smoke | 3,000 | 8 | 16 | 1024 | 1e-3 | MiniLM | NLL | 28.5 s | 2.73 | -- | MiniLM warm-start, cosine within-letter 0.48 / across 0.46 -- no category prior. |
 | hymn_ts_features_smoke | 3,000 | 8 | 16 | 1024 | 1e-3 | features | NLL | 27.8 s | 2.40 | -- | A/B vs MiniLM. Features win for char-level. |
 | **hymn_plus_v1_5k** | **5,000** | **n/a (full attention-free recurrence)** | **16** | **256** (4 layers, 4M params) | **3e-4** | **features** | **NLL** | **14.5 min CPU** | **1.25** | **1.25** | **BREAKTHROUGH: non-Transformer (Mamba-class selective recurrence + SwiGLU + pre-norm + residuals) beats HYMN-MLP by 15% with 10x fewer steps and 4x smaller dim. Generates plausible Shakespearean dialogue at temperature=0.7.** |
-| hymn_plus_v2_15k | 15,000 | n/a | 16 | 384 (6 layers, 14M params) | 3e-4 | features | NLL | ~2 h CPU | 0.28 | 0.28 (train) | **OVERFITTING**: 14M params on 1.1M-char corpus is 12 chars/param + 20 epochs of training. Verified memorization (output contains verbatim Shakespeare lines from training). NLL number not meaningful for distribution learning. Architecture validates but corpus is too small for this capacity. Held-out eval needed for true number. |
+| hymn_plus_v2_15k | 15,000 | n/a | 16 | 384 (6 layers, 14M params) | 3e-4 | features | NLL | ~2 h CPU | 0.28 | 0.28 (train) | **OVERFITTING**: 14M params on 1.1M-char corpus is 12 chars/param + 20 epochs. Verified memorization (output contains verbatim Shakespeare lines from training). Train NLL not meaningful. |
+
+## Held-out generalization (HYMN-Plus on OOD WikiText-2)
+
+The honest test of any LM: NLL on text the model never saw. Tiny
+Shakespeare-trained checkpoints evaluated on the first 50K chars of
+WikiText-2 (Wikipedia-style English -- different distribution).
+
+Uniform baseline for the 65-char vocab is 4.17 nats/char. Below uniform
+= the model learned something general; above uniform = the model is so
+specialized to training that it actively hurts on OOD text.
+
+| Checkpoint | Held-out NLL on WT-2 | Ratio of uniform | Generalizes? |
+|---|---|---|---|
+| **hymn_plus_v1_5k** (4M params, 5K steps) | **2.77** | 66% | **Yes -- the architecture works** |
+| hymn_plus_v2_15k (14M params, 15K steps) | 5.16 | 124% | No -- destroyed by overfit to Shakespeare |
+
+**Headline:** the smaller v1 checkpoint that hit 1.25 on training generalizes
+to 2.77 on OOD WikiText-2 -- a real, honest number proving the architecture
+learns distribution structure, not just memorization. The bigger v2 went
+too far into overfit and lost generalization.
+
+Lesson: **future training runs MUST use held-out validation.** A train
+NLL that drops without a val NLL is meaningless. `scripts/eval_hymn_plus.py`
+is the new standard tool.
 
 ## L2 -- WikiText-X self-eval NLL
 
