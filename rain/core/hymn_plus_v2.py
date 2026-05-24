@@ -73,6 +73,7 @@ class HymnPlusV2Config:
     kb_size: int = 1024  # number of facts in the inline KB
     kb_top_k: int = 8  # how many facts to retrieve per query
     kb_attn_in_layers: tuple[int, ...] | None = None  # which layers get KB-attn (None = all)
+    kb_w_o_init_gain: float = 0.0  # non-zero gain when training with KB shuffle
     # Initialization
     init_codebook: np.ndarray | None = None
     init_kb: np.ndarray | None = None
@@ -147,7 +148,7 @@ class KbAttention(nn.Module):
     gradients flowing through the same K facts that inference will use.
     """
 
-    def __init__(self, dim: int, kb_size: int, top_k: int = 8):
+    def __init__(self, dim: int, kb_size: int, top_k: int = 8, w_o_init_gain: float = 0.0):
         super().__init__()
         self.dim = dim
         self.kb_size = kb_size
@@ -164,14 +165,18 @@ class KbAttention(nn.Module):
         self.W_v = nn.Linear(dim, dim, bias=False)
         self.W_o = nn.Linear(dim, dim, bias=False)
 
-        # Small-gain init keeps the KB-attention contribution close to 0
-        # at the start of training; the model "learns to retrieve" when
-        # the gradient signal points that way.
         for w in (self.W_q.weight, self.W_k.weight, self.W_v.weight):
             nn.init.xavier_uniform_(w, gain=0.5)
-        # Output projection initialized small so the residual path
-        # dominates at init -- v1-equivalent behavior is the limit.
-        nn.init.zeros_(self.W_o.weight)
+        # Output projection init: zero gives v1-equivalent behavior at start
+        # (residual dominates, KB-attn contributes nothing -- model must learn
+        # KB matters from gradient). Non-zero init forces the KB contribution
+        # to be non-trivial from step 1 -- required when training with KB
+        # shuffle, because zero W_o gives zero gradient flow from KB shuffle
+        # and the model just learns to ignore the layer (v3 failure mode).
+        if w_o_init_gain > 0.0:
+            nn.init.xavier_uniform_(self.W_o.weight, gain=w_o_init_gain)
+        else:
+            nn.init.zeros_(self.W_o.weight)
 
     def set_kb(self, kb: torch.Tensor) -> None:
         """Replace the KB at inference time. Shape must be (kb_size, dim)."""
@@ -223,6 +228,7 @@ class HymnPlusV2Block(nn.Module):
         top_k: int = 8,
         use_kb_attn: bool = True,
         dropout: float = 0.0,
+        w_o_init_gain: float = 0.0,
     ):
         super().__init__()
         self.use_kb_attn = use_kb_attn
@@ -230,7 +236,9 @@ class HymnPlusV2Block(nn.Module):
         self.recur = SelectiveGatedRecurrence(dim)
         if use_kb_attn:
             self.norm_kb = nn.LayerNorm(dim)
-            self.kb_attn = KbAttention(dim, kb_size=kb_size, top_k=top_k)
+            self.kb_attn = KbAttention(
+                dim, kb_size=kb_size, top_k=top_k, w_o_init_gain=w_o_init_gain
+            )
         self.norm2 = nn.LayerNorm(dim)
         self.mlp = GatedMLP(dim, mult=mlp_mult)
         self.drop = nn.Dropout(dropout) if dropout > 0 else nn.Identity()
@@ -285,6 +293,7 @@ class HymnPlusV2(nn.Module):
                     top_k=config.kb_top_k,
                     use_kb_attn=(i in kb_in),
                     dropout=config.dropout,
+                    w_o_init_gain=config.kb_w_o_init_gain,
                 )
                 for i in range(config.n_layers)
             ]

@@ -242,6 +242,16 @@ def main() -> None:
         "10%% of facts replaced per shuffle (recommended for KB generalization).",
     )
     p.add_argument("--kb-shuffle-every", type=int, default=1)
+    p.add_argument(
+        "--kb-w-o-init-gain",
+        type=float,
+        default=0.0,
+        help="v4: gain for the KB-attention output projection's xavier init. "
+        "0.0 (default) = zero-init (v2/v3, residual dominates at start, model "
+        "must learn KB matters from gradient). 0.3-0.5 = forces KB-attn to "
+        "contribute from step 1 -- required when training with --kb-shuffle-frac, "
+        "otherwise the model just routes around the KB-attention block.",
+    )
     p.add_argument("--device", choices=["auto", "cpu"], default="cpu")
     p.add_argument("--log-every", type=int, default=500)
     p.add_argument("--seed", type=int, default=42)
@@ -292,6 +302,7 @@ def main() -> None:
         kb_size=args.kb_size,
         kb_top_k=args.kb_top_k,
         kb_attn_in_layers=tuple(args.kb_attn_in_layers) if args.kb_attn_in_layers else None,
+        kb_w_o_init_gain=args.kb_w_o_init_gain,
         seed=args.seed,
     )
     model = HymnPlusV2(cfg)
@@ -354,6 +365,7 @@ def main() -> None:
         "tie_weights": not args.no_tie_weights,
         "kb_shuffle_frac": args.kb_shuffle_frac,
         "kb_shuffle_every": args.kb_shuffle_every,
+        "kb_w_o_init_gain": args.kb_w_o_init_gain,
         "trainable_params": count_params(model),
         "wall_seconds": result["wall_seconds"],
         "initial_loss": result["initial_loss"],
