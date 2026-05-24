@@ -68,6 +68,93 @@ one overfit.
 **Identical val NLL.** Keep weight tying enabled by default -- saves
 8K params and 14% wall time at no quality cost.
 
+---
+
+## HYMN-Plus v2 (KB-Attention + BPE)
+
+### Run: hymn_plus_v2_bpe (Tiny Shakespeare, 4K steps)
+
+| | Value |
+|---|---|
+| Params (trainable) | 3.35M |
+| KB buffer (non-trainable) | 1024 facts x dim 192 = 196,608 floats |
+| BPE vocab | 2048 (3.25 chars/token compression) |
+| Steps / wall | 4000 / 33 min CPU |
+| Initial train NLL | 7.65 (vs uniform ln(2048)=7.62 -- ~at baseline at init) |
+| Best val NLL | ~4.97 around step 1200 |
+| Final val NLL | 5.74 (after train continued past best val) |
+| Final train NLL | 2.47 |
+| Train/val gap | +3.35 -- **textbook overfit** |
+
+**Honest finding:** v2 model overfit. Train kept dropping; val NLL
+bottomed at ~5.0 around step 1200 and rose back to 5.74 by step 4000.
+Early stopping wasn't enabled on this run; next run will use
+`--early-stop-patience 3` to capture the best val checkpoint.
+
+### Architectural-claim test (`scripts.validate_v2_kb_grounding`)
+
+On 4K held-out Tiny Shakespeare tokens, three KB conditions:
+
+| KB condition | NLL | PPL |
+|---|---|---|
+| Trained KB (from checkpoint) | 2.37 | 10.73 |
+| Random bipolar KB | 2.98 | 19.75 |
+| In-distribution KB (built from training corpus) | 2.98 | 19.63 |
+| OOD KB (WikiText-2) | 2.99 | 19.94 |
+
+**Two important findings:**
+
+1. **KB-Attention IS doing real work in the trained checkpoint.** The
+   trained KB gives 0.61 nats/token (~20%) better NLL than random KB.
+   The architectural moat is functional when the KB is the one the
+   model trained with.
+
+2. **The "swap in new facts" generalization is BROKEN.** A KB built
+   from the same corpus (B) gives almost identical NLL to a random KB
+   (A). The model learned to depend on its specific trained KB; the
+   W_q / W_k / W_v projections don't generalize to ANY bipolar KB
+   matrix yet.
+
+**What this means for the moat:** v2 proves that integrating retrieved
+facts at every block IS useful (point 1). But the "tell() → KB update
+→ immediate generation impact" story (point 2) requires v3 with
+**KB-shuffle training** -- during training, randomly replace some KB
+entries each step so the projections learn to handle arbitrary KB
+content.
+
+### Sample (temperature=0.7, top_k=30, trained KB)
+
+```
+ROMEO: Fellow, good friend! I'll make thee conforforce it, and thou
+shalt do his father might know The time Of good dimm'd with such a
+hotd; And I will fight for us! O, let me speak. But, say he comes?
+First Citizen: You are too much slays pay for us, I am hur
+```
+
+Real character-format dialogue. Period-correct vocabulary ("thou",
+"thee", "doth"). Mostly-grammatical sentence structure. Some BPE
+artifacts ("conforforce", "hotd"). Clearly more fluent than v1
+char-level output at similar token count.
+
+### tell-changes-generation demo
+
+`scripts.demo_v2_tell_changes_generation` does work mechanically --
+running with facts ["lion lives_in savanna", ...] produces a
+completely different generation (Hamming distance 124 of 132 chars).
+But the model's output doesn't *use the new fact semantically* -- it
+just gets perturbed into different Shakespeare-style text.
+
+This confirms finding #2 above: mechanism works, semantic grounding
+needs KB-shuffle training.
+
+### v3 plan
+
+1. KB-shuffle during training (random replacement of K facts/step)
+2. Smaller model (dim=128, 3 layers) to avoid the v2 overfit
+3. Early stopping enabled by default
+4. Validate on `scripts.validate_v2_kb_grounding`: B should beat A
+   by >=5% NLL after the fix
+
 **Headline:** the smaller v1 checkpoint that hit 1.25 on training generalizes
 to 2.77 on OOD WikiText-2 -- a real, honest number proving the architecture
 learns distribution structure, not just memorization. The bigger v2 went

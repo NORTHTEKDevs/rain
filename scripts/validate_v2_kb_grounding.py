@@ -193,7 +193,7 @@ def main() -> int:
     print()
     delta_id = nll_random - nll_id
     pct = delta_id / nll_random * 100 if nll_random > 0 else 0.0
-    print(f"verdict: in-distribution KB vs random KB: ΔNLL = {delta_id:+.4f} ({pct:+.2f}%)")
+    print(f"verdict: in-distribution KB vs random KB: delta NLL = {delta_id:+.4f} ({pct:+.2f}%)")
     if delta_id > 0.05 * nll_random:
         print("  -> KB-attention IS using the KB. Architectural moat is functional.")
     elif abs(delta_id) < 0.005 * nll_random:
