@@ -24,10 +24,44 @@ If you're on AMD on Windows, init.sh installs `torch-directml` so the iGPU
 is usable. On NVIDIA or CPU-only systems, training still works (slower);
 just ignore the DirectML log lines.
 
-## 2. Train the HYMN core (~15 min on CPU; ~10 min on the iGPU)
+## 2. Train the model core (~15 min CPU)
 
-This is the run that produced the L1-PASSING checkpoint
-(L1 NLL = 1.5359, target 1.55):
+**Recommended: HYMN-Plus** (the new non-Transformer architecture, generalizes
+to OOD WikiText-2 at NLL 2.77):
+
+```bash
+.venv/Scripts/python -u -m scripts.pretrain_hymn_plus \
+  --corpus data/corpora/tiny_shakespeare.txt \
+  --steps 5000 --batch-size 16 --seq-len 64 \
+  --dim 256 --n-layers 4 --mlp-mult 4 \
+  --lr 3e-4 --warmup-steps 300 --cosine-decay --weight-decay 0.05 \
+  --grad-clip 1.0 --warm-start-chars \
+  --val-split 0.05 --val-every 500 \
+  --device cpu --log-every 500 \
+  --out data/checkpoints/hymn_plus_v1_5k.npz
+```
+
+Sample from it:
+
+```bash
+.venv/Scripts/python -m scripts.sample_hymn_plus \
+  --checkpoint data/checkpoints/hymn_plus_v1_5k.npz \
+  --prompt "ROMEO: " --max-new 200 --temperature 0.7 --top-k 30
+```
+
+Check it generalized (vs memorized):
+
+```bash
+.venv/Scripts/python -m scripts.eval_hymn_plus \
+  --checkpoint data/checkpoints/hymn_plus_v1_5k.npz \
+  --corpus data/corpora/wikitext2_train.txt \
+  --n-eval-chars 50000
+# Expect: nll_nats_per_char ~ 2.77 (66% of uniform 4.17)
+```
+
+---
+
+**Legacy: HYMN MLP** (the original baseline, still works for backward compat):
 
 ```bash
 .venv/Scripts/python -u -m scripts.pretrain_hymn_torch \

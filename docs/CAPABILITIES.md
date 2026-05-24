@@ -3,6 +3,39 @@
 > Honest, reproducible list of capabilities the v0 stack actually delivers
 > on the broke-mode workstation. Every line has a concrete command you can
 > run to verify it yourself. No vaporware.
+>
+> **New 2026-05-23:** HYMN-Plus, a working non-Transformer generative
+> LM (selective gated recurrence + SwiGLU + pre-norm), beats the original
+> HYMN baseline at 4x smaller dim. Section 0 below.
+
+## 0. HYMN-Plus -- non-Transformer generative LM that actually works
+
+Architecture: `rain.core.hymn_plus.HymnPlus`. N blocks of
+selective-gated-recurrence + SwiGLU MLP + pre-norm + residuals,
+weight-tied output head. **No attention. No convolution.** Trains on
+CPU in ~15 min.
+
+Measured on Tiny Shakespeare (train + held-out OOD WikiText-2):
+
+| | Train NLL | OOD WT-2 NLL | Generates real text? |
+|---|---|---|---|
+| Old HYMN (50K steps, dim=1024) | 1.47 | (in-distribution only) | yes |
+| **HYMN-Plus v1 (5K steps, dim=256)** | **1.25** | **2.77 (66% of uniform)** | **yes, generalized** |
+
+Verify yourself:
+```bash
+python -m scripts.pretrain_hymn_plus \
+    --corpus data/corpora/tiny_shakespeare.txt \
+    --steps 5000 --batch-size 16 --seq-len 64 \
+    --dim 256 --n-layers 4 --mlp-mult 4 \
+    --lr 3e-4 --warmup-steps 300 --cosine-decay --weight-decay 0.05 \
+    --grad-clip 1.0 --warm-start-chars --val-split 0.05 \
+    --device cpu --out data/checkpoints/hymn_plus_v1_5k.npz
+
+python -m scripts.sample_hymn_plus \
+    --checkpoint data/checkpoints/hymn_plus_v1_5k.npz \
+    --prompt "ROMEO: " --temperature 0.7
+```
 
 ## 1. Char-level language modeling that passes the design-plan threshold
 

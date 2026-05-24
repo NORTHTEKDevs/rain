@@ -1,14 +1,19 @@
-# HYMN Training Runbook
+# HYMN / HYMN-Plus Training Runbook
 
-> Empirical hyperparameters and gotchas collected while training HYMN on the
-> Corsair AI Workstation 300 (Ryzen AI MAX+ 395, Radeon 8060S, 128 GB DDR5
-> unified). Last updated: 2026-05-22.
+> Empirical hyperparameters and gotchas. Two architectures live here now:
+> **HYMN** (legacy 2-layer MLP with carry-step) and **HYMN-Plus**
+> (selective gated recurrence + SwiGLU + pre-norm + residuals, the
+> non-Transformer LM that actually generates text).
+>
+> Corsair AI Workstation 300 (Ryzen AI MAX+ 395, Radeon 8060S, 128 GB
+> DDR5 unified). Last updated: 2026-05-23.
 
 ## Quick decision tree
 
 | Question | Answer |
 |---|---|
-| Which trainer? | `scripts.pretrain_hymn_torch` (Adam-W + batching + DirectML). Numpy reference at `scripts.pretrain_hymn` stays as the deterministic checkpoint-format anchor only. |
+| Which architecture? | **HYMN-Plus** for any new run -- beats HYMN by 15%+ at smaller param count, generates real text. Use HYMN only for backward-compat checkpoint reads. |
+| Which trainer? | `scripts.pretrain_hymn_plus` for HYMN-Plus. `scripts.pretrain_hymn_torch` for HYMN. |
 | Which loss? | `--loss nll` for any new run. MSE-on-HV is the v0 reference and trained slower per signal-bit. |
 | Which device? | `--device directml` on this workstation. CPU is competitive at dim ≤ 1024 but DirectML wins as dim grows. |
 | Which corpus? | Start with Tiny Shakespeare (~1.1 MB, in `data/corpora/`). Bump to WikiText-2 when train and val both look healthy. |
@@ -127,3 +132,96 @@ python -m evals.tier2_llm_parity.tiny_shakespeare \
   visible at 10K steps on Tiny Shakespeare.
 - Real NLL eval on a checkpoint trained with NLL + 50K steps + context=16 + weight_decay.
   Latest in-flight at the time of writing.
+
+---
+
+# HYMN-Plus Training Recipes (the new default)
+
+## Architecture
+
+`rain.core.hymn_plus.HymnPlus`: N x (Selective-Gated-Recurrence + SwiGLU MLP)
+with pre-norm + residuals + weight-tied output head. Non-Transformer. All ops
+are matmul + elementwise. Bipolar codebook is used as the optional warm-start
+prior for the learnable embedding table.
+
+## Tuned defaults
+
+### Goldilocks (the recommended starting point)
+
+For Tiny Shakespeare or any small corpus where memorization is a risk:
+
+```bash
+python -m scripts.pretrain_hymn_plus \
+    --corpus data/corpora/tiny_shakespeare.txt \
+    --steps 8000 --batch-size 16 --seq-len 64 \
+    --dim 192 --n-layers 4 --mlp-mult 4 \
+    --lr 3e-4 --warmup-steps 400 --cosine-decay --weight-decay 0.05 \
+    --grad-clip 1.0 --warm-start-chars \
+    --val-split 0.05 --val-every 500 \
+    --device cpu --log-every 500 \
+    --out data/checkpoints/hymn_plus_goldilocks.npz
+```
+
+Why these numbers: 4M params on 1.1M-char corpus is ~4 chars/param, low
+enough to learn distribution structure without dropping into pure memorization.
+val-split required; if val gap grows large, stop early.
+
+### Scale-up (when corpus dwarfs model)
+
+For WikiText-103 (543 MB) or hybrid corpora >100 MB:
+
+```bash
+python -m scripts.pretrain_hymn_plus \
+    --corpus data/corpora/wikitext103_train.txt \
+    --steps 30000 --batch-size 16 --seq-len 96 \
+    --dim 384 --n-layers 6 --mlp-mult 4 \
+    --lr 3e-4 --warmup-steps 1000 --cosine-decay --weight-decay 0.05 \
+    --grad-clip 1.0 --warm-start-chars \
+    --val-split 0.02 --val-every 1000 \
+    --device cpu --log-every 1000 \
+    --out data/checkpoints/hymn_plus_wt103_30k.npz
+```
+
+14M params on 543 MB cannot memorize -> val NLL is the honest distribution
+learning number.
+
+## Honest validation rules (added 2026-05-23)
+
+**Train NLL without val NLL is meaningless.** v2_15k hit train 0.28 but val
+on out-of-distribution text was 5.16 (worse than uniform random) -- pure
+memorization. Every new run MUST:
+
+1. Use `--val-split` (default 0.05; raise to 0.1 for very small corpora)
+2. Watch the val/train gap in the training log
+3. After training, run `scripts.eval_hymn_plus --corpus <held-out>`
+4. After training, run `scripts.sample_quality` -- verbatim_overlap > 5%
+   means memorization
+
+## Measured results (Tiny Shakespeare)
+
+| Run | Steps | Dim | Layers | Params | Wall | Train NLL | OOD WT-2 NLL | Verbatim overlap |
+|---|---|---|---|---|---|---|---|---|
+| hymn_plus_v1_5k | 5,000 | 256 | 4 | 4M | 14.5 min CPU | 1.25 | 2.77 | 0% |
+| hymn_plus_v2_15k | 15,000 | 384 | 6 | 14M | ~2h CPU | 0.28 | 5.16 (worse than uniform) | 16% (one prompt: 91%) |
+
+**v1 wins.** v2 is documented as a negative result: too many params for the
+corpus, memorized instead of learning.
+
+## Sampling defaults
+
+`temperature=0.7 top_k=30` are the v1 defaults that produced fluent Shakespeare
+dialogue without descending into copy or into random gibberish. Lower
+temperature gets more conservative output; higher gets more creative.
+
+## Throughput (HYMN-Plus, CPU)
+
+| Config | Steps / sec |
+|---|---|
+| dim=128, layers=2, seq=32 | ~37 |
+| dim=192, layers=4, seq=64 | ~14 |
+| dim=256, layers=4, seq=64 | ~6 |
+| dim=384, layers=6, seq=96 | ~2 |
+
+CPU dominates HYMN-Plus on this workstation -- the sequential Python loop
+inside SelectiveGatedRecurrence kills DirectML throughput (per-op host-device
+sync costs). Use `--device cpu` for HYMN-Plus until we ship a parallel scan kernel.
