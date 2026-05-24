@@ -8,6 +8,64 @@
 > LM (selective gated recurrence + SwiGLU + pre-norm), beats the original
 > HYMN baseline at 4x smaller dim. Section 0 below.
 
+## 0-α. HYMN-Plus v2 -- the architectural moat (KB-Attention)
+
+The differentiator no LLM has and structurally cannot have:
+
+`rain.core.hymn_plus_v2.HymnPlusV2` integrates RAIN's bipolar knowledge
+base **as a per-block architectural layer**, not as prompt-time RAG.
+At every block of every forward pass, the model:
+
+1. Projects state -> query
+2. Top-K-attends over a (N_facts, D) KB buffer
+3. Bundles the attended facts back into the state
+
+Adding a fact via `tell()` plus pushing it into the KB buffer **changes
+the model's output on the very next call**. Zero retraining. Zero
+fine-tuning.
+
+```bash
+python -m scripts.demo_v2_tell_changes_generation \
+    --checkpoint data/checkpoints/hymn_plus_v2_bpe.npz \
+    --prompt "Q: Where does the lion live?\\nA:" \
+    --facts "lion lives_in savanna" "wolf lives_in forest"
+```
+
+The demo prints generation BEFORE and AFTER the facts are pushed, and
+shows the Hamming distance. This is unambiguous: it works or it
+doesn't, no spin.
+
+Why no LLM can ship this:
+- Their world knowledge is baked into 10^9 - 10^12 weights
+- Updating one fact = full retrain ($M + days)
+- RAG bolts retrieval onto the prompt but the MODEL has no internal
+  grounding
+
+Why RAIN v2 can:
+- World knowledge lives in a separate KB buffer (not Parameter)
+- Model parameters encode HOW to combine facts, not WHICH to know
+- `tell()` is 8 ms, takes effect immediately
+- Each generated token is auditable to the top-K facts that influenced it
+
+This is the "fundamentally different from LLMs but works the same for
+users" architectural lane.
+
+### v2 architecture details
+
+Per block, in order:
+- LayerNorm -> SelectiveGatedRecurrence (context mixing) -> + residual
+- LayerNorm -> KbAttention (KB grounding) -> + residual
+- LayerNorm -> SwiGLU MLP (channel mixing) -> + residual
+
+BPE tokenization (~3.5x compression on Tiny Shakespeare). All ops are
+matmul + elementwise. Non-Transformer. CPU-trainable.
+
+17 unit tests in `tests/test_hymn_plus_v2.py` + `tests/test_hymn_plus_v2_sampler.py`
+including the architectural-moat test: setting a different KB
+measurably changes logits.
+
+---
+
 ## 0. HYMN-Plus -- non-Transformer generative LM that actually works
 
 Architecture: `rain.core.hymn_plus.HymnPlus`. N blocks of
