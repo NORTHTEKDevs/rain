@@ -5,9 +5,26 @@
 > training run + one eval; no row is overwritten when a later run
 > beats it -- the negative findings stay so we don't relearn them.
 
+## HYMN-Pro -- proper-attention LM core
+
+| Run | Steps | Dim | Layers | Heads | Params | Wall | Best Val NLL | Notes |
+|---|---|---|---|---|---|---|---|---|
+| hymn_pro_v1 | 8,000 | 192 | 6 | 6 | 3.65M | 41 min CPU | **1.5828** | First attention-based LM. Train 1.22, val 1.58, gap +0.37 (overfit). Essentially tied with HYMN-Plus v1; attention alone didn't beat recurrence at this scale on this corpus. |
+| hymn_pro_v2 (in flight) | 15K | 256 | 6 | 8 | ~8M | TBD | TBD | Bigger model, dropout 0.2, longer seq 256 to give attention more to work with |
+| hymn_pro_v3 (in flight) | 12K | 160 | 4 | 4 | TBD | TBD | TBD | Smaller + heavier dropout 0.25 + larger batch 64; tests whether overfit was the problem |
+
+**Honest interpretation:** The first attention attempt is no better than
+the recurrence-based HYMN-Plus v1. Tiny Shakespeare is small enough
+(1.1M chars) that attention's advantage gets washed out by overfit.
+Need either bigger regularization (v3) or bigger model with more depth
+(v2). Will report once they finish.
+
 ## L1 -- Tiny Shakespeare char-level LM NLL
 
 L1's pass threshold per the design plan is **NLL <= 1.55 nats/char**.
+Note: NLL is "lower is better". HYMN baseline (1.47) **beats** the
+target of 1.55 by 5%. HYMN-Pro target is much more aggressive:
+sub-1.0 nats/char, comparable to nanoGPT on this corpus.
 
 | Run | Steps | Carry | Batch | Dim | LR | Warm-start | Loss | Train wall | Train NLL | L1 NLL | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|---|
