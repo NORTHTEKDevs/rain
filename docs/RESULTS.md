@@ -31,8 +31,42 @@ specialized to training that it actively hurts on OOD text.
 
 | Checkpoint | Held-out NLL on WT-2 | Ratio of uniform | Generalizes? |
 |---|---|---|---|
-| **hymn_plus_v1_5k** (4M params, 5K steps) | **2.77** | 66% | **Yes -- the architecture works** |
+| **hymn_plus_goldilocks** (2.4M params, 8K steps, val=1.60) | **2.76** | 66% | **Yes -- the new default recipe** |
+| hymn_plus_v1_5k (4M params, 5K steps) | 2.77 | 66% | Yes -- essentially tied with goldilocks |
 | hymn_plus_v2_15k (14M params, 15K steps) | 5.16 | 124% | No -- destroyed by overfit to Shakespeare |
+
+## Sample-quality (verbatim overlap / diversity)
+
+`scripts.sample_quality` runs N samples per prompt and computes the
+fraction of 32-char windows from each sample that appear verbatim in
+the training corpus (memorization signal) plus distinct-n-gram
+diversity (mode collapse signal). Required after every training run.
+
+| Checkpoint | Mean verbatim overlap | Diagnosis |
+|---|---|---|
+| hymn_plus_v1_5k | **0%** | Pure generation, no memorization |
+| hymn_plus_v2_15k | 16.47% (one prompt 90.9%) | Memorized chunks of Shakespeare |
+
+## Architecture A/B head-to-head (v1 vs v2 on OOD WT-2)
+
+`scripts.benchmark_checkpoints` ran apples-to-apples eval:
+
+  A: hymn_plus_v1_5k.npz   | 4M params | dim 256 | NLL=2.7566 | %uniform=66.0
+  B: hymn_plus_v2_15k.npz  | 14M params | dim 384 | NLL=5.1288 | %uniform=122.9
+  verdict: A wins by 2.3722 NLL (46.3% better than B)
+
+The smaller, less-trained model dominates on OOD because the bigger
+one overfit.
+
+## Tied-vs-untied embedding ablation (2K steps, dim=128, 3 layers, Tiny Shakespeare)
+
+| Config | Params | Wall | Final train NLL | Final val NLL |
+|---|---|---|---|---|
+| tied (default) | 796K | 350 s | 1.66 | **1.75** |
+| no-tie-weights | 805K | 398 s | 1.63 | 1.75 |
+
+**Identical val NLL.** Keep weight tying enabled by default -- saves
+8K params and 14% wall time at no quality cost.
 
 **Headline:** the smaller v1 checkpoint that hit 1.25 on training generalizes
 to 2.77 on OOD WikiText-2 -- a real, honest number proving the architecture

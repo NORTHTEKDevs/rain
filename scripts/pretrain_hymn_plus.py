@@ -142,6 +142,8 @@ def train(
     log_every: int,
     val_split: float = 0.0,
     val_every: int = 0,
+    early_stop_patience: int = 0,
+    early_stop_min_delta: float = 0.001,
 ) -> dict:
     model.to(device)
     model.train()
@@ -172,6 +174,9 @@ def train(
     start = time.time()
 
     val_interval = val_every if val_every > 0 else max(1, n_steps // 10)
+    best_val = float("inf")
+    n_no_improvement = 0
+    stopped_early_at: int | None = None
 
     for step in range(n_steps):
         cur_lr = _lr_schedule(step, n_steps, lr, warmup_steps, cosine_decay)
@@ -217,17 +222,35 @@ def train(
                 msg += f"  val = {val_nll:.4f}  gap = {gap:+.4f}"
                 if gap > 0.5 and step > warmup_steps + 100:
                     msg += "  WARN: val>>train, likely overfitting"
+                # Early stopping on val plateau.
+                if val_nll < best_val - early_stop_min_delta:
+                    best_val = val_nll
+                    n_no_improvement = 0
+                else:
+                    n_no_improvement += 1
+                    if early_stop_patience > 0 and n_no_improvement >= early_stop_patience:
+                        msg += (
+                            f"  EARLY STOP: val plateaued for {n_no_improvement} "
+                            f"checks (patience={early_stop_patience})"
+                        )
+                        print(msg)
+                        stopped_early_at = step + 1
+                        break
             print(msg)
+        if stopped_early_at is not None:
+            break
 
     wall = time.time() - start
     final = float(sum(losses[-min(1000, len(losses)) :]) / min(1000, len(losses)))
     final_val = val_history[-1][1] if val_history else None
     return {
         "steps": n_steps,
+        "stopped_early_at": stopped_early_at,
         "wall_seconds": wall,
         "initial_loss": initial_loss,
         "final_loss": final,
         "final_val_loss": final_val,
+        "best_val_loss": best_val if best_val < float("inf") else None,
         "val_history": val_history,
         "losses": losses,
     }
@@ -250,6 +273,12 @@ def main() -> None:
     p.add_argument("--grad-clip", type=float, default=1.0)
     p.add_argument("--warm-start-chars", action="store_true")
     p.add_argument(
+        "--no-tie-weights",
+        action="store_true",
+        help="disable embedding/output weight tying (uses a separate LM head; "
+        "+V*D params, slightly more capacity, slightly slower)",
+    )
+    p.add_argument(
         "--val-split",
         type=float,
         default=0.05,
@@ -261,6 +290,19 @@ def main() -> None:
         type=int,
         default=0,
         help="run validation every N steps (0 = ~10 evenly-spaced checks)",
+    )
+    p.add_argument(
+        "--early-stop-patience",
+        type=int,
+        default=0,
+        help="stop training when val NLL fails to improve for N val checks "
+        "(0 = disabled, requires --val-split > 0)",
+    )
+    p.add_argument(
+        "--early-stop-min-delta",
+        type=float,
+        default=0.001,
+        help="minimum val-NLL improvement to reset patience counter",
     )
     p.add_argument("--device", choices=["auto", "cpu", "directml"], default="auto")
     p.add_argument("--log-every", type=int, default=500)
@@ -292,6 +334,7 @@ def main() -> None:
         n_layers=args.n_layers,
         mlp_mult=args.mlp_mult,
         dropout=args.dropout,
+        tie_weights=not args.no_tie_weights,
         init_codebook=init_cb,
         seed=args.seed,
     )
@@ -315,6 +358,8 @@ def main() -> None:
         log_every=args.log_every,
         val_split=args.val_split,
         val_every=args.val_every,
+        early_stop_patience=args.early_stop_patience,
+        early_stop_min_delta=args.early_stop_min_delta,
     )
 
     out = Path(args.out)
@@ -341,8 +386,11 @@ def main() -> None:
         "initial_loss": result["initial_loss"],
         "final_loss": result["final_loss"],
         "final_val_loss": result.get("final_val_loss"),
+        "best_val_loss": result.get("best_val_loss"),
+        "stopped_early_at": result.get("stopped_early_at"),
         "val_history": result.get("val_history", []),
         "val_split": args.val_split,
+        "early_stop_patience": args.early_stop_patience,
         "device": _device_name(dev),
         "seed": args.seed,
         "char_vocab": sorted(char_to_id.keys()),
