@@ -17,6 +17,7 @@ L1's pass threshold per the design plan is **NLL <= 1.55 nats/char**.
 | hymn_ts_minilm_smoke | 3,000 | 8 | 16 | 1024 | 1e-3 | MiniLM | NLL | 28.5 s | 2.73 | -- | MiniLM warm-start, cosine within-letter 0.48 / across 0.46 -- no category prior. |
 | hymn_ts_features_smoke | 3,000 | 8 | 16 | 1024 | 1e-3 | features | NLL | 27.8 s | 2.40 | -- | A/B vs MiniLM. Features win for char-level. |
 | **hymn_plus_v1_5k** | **5,000** | **n/a (full attention-free recurrence)** | **16** | **256** (4 layers, 4M params) | **3e-4** | **features** | **NLL** | **14.5 min CPU** | **1.25** | **1.25** | **BREAKTHROUGH: non-Transformer (Mamba-class selective recurrence + SwiGLU + pre-norm + residuals) beats HYMN-MLP by 15% with 10x fewer steps and 4x smaller dim. Generates plausible Shakespearean dialogue at temperature=0.7.** |
+| hymn_plus_v2_15k | 15,000 | n/a | 16 | 384 (6 layers, 14M params) | 3e-4 | features | NLL | ~2 h CPU | 0.28 | 0.28 (train) | **OVERFITTING**: 14M params on 1.1M-char corpus is 12 chars/param + 20 epochs of training. Verified memorization (output contains verbatim Shakespeare lines from training). NLL number not meaningful for distribution learning. Architecture validates but corpus is too small for this capacity. Held-out eval needed for true number. |
 
 ## L2 -- WikiText-X self-eval NLL
 
@@ -24,6 +25,7 @@ L1's pass threshold per the design plan is **NLL <= 1.55 nats/char**.
 |---|---|---|---|---|---|---|---|---|---|---|
 | hymn_wt2_carry16_30k | WikiText-2 | 30,000 | 16 | 16 | 1024 | 11 min | -- | 1.72 | ~6.5 | ~26% |
 | hymn_wt103_warm_100k | WikiText-103 | 100,000 | 8 | 16 | 1024 | 20 min | 1.95 | **2.04** | 8.51 (4979 chars) | **24%** |
+| hymn_plus_wt103_30k (in flight) | WikiText-103 | 30,000 | n/a | 16 | 384 (6 layers, 14M params) | ~6 h CPU | -- | (running) | 8.51 | -- | The real test of HYMN-Plus. 543 MB corpus dwarfs 14M params -> can't memorize -> NLL means something. |
 
 **Generalist vs specialist note:** the WT-103-trained generalist scores
 3.69 on Tiny Shakespeare (expected -- different character distribution).
