@@ -59,15 +59,17 @@ def _make_routes(
     """Define routes referencing the bound agent + sampler + judge."""
 
     async def health(_: web.Request) -> web.Response:
-        return web.json_response({
-            "status": "ok",
-            "uptime_seconds": round(time.time() - _STARTED, 1),
-            "checkpoint": args.checkpoint or None,
-            "kb_path": args.kb or None,
-            "has_sampler": sampler is not None,
-            "has_judge": judge is not None,
-            "continual": agent._continual,
-        })
+        return web.json_response(
+            {
+                "status": "ok",
+                "uptime_seconds": round(time.time() - _STARTED, 1),
+                "checkpoint": args.checkpoint or None,
+                "kb_path": args.kb or None,
+                "has_sampler": sampler is not None,
+                "has_judge": judge is not None,
+                "continual": agent._continual,
+            }
+        )
 
     async def ask(req: web.Request) -> web.Response:
         body = await req.json()
@@ -93,7 +95,9 @@ def _make_routes(
 
     async def tell(req: web.Request) -> web.Response:
         body = await req.json()
-        s = body.get("subject"); r = body.get("relation"); o = body.get("object")
+        s = body.get("subject")
+        r = body.get("relation")
+        o = body.get("object")
         if not (s and r and o):
             return web.json_response({"error": "subject, relation, object required"}, status=400)
         agent.tell(s, r, o)
@@ -116,7 +120,8 @@ def _make_routes(
         top_k = int(body.get("top_k", args.top_k))
         rp = float(body.get("repetition_penalty", args.repetition_penalty))
         text = sampler.sample(
-            prompt, n_tokens=n_tokens,
+            prompt,
+            n_tokens=n_tokens,
             temperature=temp,
             top_k=(top_k if top_k > 0 else None),
             seed=int(body.get("seed", np.random.randint(0, 1 << 31))),
@@ -128,7 +133,8 @@ def _make_routes(
         if judge is None:
             return web.json_response({"error": "no judge model configured"}, status=503)
         body = await req.json()
-        s = body.get("subject"); r = body.get("relation")
+        s = body.get("subject")
+        r = body.get("relation")
         if not (s and r):
             return web.json_response({"error": "subject + relation required"}, status=400)
         ans = agent.ask(s, r)
@@ -143,18 +149,24 @@ def _make_routes(
         if verdict.confidence >= args.min_confidence:
             agent.feedback(r, verdict.correct)
             fired = True
-        return web.json_response({
-            "subject": s, "relation": r, "stored_object": stored_obj,
-            "correct": verdict.correct,
-            "confidence": verdict.confidence,
-            "reasoning": verdict.reasoning,
-            "feedback_fired": fired,
-            "relation_calibration_after": round(agent.calibration.calibration(r), 4),
-        })
+        return web.json_response(
+            {
+                "subject": s,
+                "relation": r,
+                "stored_object": stored_obj,
+                "correct": verdict.correct,
+                "confidence": verdict.confidence,
+                "reasoning": verdict.reasoning,
+                "feedback_fired": fired,
+                "relation_calibration_after": round(agent.calibration.calibration(r), 4),
+            }
+        )
 
     async def tally(_: web.Request) -> web.Response:
-        out = {rel: round(agent.calibration.calibration(rel), 4)
-               for rel in sorted(agent.calibration._total)}
+        out = {
+            rel: round(agent.calibration.calibration(rel), 4)
+            for rel in sorted(agent.calibration._total)
+        }
         return web.json_response(out)
 
     async def snapshot(_: web.Request) -> web.Response:
@@ -168,8 +180,7 @@ def _make_routes(
         ui_path = Path(__file__).resolve().parents[1] / "rain" / "webui" / "chat.html"
         if not ui_path.is_file():
             return web.Response(text="(chat.html missing)", status=404)
-        return web.Response(text=ui_path.read_text(encoding="utf-8"),
-                            content_type="text/html")
+        return web.Response(text=ui_path.read_text(encoding="utf-8"), content_type="text/html")
 
     return [
         web.get("/", ui),
@@ -189,8 +200,16 @@ def main() -> int:
     p = argparse.ArgumentParser(description="RAIN HTTP server")
     p.add_argument("--kb", default=None)
     p.add_argument("--checkpoint", default=None)
-    p.add_argument("--corpus", default=None,
-                   help="training corpus path (for HYMN char vocab fallback)")
+    p.add_argument(
+        "--corpus", default=None, help="training corpus path (for HYMN char vocab fallback)"
+    )
+    p.add_argument(
+        "--arch",
+        choices=["hymn", "hymn_plus", "auto"],
+        default="auto",
+        help="which sampler architecture matches --checkpoint. "
+        "'auto' inspects the .json sidecar's arch field.",
+    )
     p.add_argument("--dim", type=int, default=2048)
     p.add_argument("--num-shards", type=int, default=32)
     p.add_argument("--rng-seed", type=int, default=0)
@@ -208,27 +227,58 @@ def main() -> int:
     args = p.parse_args()
 
     agent = ConsciousAgent(
-        dim=args.dim, num_shards=args.num_shards, seed=args.rng_seed,
+        dim=args.dim,
+        num_shards=args.num_shards,
+        seed=args.rng_seed,
         enable_continual=args.enable_continual,
     )
     n_loaded = 0
     if args.kb and Path(args.kb).is_file():
         n_loaded = seed_from_jsonl(agent.kb, args.kb)
-    sampler = (_HymnSampler(args.checkpoint, args.corpus)
-               if args.checkpoint and Path(args.checkpoint).is_file()
-               else None)
-    if sampler is not None:
-        def _agent_sampler(prompt: str, n_tokens: int) -> str:
-            return sampler.sample(
-                prompt, n_tokens=n_tokens,
+    sampler = None
+    if args.checkpoint and Path(args.checkpoint).is_file():
+        arch = args.arch
+        if arch == "auto":
+            meta_path = Path(args.checkpoint).with_suffix(".json")
+            if meta_path.is_file():
+                import json as _json
+
+                try:
+                    meta = _json.loads(meta_path.read_text(encoding="utf-8"))
+                    arch = "hymn_plus" if meta.get("arch") == "hymn_plus_v1" else "hymn"
+                except Exception:
+                    arch = "hymn"
+            else:
+                arch = "hymn"
+
+        if arch == "hymn_plus":
+            from rain.cognition.hymn_plus_sampler import HymnPlusSampler
+
+            hp_sampler = HymnPlusSampler.from_checkpoint(
+                args.checkpoint,
                 temperature=args.temperature,
-                top_k=(args.top_k if args.top_k > 0 else None),
-                seed=np.random.randint(0, 1 << 31),
-                repetition_penalty=args.repetition_penalty,
+                top_k=(args.top_k if args.top_k > 0 else 0),
             )
+
+            def _agent_sampler(prompt: str, n_tokens: int) -> str:
+                return hp_sampler(prompt, n_tokens=n_tokens)
+
+            sampler = hp_sampler  # for diagnostics print at end of main()
+        else:
+            sampler = _HymnSampler(args.checkpoint, args.corpus)
+
+            def _agent_sampler(prompt: str, n_tokens: int) -> str:
+                return sampler.sample(
+                    prompt,
+                    n_tokens=n_tokens,
+                    temperature=args.temperature,
+                    top_k=(args.top_k if args.top_k > 0 else None),
+                    seed=np.random.randint(0, 1 << 31),
+                    repetition_penalty=args.repetition_penalty,
+                )
+
         if args.use_rag:
-            rag = KbAugmentedSampler(agent.kb, _agent_sampler,
-                                     max_facts=args.rag_max_facts)
+            rag = KbAugmentedSampler(agent.kb, _agent_sampler, max_facts=args.rag_max_facts)
             agent.attach_hymn_sampler(rag.sample, n_tokens=args.sample_tokens)
         else:
             agent.attach_hymn_sampler(_agent_sampler, n_tokens=args.sample_tokens)
