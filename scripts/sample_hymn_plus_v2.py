@@ -148,8 +148,13 @@ def main() -> int:
     prompt = torch.tensor([ids], dtype=torch.long)
     out = model.sample(prompt, max_new=args.max_new, temperature=args.temperature, top_k=args.top_k)
     full_ids = out[0].tolist()
+    text = tok.decode(full_ids)
     print()
-    print(tok.decode(full_ids))
+    # Force utf-8 for Windows cp1252 stdout
+    import sys
+
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    print(text)
     return 0
 
 
