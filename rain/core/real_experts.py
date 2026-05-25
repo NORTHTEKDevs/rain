@@ -574,9 +574,10 @@ def make_real_expert_bank(
     """The eight-expert bank with REAL implementations swapped in.
 
     Real: tsetlin, sdm, sym_regression, pure_attn, samba_lm (if ckpt),
-    diffusion (deterministic image-HV gen), gnn (SVO triple reasoning).
-    Stub: jepa_wm only.
+    diffusion, gnn, jepa_wm (all 8 now real as of v0.2).
     """
+    from rain.core.jepa_expert import make_jepa_expert
+
     bank: list[ExpertSpec] = [
         make_hymn_expert(checkpoint_path=hymn_checkpoint, dim=dim),
         make_pure_attn_expert(dim=dim),
@@ -585,7 +586,7 @@ def make_real_expert_bank(
         make_gnn_expert(dim=dim),
         make_sdm_expert(dim=dim),
         make_sym_regression_expert(dim=dim),
-        _stub_with_seeded_domain("jepa_wm", dim, seed=7),
+        make_jepa_expert(dim=dim),
     ]
     return bank
 

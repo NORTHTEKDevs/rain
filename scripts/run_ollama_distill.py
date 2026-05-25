@@ -38,7 +38,7 @@ def main(argv: list[str]) -> int:
     p.add_argument("--model", default="llama3.2:3b", help="Ollama model name")
     p.add_argument("--host", default="http://localhost:11434", help="Ollama host")
     p.add_argument("--n", type=int, default=20, help="number of curriculum queries")
-    p.add_argument("--domain", default="general", choices=["general", "code", "math", "regulated"])
+    p.add_argument("--domain", default="general", help="curriculum domain (see _CURRICULUM_TOPICS)")
     p.add_argument("--out", default="data/distill/ollama_v0.jsonl")
     p.add_argument("--report", default="data/distill/ollama_v0_report.md")
     p.add_argument("--dim", type=int, default=10_000)
@@ -72,31 +72,38 @@ def main(argv: list[str]) -> int:
         print(f"  A (empty KB): {report.answer_text[:80]}...")
     print(f"  (showing first 5; KB is empty so all fall back to no-grounding)")
 
-    # Distill.
+    # Distill. Save after every example so a kill mid-run doesn't lose
+    # work and we can monitor progress via wc -l on the output file.
     print()
     print(f"--- Distillation (asking Ollama {args.model}) ---")
     t0 = time.time()
     examples = []
-    for i, q in enumerate(queries, 1):
-        ex = pipe.collect_example(q)
-        if ex is not None:
-            examples.append(ex)
-            elapsed = time.time() - t0
-            print(
-                f"  [{i:3d}/{len(queries)}] tok in/out={ex.tokens_in}/{ex.tokens_out} "
-                f"len={len(ex.teacher_answer)} chars, elapsed={elapsed:.1f}s"
-            )
-        else:
-            print(f"  [{i:3d}/{len(queries)}] FAILED")
+    Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+    out_handle = open(args.out, "a", encoding="utf-8")
+    try:
+        for i, q in enumerate(queries, 1):
+            ex = pipe.collect_example(q)
+            if ex is not None:
+                examples.append(ex)
+                # Append THIS example to the JSONL immediately.
+                out_handle.write(ex.to_json() + "\n")
+                out_handle.flush()
+                elapsed = time.time() - t0
+                if i % 5 == 0 or i == len(queries):
+                    print(
+                        f"  [{i:3d}/{len(queries)}] tok in/out={ex.tokens_in}/{ex.tokens_out} "
+                        f"len={len(ex.teacher_answer)} chars, elapsed={elapsed:.1f}s",
+                        flush=True,
+                    )
+            else:
+                print(f"  [{i:3d}/{len(queries)}] FAILED", flush=True)
+    finally:
+        out_handle.close()
 
     print()
     print(f"Collected {len(examples)} distillation examples.")
     print(f"Total elapsed: {time.time()-t0:.1f}s")
     print(f"Token budget used: {pipe.token_budget_used} (~$0 on local Ollama)")
-
-    # Persist to JSONL.
-    Path(args.out).parent.mkdir(parents=True, exist_ok=True)
-    pipe.save(args.out)
     print(f"Saved to {args.out}")
 
     # Ingest into the RainNet semantic memory.

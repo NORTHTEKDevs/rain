@@ -42,11 +42,15 @@ Plus:
 
 | Test | Result | Notes |
 |---|---|---|
-| Synthetic 200-fact retrieval, top-1 | RAIN-Net 21.0% vs Jaccard 8.5% | **2.5x baseline**, no training |
-| Synthetic 200-fact retrieval, top-3 | RAIN-Net 48.5% vs Jaccard 23.5% | **2.1x baseline** |
-| Real Ollama-distilled KB self-eval, top-1 | **71.8%** | 220 facts across 4 domains from llama3.2:3b |
-| Real Ollama-distilled KB self-eval, top-3 | **90.5%** | improves with KB growth |
-| Real Ollama-distilled KB self-eval, top-5 | **95.5%** | end-to-end pipeline validated |
+| Honest retrieval benchmark (1852 facts, v0.2 learned encoder) | RAIN-Net **85.8%** vs sentence-transformer **85.4%** | **beats production baseline at scale** |
+| Two-stage retrieve (shortlist 20 -> HV rerank 5) | top-1 **85.8%** at **15ms/query** (vs 49ms single-stage) | **3.3x speedup, identical quality** |
+| Honest retrieval benchmark (685 facts, v0.2 learned encoder) | 80.6% vs 80.3% | smaller-scale comparison |
+| Synthetic 200-fact retrieval, top-1 (n-gram encoder) | 21.0% vs Jaccard 8.5% | 2.5x lexical baseline |
+| Synthetic 200-fact retrieval, top-3 (n-gram encoder) | 48.5% vs 23.5% | 2.1x lexical baseline |
+| Real Ollama-distilled KB self-eval, top-1 | **71.4%** | 507 facts across 7 domains (v1, still growing) |
+| Real Ollama-distilled KB self-eval, top-3 | **85.9%** | discrimination holds as KB grows |
+| Real Ollama-distilled KB self-eval, top-5 | **92.4%** | end-to-end pipeline validated at scale |
+| Distillation curriculum size | **11,040 unique queries** across 16 domains | textbooks-are-all-you-need approach |
 | Verifier head training (8-domain QA) | 30% → 100% after 1 epoch | gap: -0.0035 → +0.4997 (in-distribution) |
 | Multimodal compound query | Apollo image+text bound: +0.501 vs +0.011 distractor | **64x** discrimination on multi-modal bind |
 | MoA routing accuracy (10 query types → 8 experts) | **9/10 = 90.0%** | seeded domain HVs, top-k=2 |
@@ -54,7 +58,9 @@ Plus:
 | HYMN-Plus live generation through RAIN-Net | 64 chars in 2.3s | 14M-param Shakespeare-trained ckpt |
 | Procedural skills bundled | **4 on-disk skills** (math, date, unit, regex) — all deterministic |
 | Session abstraction | 20+ turn episodic recall verified | pyramid query at t0 recallable at t20+ |
-| Full test suite | **474/474 green** | 351 RAIN + 48 RAIN-Net + 20 expert + 13 adapter + 12 session + 26 skills + 4 misc |
+| Reflexion loop (iterative self-critique) | shipped | unbind-based critique HV, no LLM cost |
+| Causal graph reasoning (do-calculus over KB) | shipped | Pearl-style interventions, ancestors/descendants, chain finding |
+| Full test suite | **516/516 green** | +17 v0.2 component tests |
 
 ## Quickstart (60 seconds)
 

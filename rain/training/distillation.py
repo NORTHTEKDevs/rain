@@ -355,59 +355,297 @@ def synthetic_curriculum_queries(
     """Generate a curriculum of seed queries for a domain.
 
     Used to bootstrap a distillation dataset without pre-existing data.
-    The queries themselves are synthetic but they cover the space the
-    teacher should explain. Microsoft's textbooks-are-all-you-need
-    approach: quality > quantity.
+    Microsoft's textbooks-are-all-you-need approach: quality > quantity.
+    Each domain has a topic pool (30+ items) and is asked through ~20
+    templates, so a single domain can produce >500 unique queries.
 
-    Templates per domain:
-        general    "explain X", "what is X used for", "compare X and Y"
-        code       "implement X in Python", "what does X do in code"
-        math       "compute X", "solve for X given Y"
-        regulated  "what does regulation X require", "is X allowed under Y"
+    Domains: general, code, math, regulated, science, history,
+    geography, business, technology, medicine, philosophy, art, music,
+    food, travel, sports.
     """
     rng = np.random.default_rng(seed)
-    topics = {
-        "general": [
-            "photosynthesis", "DNA replication", "supply and demand",
-            "the French revolution", "general relativity", "machine learning",
-            "the periodic table", "blood circulation", "plate tectonics",
-            "the scientific method",
-        ],
-        "code": [
-            "binary search", "depth-first search", "merge sort",
-            "hash tables", "dynamic programming", "recursion",
-            "object-oriented programming", "functional programming",
-            "regular expressions", "memory management",
-        ],
-        "math": [
-            "the quadratic formula", "the chain rule", "linear algebra",
-            "the Pythagorean theorem", "the fundamental theorem of calculus",
-            "Bayes theorem", "the law of large numbers",
-            "the central limit theorem", "matrix multiplication", "eigenvalues",
-        ],
-        "regulated": [
-            "FAA part 91", "FAA part 135", "OSHA fall protection",
-            "HIPAA privacy rule", "GDPR consent", "SEC rule 10b-5",
-            "EPA clean water act", "IRS section 179", "ADA accessibility",
-            "FDA 510(k)",
-        ],
-    }
+    topics = _CURRICULUM_TOPICS
     pool = topics.get(domain, topics["general"])
-    templates = [
-        "Explain {t} in 3 sentences.",
-        "What is {t} used for?",
-        "Give a concrete example of {t}.",
-        "What are common misconceptions about {t}?",
-        "How does {t} relate to similar concepts?",
-        "What are the prerequisites to understand {t}?",
-        "What is the simplest possible description of {t}?",
-        "What problem does {t} solve?",
-        "Compare {t} with one alternative approach.",
-        "What is the historical origin of {t}?",
-    ]
+    templates = _CURRICULUM_TEMPLATES
     out: list[str] = []
+    seen: set[str] = set()
     while len(out) < n:
         t = pool[int(rng.integers(0, len(pool)))]
         tmpl = templates[int(rng.integers(0, len(templates)))]
-        out.append(tmpl.format(t=t))
+        q = tmpl.format(t=t)
+        # Dedupe so a single domain doesn't repeat the same exact
+        # query across the run.
+        if q in seen:
+            continue
+        seen.add(q)
+        out.append(q)
+        if len(seen) >= len(pool) * len(templates):
+            break
     return out[:n]
+
+
+# 16 domains, ~30 topics each = 480+ unique base topics. With 23
+# templates per topic, that's ~11000 distinct possible queries -- plenty
+# for a 2000-3000 fact run.
+_CURRICULUM_TOPICS: dict[str, list[str]] = {
+    "general": [
+        "photosynthesis", "DNA replication", "supply and demand",
+        "the French Revolution", "general relativity", "machine learning",
+        "the periodic table", "blood circulation", "plate tectonics",
+        "the scientific method", "consciousness", "the placebo effect",
+        "evolution by natural selection", "the water cycle",
+        "the Big Bang", "black holes", "the immune system",
+        "the nervous system", "the Internet", "language acquisition",
+        "human memory", "sleep stages", "atmospheric pressure",
+        "the carbon cycle", "tides", "the Krebs cycle",
+        "neural plasticity", "ecosystems", "the periodic motion of pendulums",
+        "the human heart",
+    ],
+    "code": [
+        "binary search", "depth-first search", "merge sort",
+        "hash tables", "dynamic programming", "recursion",
+        "object-oriented programming", "functional programming",
+        "regular expressions", "memory management", "REST APIs",
+        "garbage collection", "the actor model", "lock-free data structures",
+        "the SOLID principles", "design patterns", "concurrency vs parallelism",
+        "test-driven development", "monads", "type systems",
+        "compilers vs interpreters", "B-trees", "TCP vs UDP",
+        "JIT compilation", "vectorization", "cache coherency",
+        "the C ABI", "WebAssembly", "containers", "git rebase",
+    ],
+    "math": [
+        "the quadratic formula", "the chain rule", "linear algebra",
+        "the Pythagorean theorem", "the fundamental theorem of calculus",
+        "Bayes theorem", "the law of large numbers",
+        "the central limit theorem", "matrix multiplication", "eigenvalues",
+        "complex numbers", "modular arithmetic", "set theory",
+        "graph theory", "topology", "group theory", "Markov chains",
+        "the normal distribution", "differential equations",
+        "the Fourier transform", "the Riemann hypothesis",
+        "the prime number theorem", "Fermat's last theorem", "fractals",
+        "non-Euclidean geometry", "logic", "Goedel's incompleteness",
+        "the Monte Carlo method", "Pi", "Euler's identity",
+    ],
+    "regulated": [
+        "FAA part 91", "FAA part 135", "OSHA fall protection",
+        "HIPAA privacy rule", "GDPR consent", "SEC rule 10b-5",
+        "EPA clean water act", "IRS section 179", "ADA accessibility",
+        "FDA 510(k)", "FCC spectrum allocation", "PCI DSS",
+        "ITAR export controls", "Clean Air Act", "NEPA review",
+        "MIFID II", "Sarbanes-Oxley", "FERPA student records",
+        "USDA organic certification", "DOT hazmat",
+        "TCPA telephone consumer protection", "CCPA California privacy",
+        "the Wassenaar arrangement", "NRC reactor licensing",
+        "FAA part 23", "SOC 2 compliance", "ISO 27001",
+        "NIST 800-53", "OFAC sanctions", "FDIC deposit insurance",
+    ],
+    "science": [
+        "thermodynamics", "quantum entanglement", "dark matter",
+        "the standard model", "CRISPR gene editing", "mRNA vaccines",
+        "the Higgs boson", "neutrino oscillation", "stem cells",
+        "the human genome", "string theory", "superconductivity",
+        "antimatter", "fission and fusion", "exoplanets",
+        "the cosmic microwave background", "the second law of thermodynamics",
+        "the strong nuclear force", "DNA methylation", "epigenetics",
+        "the central dogma of molecular biology", "synaptic transmission",
+        "the speed of light", "wave-particle duality", "the Schrödinger equation",
+        "Maxwell's equations", "Newton's laws", "general anesthesia",
+        "homeostasis", "photovoltaics",
+    ],
+    "history": [
+        "the Roman Empire", "the Mongol invasions", "the Renaissance",
+        "the Industrial Revolution", "the Age of Exploration",
+        "the Cold War", "the fall of Constantinople",
+        "the American Revolution", "the French Revolution",
+        "World War I", "World War II", "the Vietnam War",
+        "the Cuban Missile Crisis", "the moon landing", "the printing press",
+        "the silk road", "the rise of Islam", "the Reformation",
+        "the Crusades", "the Russian Revolution", "the Meiji Restoration",
+        "the Ottoman Empire", "the Mauryan Empire", "the Tang Dynasty",
+        "the Aztec Empire", "the Inca Empire", "the Bronze Age",
+        "the Black Death", "the Magna Carta", "the partition of India",
+    ],
+    "geography": [
+        "the Amazon River", "the Sahara Desert", "Mount Everest",
+        "the Great Barrier Reef", "Antarctica", "the Andes mountains",
+        "the Nile", "the Mississippi River", "the Mariana Trench",
+        "the Himalayas", "the Atlas Mountains", "the Yangtze",
+        "Greenland", "the Caspian Sea", "the Pacific Ring of Fire",
+        "the Galapagos Islands", "the Atacama Desert", "the Congo Basin",
+        "Lake Baikal", "the Australian Outback", "the Alps",
+        "the Mediterranean Sea", "Iceland's volcanoes",
+        "the Grand Canyon", "Victoria Falls", "the Arctic Ocean",
+        "the equator", "the prime meridian", "the Bering Strait",
+        "Madagascar",
+    ],
+    "business": [
+        "discounted cash flow", "EBITDA", "compound interest",
+        "double-entry bookkeeping", "the marginal cost",
+        "Porter's five forces", "the Boston consulting matrix",
+        "blue-ocean strategy", "the lean startup", "product-market fit",
+        "venture capital", "angel investing", "Series A funding",
+        "convertible notes", "vesting cliffs", "stock options",
+        "the J-curve in PE", "the bullwhip effect in supply chains",
+        "just-in-time inventory", "the customer lifetime value",
+        "churn rate", "MRR vs ARR", "cohort analysis", "the marketing funnel",
+        "freemium pricing", "subscription economics",
+        "the platform business model", "network effects",
+        "switching costs", "Coase's theorem",
+    ],
+    "technology": [
+        "the Internet protocols", "HTTPS encryption", "public-key cryptography",
+        "blockchain", "smart contracts", "neural networks",
+        "transformers in deep learning", "convolutional neural networks",
+        "reinforcement learning", "diffusion models", "container orchestration",
+        "Kubernetes", "WebAssembly", "edge computing", "5G cellular networks",
+        "GPS positioning", "lidar in autonomous vehicles",
+        "ML on edge devices", "federated learning",
+        "vector databases", "embedding models", "RAG architectures",
+        "knowledge graphs", "the semantic web", "GraphQL", "WebRTC",
+        "service mesh", "infrastructure as code", "observability",
+        "chaos engineering",
+    ],
+    "medicine": [
+        "antibiotic resistance", "the placebo effect", "vaccines",
+        "diabetes mellitus", "high blood pressure", "atherosclerosis",
+        "Alzheimer's disease", "Parkinson's disease",
+        "depression", "anxiety disorders", "schizophrenia",
+        "the cardiovascular system", "the digestive system",
+        "type 1 vs type 2 diabetes", "autoimmune diseases",
+        "asthma", "COPD", "kidney function", "liver function",
+        "the menstrual cycle", "pregnancy stages",
+        "the lymphatic system", "anaphylaxis", "antibodies",
+        "general anesthesia", "x-rays", "MRI imaging",
+        "CT scans", "ultrasound diagnostic use",
+        "EKG interpretation",
+    ],
+    "philosophy": [
+        "utilitarianism", "deontological ethics", "virtue ethics",
+        "the trolley problem", "epistemology", "metaphysics",
+        "the mind-body problem", "free will", "determinism",
+        "the categorical imperative", "stoicism", "existentialism",
+        "phenomenology", "logical positivism", "Plato's forms",
+        "Aristotle's virtues", "the Socratic method",
+        "Descartes' meditations", "Kant's critique of pure reason",
+        "Hume's problem of induction", "Nietzsche's will to power",
+        "the veil of ignorance", "the prisoner's dilemma",
+        "social contract theory", "moral relativism",
+        "the hard problem of consciousness", "Zen Buddhism",
+        "Taoism", "consequentialism", "the is-ought problem",
+    ],
+    "art": [
+        "impressionism", "cubism", "surrealism", "the Renaissance",
+        "the Baroque", "abstract expressionism", "pop art",
+        "Romanticism", "the Bauhaus", "art nouveau",
+        "the Mona Lisa", "Picasso's Guernica", "Van Gogh's Starry Night",
+        "the Sistine Chapel", "Rodin's Thinker", "Warhol's soup cans",
+        "Banksy's street art", "Mondrian's grids",
+        "Japanese ukiyo-e", "Aboriginal dot painting", "the camera obscura",
+        "oil vs acrylic paint", "ceramics", "watercolour technique",
+        "the golden ratio in art", "color theory",
+        "perspective in Renaissance painting", "modernism vs postmodernism",
+        "performance art", "land art",
+    ],
+    "music": [
+        "music theory", "the circle of fifths", "the major scale",
+        "the blues scale", "modal interchange", "counterpoint",
+        "Bach's fugues", "Mozart's symphonies", "Beethoven's 9th",
+        "jazz harmony", "the blues form",
+        "the development of bebop", "the British Invasion",
+        "hip-hop sampling", "electronic dance music",
+        "the synthesizer", "MIDI", "DAWs",
+        "vinyl records", "the loudness war",
+        "song structure", "verse-chorus form", "song writing",
+        "the violin family", "the piano",
+        "the saxophone", "the drum kit",
+        "Indian classical music", "African drumming",
+        "Gregorian chant",
+    ],
+    "food": [
+        "fermentation", "the Maillard reaction", "sourdough",
+        "kimchi", "miso", "soy sauce", "vinegars",
+        "olive oil grades", "wine fermentation", "brewing beer",
+        "coffee roasting", "espresso extraction", "tea fermentation",
+        "cheese making", "yogurt cultures",
+        "knife technique", "stock making", "emulsions",
+        "baking soda vs baking powder", "the role of gluten",
+        "tempering chocolate", "caramelization", "pickling",
+        "smoking meat", "sous-vide cooking",
+        "the umami taste", "the science of flavor pairing",
+        "regional cuisines of Italy", "Japanese kaiseki",
+        "Mexican mole",
+    ],
+    "travel": [
+        "the Silk Road", "the Camino de Santiago",
+        "the Appalachian Trail", "the Pacific Crest Trail",
+        "the Trans-Siberian Railway",
+        "the Inca Trail to Machu Picchu",
+        "the Great Wall of China", "the Pyramids of Giza",
+        "Petra in Jordan", "Angkor Wat", "the Taj Mahal",
+        "the Galapagos cruise route",
+        "safari in the Serengeti", "the Northern Lights",
+        "the fjords of Norway", "the Cinque Terre",
+        "Kyoto's temple district",
+        "Patagonia trekking", "the Alaska Marine Highway",
+        "the Great Ocean Road", "the Salar de Uyuni",
+        "the Faroe Islands", "the Trans-Mongolian Railway",
+        "the Lofoten Islands",
+        "Bhutan's monasteries",
+        "the Atacama Desert observatories",
+        "Cuba's vintage cars",
+        "the Greek islands hopping",
+        "Iceland's ring road",
+        "Madagascar's biodiversity",
+    ],
+    "sports": [
+        "the offside rule in soccer", "the strike zone in baseball",
+        "the LBW rule in cricket", "the scoring system in tennis",
+        "the icing rule in hockey", "the salary cap in the NBA",
+        "the draft in the NFL", "VAR in soccer",
+        "the rules of golf", "match play vs stroke play",
+        "the Tour de France stages",
+        "Olympic decathlon events",
+        "Formula 1 qualifying", "MotoGP rider standings",
+        "the marathon distance origin",
+        "the modern pentathlon",
+        "rugby union vs rugby league",
+        "Australian rules football",
+        "the rules of chess", "the rules of go",
+        "the FIDE rating system",
+        "doping testing protocols",
+        "the wing-T offense in football",
+        "the pick and roll in basketball",
+        "the catenaccio defensive system",
+        "the rules of cricket test matches",
+        "tennis Grand Slam tournaments",
+        "the Stanley Cup playoff format",
+        "the Champions League knockout rounds",
+        "F1 constructor vs driver championships",
+    ],
+}
+
+_CURRICULUM_TEMPLATES: list[str] = [
+    "Explain {t} in 3 sentences.",
+    "What is {t} used for?",
+    "Give a concrete example of {t}.",
+    "What are common misconceptions about {t}?",
+    "How does {t} relate to similar concepts?",
+    "What are the prerequisites to understand {t}?",
+    "What is the simplest possible description of {t}?",
+    "What problem does {t} solve?",
+    "Compare {t} with one alternative approach.",
+    "What is the historical origin of {t}?",
+    "Who is most associated with {t}?",
+    "Describe {t} as if to a 10-year-old.",
+    "What are the main components of {t}?",
+    "How does one learn {t} effectively?",
+    "What is the most important thing to know about {t}?",
+    "Why is {t} important?",
+    "How has {t} changed over time?",
+    "What is a counter-intuitive fact about {t}?",
+    "What is one famous application of {t}?",
+    "What practical use does {t} have today?",
+    "What are the limits or open questions of {t}?",
+    "What discipline studies {t}?",
+    "What field does {t} belong to?",
+]

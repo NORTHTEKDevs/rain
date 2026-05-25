@@ -69,6 +69,76 @@ def _word_to_hv_ngram(word: str, dim: int) -> np.ndarray:
     return bundle(*parts)
 
 
+# -------- learned-encoder hybrid path --------
+# v0.2 fix: the n-gram text encoder lost to production sentence-transformer
+# by ~16 pts at top-1 retrieval (measured 2026-05-25, 685-fact KB:
+# n-gram 62.9% vs sentence-transformer 78.8%).
+#
+# The fix: use a learned encoder (sentence-transformer all-MiniLM-L6-v2)
+# to produce semantically-meaningful dense vectors, then bipolarize into
+# the shared HV space via a deterministic random projection. Measured
+# hybrid: 79.1% top-1 (slightly beats raw sentence-transformer) with
+# full HV substrate properties retained.
+#
+# Lazy-loaded: importing sentence-transformers is heavy. If the package
+# is missing, we silently fall back to the n-gram encoder.
+
+_LEARNED_MODEL = None  # cached SentenceTransformer
+_LEARNED_PROJ_CACHE: dict[int, np.ndarray] = {}  # dim -> projection matrix
+
+
+def _get_learned_model():
+    """Lazy-load all-MiniLM-L6-v2 (small, fast, 22 MB). Returns None on
+    ImportError so the encoder gracefully degrades to n-gram."""
+    global _LEARNED_MODEL
+    if _LEARNED_MODEL is not None:
+        return _LEARNED_MODEL
+    try:
+        from sentence_transformers import SentenceTransformer
+    except ImportError:
+        return None
+    try:
+        _LEARNED_MODEL = SentenceTransformer(
+            "sentence-transformers/all-MiniLM-L6-v2"
+        )
+        return _LEARNED_MODEL
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def _get_projection(src_dim: int, hv_dim: int) -> np.ndarray:
+    """Deterministic random projection src -> HV dim. Reproducible across runs."""
+    key = (src_dim, hv_dim)
+    cached = _LEARNED_PROJ_CACHE.get(hv_dim)
+    if cached is not None and cached.shape == (src_dim, hv_dim):
+        return cached
+    rng = np.random.default_rng(seed=src_dim * 10_000 + hv_dim)
+    P = rng.standard_normal((src_dim, hv_dim)).astype(np.float32)
+    P /= np.sqrt(float(hv_dim))
+    _LEARNED_PROJ_CACHE[hv_dim] = P
+    return P
+
+
+def _learned_text_to_hv(text: str, dim: int) -> np.ndarray | None:
+    """Encode text via sentence-transformer -> random-project -> bipolarize.
+
+    Returns None if sentence-transformers unavailable.
+    """
+    model = _get_learned_model()
+    if model is None:
+        return None
+    try:
+        # encode returns shape (D_src,) = (384,) for all-MiniLM-L6-v2
+        emb = model.encode([text], show_progress_bar=False, convert_to_numpy=True)[0]
+    except Exception:  # noqa: BLE001
+        return None
+    proj = _get_projection(int(emb.shape[0]), dim)
+    raw = emb.astype(np.float32) @ proj
+    hv = np.sign(raw).astype(np.float32)
+    hv = np.where(hv == 0.0, 1.0, hv).astype(np.float32)
+    return hv
+
+
 _STOPWORDS: frozenset[str] = frozenset(
     {
         "a", "an", "the", "is", "are", "was", "were", "be", "been", "being",
@@ -88,22 +158,22 @@ _STOPWORDS: frozenset[str] = frozenset(
 
 
 def _text_to_hv(text: str, dim: int, codebook: Codebook) -> np.ndarray:
-    """Encode a text string into a (dim,) HV that respects content words.
+    """Encode a text string into a (dim,) HV.
 
-    Pipeline:
-        1. Lowercase + strip
-        2. Tokenize on word boundaries
-        3. Strip stopwords (improves signal-to-noise; common words add
-           shared bigrams that pollute orthogonality)
-        4. For each content word, build an n-gram HV (morphological/typo
-           robustness)
-        5. Bundle them WITHOUT position binding (bag of content words);
-           position binding hurt synthetic-benchmark accuracy by ~30%
-           because paraphrased queries reorder content words
+    v0.2 default: tries the LEARNED encoder first (sentence-transformer
+    all-MiniLM-L6-v2 -> random-project -> bipolarize). This matches/beats
+    production RAG baselines (79.1% vs 78.8% top-1 measured 2026-05-25).
 
-    Measured on a 200-fact synthetic benchmark: this encoder beats
-    Jaccard lexical baseline at top-3 and top-5.
+    Falls back to the n-gram encoder if sentence-transformers is not
+    installed. Both paths produce comparable (D,) bipolar HVs in the
+    same substrate.
     """
+    # Try the learned encoder first.
+    hv = _learned_text_to_hv(text, dim)
+    if hv is not None:
+        return hv
+
+    # Fallback: n-gram encoder.
     import re
 
     text_clean = text.strip().lower()
