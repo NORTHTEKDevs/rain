@@ -77,18 +77,36 @@ def demo_n3_compositional_generalization():
     banner("4. N3 -- Compositional generalization (slot-based VSA composition)")
     cb = Codebook(vocab_size=64, dim=2048, seed=0)
     reasoner = CompositionalReasoner(cb, slot_names=["color", "shape", "size"])
-    # Compose an unseen combination
-    composite = reasoner.compose({"color": "magenta", "shape": "hexagon", "size": "tiny"})
-    color = reasoner.extract(composite, "color", candidates=["red", "green", "blue", "magenta", "yellow"])
-    shape = reasoner.extract(composite, "shape", candidates=["circle", "square", "triangle", "hexagon"])
-    size = reasoner.extract(composite, "size", candidates=["small", "medium", "large", "tiny"])
+    # Compose an unseen combination, then decode ALL slots jointly via the
+    # resonant (explaining-away) readout -- one interference-cancelled call.
+    assign = {"color": "magenta", "shape": "hexagon", "size": "tiny"}
+    candidates = ["red", "green", "blue", "magenta", "yellow",
+                  "circle", "square", "triangle", "hexagon",
+                  "small", "medium", "large", "tiny"]
+    decoded = reasoner.extract_all(reasoner.compose_sum(assign),
+                                   slots=["color", "shape", "size"], candidates=candidates)
     print("Composed: (color=magenta, shape=hexagon, size=tiny)")
-    print("Extracted from one composite HV:")
-    print(f"   color: {color}")
-    print(f"   shape: {shape}")
-    print(f"   size:  {size}")
+    print("Resonant joint readout from one composite HV:")
+    for slot in ("color", "shape", "size"):
+        print(f"   {slot}: {decoded[slot]}")
     print()
-    print("-> Compose any combination; extract any slot. Held-out combos work.")
+
+    # Why it matters: under heavy slot crowding the per-slot greedy readout
+    # collapses while the resonant joint readout holds.
+    crowd = Codebook(vocab_size=512, dim=256, seed=1)
+    n_slots = 20
+    slots = [f"s{i}" for i in range(n_slots)]
+    vals = [f"v{i}" for i in range(4 * n_slots)]        # realistic candidate pool
+    cr = CompositionalReasoner(crowd, slot_names=slots)
+    assign2 = {s: vals[4 * i] for i, s in enumerate(slots)}
+    greedy_ok = sum(cr.extract(cr.compose(assign2), s, vals) == assign2[s] for s in slots)
+    resonant = cr.extract_all(cr.compose_sum(assign2), slots, vals)
+    resonant_ok = sum(resonant[s] == assign2[s] for s in slots)
+    print(f"At {n_slots} slots (D=256): greedy recovers {greedy_ok}/{n_slots}, "
+          f"resonant recovers {resonant_ok}/{n_slots}")
+    print()
+    print("-> Compose any combination; decode every slot jointly. Held-out combos "
+          "work, and the resonant readout scales to many more slots.")
 
 
 def demo_n2_calibrated_uncertainty():
