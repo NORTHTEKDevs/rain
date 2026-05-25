@@ -645,3 +645,33 @@ SHIFTS_CONTINUED:
     - Push v0.2 to GitHub origin (USER ACTION)
     - Train HYMN-Plus on bigger corpus (WikiText-103+, multi-day GPU job)
     - Build swarm demo: aviation + medical + legal specialist swarm
+  ---
+  step: 87
+  date: 2026-05-25T05:00:00Z
+  engineer: claude
+  summary: |
+    Pushed v0.2 to GitHub. Created GitHub releases for v0.1 + v0.2.
+    Built swarm_demo (3-specialist aviation+medical+legal). Wrote
+    CHANGELOG entries + RELEASE-NOTES-v0.2.md. Audited all 4 demo
+    scripts -- all clean. Aviation demo improved with new encoder.
+  files_added:
+    - scripts/swarm_demo.py (3-specialist swarm demo)
+    - docs/RELEASE-NOTES-v0.2.md (investor-ready release narrative)
+  files_modified:
+    - CHANGELOG.md (proper v0.1 + v0.2 entries)
+  github:
+    main_pushed: 9fd4cf6 (v0.2) + c107c64 (post-v0.2)
+    tags_pushed: rain-net-v0.1, rain-net-v0.2
+    releases_published:
+      - https://github.com/NORTHTEKDevs/rain/releases/tag/rain-net-v0.1
+      - https://github.com/NORTHTEKDevs/rain/releases/tag/rain-net-v0.2
+  demo_audit:
+    rain_chat_v2: clean -- math skill fires, learn works, retrieval works
+    multimodal_demo: clean -- image 0.5 vs 0.001 distractor, ts exact match 1.0
+    aviation_demo: improved -- Phase 3 operator queries now all retrieve correctly
+    swarm_demo: works -- 3 specialists routed correctly, verifier-voted answers
+  next:
+    - Train HYMN-Plus on bigger corpus (WikiText-103+, multi-day GPU run)
+    - Implement persistent verifier head training across sessions
+    - Build proper SDM (Kanerva) at 64K-bit address scale
+    - Open-source launch announcement (HN + Twitter)
