@@ -609,3 +609,39 @@ SHIFTS_CONTINUED:
     - Implement JEPA world-model expert (replaces last stub)
     - Tag v0.2 release
     - Push v0.2 numbers to docs/SERIES-A/01-ONE-PAGER.md
+  ---
+  step: 86
+  date: 2026-05-25T04:30:00Z
+  engineer: claude
+  summary: |
+    v0.2 release tagged. Multi-agent VSA swarm + JEPA world-model
+    expert shipped. All 8 MoA experts now real (zero stubs).
+    Commit 9fd4cf6, tag rain-net-v0.2.
+  files:
+    - rain/core/swarm.py (RainNetSwarm + SwarmMember + HV-routed dispatch)
+    - rain/core/jepa_expert.py (JEPAState + make_jepa_expert + train_jepa_from_episodic)
+    - rain/core/real_experts.py (jepa_wm now real, all 8 experts real)
+    - tests/test_swarm_and_jepa.py (15 tests)
+    - docs/SERIES-A/01-ONE-PAGER.md (refreshed with v0.2 measured numbers)
+  measured:
+    swarm_routing_correctness: aviation query routes to aviation member (verified test)
+    jepa_training_improves_prediction: trained 20 steps -> similarity increases vs untrained
+    all_8_experts_real: tsetlin sdm sym_regression pure_attn samba_lm diffusion gnn jepa_wm
+  test_status: 539/539 passing
+  v0_2_complete:
+    - Encoder reformat: shipped
+    - Two-stage retrieval: shipped (3.3x speedup)
+    - Reflexion loop: shipped
+    - Causal graph: shipped
+    - Multi-agent swarm: shipped
+    - JEPA world-model: shipped
+    - All 8 experts real: shipped
+    - 539 tests: green
+  git:
+    tags: [rain-net-v0.1, rain-net-v0.2]
+    commits: [b2a4e1a (v0.1), 9fd4cf6 (v0.2)]
+  next:
+    - First investor outreach (docs/SERIES-A/01-ONE-PAGER.md)
+    - Push v0.2 to GitHub origin (USER ACTION)
+    - Train HYMN-Plus on bigger corpus (WikiText-103+, multi-day GPU job)
+    - Build swarm demo: aviation + medical + legal specialist swarm
