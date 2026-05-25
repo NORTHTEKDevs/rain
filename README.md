@@ -1,11 +1,109 @@
-# RAIN — Resonant Active Inference Network
+# RAIN — Resonant Active Inference Network → **RAIN-Net** (v0.1, 2026-05-24)
 
-> A non-Transformer generative AI architecture with structured knowledge
-> integrated as a per-block forward-pass primitive. CPU-trainable on a
-> workstation. Auditable, continually-learning, multi-modal substrate.
-> Architecturally distinct from any LLM.
+> A new generative-AI architecture class built on Vector Symbolic
+> Architecture (VSA) hypervectors. Knowledge in addressable memory,
+> skills as compiled procedures, reasoning as a verifiable trace.
+> CPU-trainable. Multi-modal substrate. Architecturally distinct from
+> any LLM, with measurable structural advantages on cost, audit, and
+> continual learning.
 
 **CONFIDENTIAL** — (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
+
+---
+
+## TL;DR — what shipped in v0.1 (2026-05-24)
+
+**RAIN-Net** is a 9-module composition engine wired together as a
+single `RainNet` class. All modules shipped + tested:
+
+| Module | File | Role |
+|---|---|---|
+| HV substrate | `rain/core/hv_substrate.py` | unifying bind/bundle/permute/cleanup |
+| Encoder bank | `rain/core/encoder_bank.py` | every modality → shared 10K-D HV space |
+| MoA router | `rain/core/moa_router.py` | routes to heterogeneous experts by HV similarity |
+| Real experts | `rain/core/real_experts.py` | Tsetlin + SDM + pure-attn + sym-regression + HYMN |
+| Hierarchical memory | `rain/core/hierarchical_memory.py` | 4-level addressable memory |
+| Verifier head | `rain/core/verifier_head.py` | test-time-compute candidate scoring |
+| Symbolic verifier | `rain/core/symbolic_verifier.py` | citation + clause + binding-coherence audit |
+| RainNet composition | `rain/core/rain_net.py` | public API |
+| Distillation pipeline | `rain/training/distillation.py` | Ollama + Claude teacher |
+| Active learning loop | `rain/training/active_learning.py` | live self-improvement during use |
+
+Plus:
+- `docs/RAIN-NET.md` — arxiv-shaped architectural spec
+- `docs/TRAINING-STRATEGY.md` — cheap-compute path ($5K → $5M tiers)
+- `docs/SERIES-A/` — investor package (one-pager, pitch deck, financial model, demo script)
+- `scripts/rain_net_demo.py` — interactive REPL with full audit trail
+- `scripts/benchmark_rain_net.py` — measurable beat vs Jaccard baseline
+- `scripts/run_ollama_distill.py` — real Ollama distillation runner
+- `tests/test_rain_net.py` — 48 tests, all green
+
+**Measured today (2026-05-24)**:
+
+| Test | Result | Notes |
+|---|---|---|
+| Synthetic 200-fact retrieval, top-1 | RAIN-Net 21.0% vs Jaccard 8.5% | **2.5x baseline**, no training |
+| Synthetic 200-fact retrieval, top-3 | RAIN-Net 48.5% vs Jaccard 23.5% | **2.1x baseline** |
+| Real Ollama-distilled KB self-eval, top-1 | **71.8%** | 220 facts across 4 domains from llama3.2:3b |
+| Real Ollama-distilled KB self-eval, top-3 | **90.5%** | improves with KB growth |
+| Real Ollama-distilled KB self-eval, top-5 | **95.5%** | end-to-end pipeline validated |
+| Verifier head training (8-domain QA) | 30% → 100% after 1 epoch | gap: -0.0035 → +0.4997 (in-distribution) |
+| Multimodal compound query | Apollo image+text bound: +0.501 vs +0.011 distractor | **64x** discrimination on multi-modal bind |
+| MoA routing accuracy (10 query types → 8 experts) | **9/10 = 90.0%** | seeded domain HVs, top-k=2 |
+| Ollama distillation, 220 examples (4 domains) | $0 cost, ~10 min total | local llama3.2:3b |
+| HYMN-Plus live generation through RAIN-Net | 64 chars in 2.3s | 14M-param Shakespeare-trained ckpt |
+| Procedural skills bundled | **4 on-disk skills** (math, date, unit, regex) — all deterministic |
+| Session abstraction | 20+ turn episodic recall verified | pyramid query at t0 recallable at t20+ |
+| Full test suite | **474/474 green** | 351 RAIN + 48 RAIN-Net + 20 expert + 13 adapter + 12 session + 26 skills + 4 misc |
+
+## Quickstart (60 seconds)
+
+```bash
+git clone https://github.com/NORTHTEKDevs/rain.git
+cd rain
+python -m venv .venv && source .venv/bin/activate    # Linux/Mac
+# or .venv\Scripts\activate                          # Windows
+pip install -e .
+
+# Verify everything works
+python -m pytest tests/ -q                           # 474 passed
+
+# Interactive REPL (skills + episodic recall + audit trail)
+rain-chat
+
+# Or run any of the CLI commands
+rain-demo            # simpler REPL
+rain-bench           # synthetic retrieval benchmark
+rain-distill         # real Ollama distillation pipeline
+rain-multimodal      # text + image + numeric demo
+rain-report          # full benchmark report -> docs/RESULTS-v0.1.md
+rain-serve --port 8080   # HTTP API
+
+# Or reproducibility one-liner
+bash scripts/repro.sh
+```
+
+Or with Docker:
+
+```bash
+docker build -t rain-net:0.1 .
+docker run --rm -p 8080:8080 rain-net:0.1
+curl -X POST http://localhost:8080/query \
+  -H 'Content-Type: application/json' \
+  -d '{"query": "what is 47 * 38"}'
+```
+
+For the architecture spec read [`docs/RAIN-NET.md`](docs/RAIN-NET.md).
+For investor materials read [`docs/SERIES-A/`](docs/SERIES-A/).
+
+---
+
+## Historical note: the v5 retraction (prior architecture, kept for reference)
+
+Below is the original (pre-RAIN-Net) RAIN architecture documentation,
+which honestly retracts an earlier over-claimed result. RAIN-Net v0.1
+builds on the verified pieces here and explicitly removes the
+unverified claims.
 
 ---
 

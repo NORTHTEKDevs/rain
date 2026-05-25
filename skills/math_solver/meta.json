@@ -1,0 +1,15 @@
+{
+  "name": "math_solver",
+  "description": "Safe arithmetic evaluator. Handles expressions like 2+2, 47*38, (10+5)/3.",
+  "version": "0.1.0",
+  "domain_text": "compute calculate evaluate solve arithmetic math equation formula sum product divide multiply plus minus times what is plus equals add subtract",
+  "dim": 10000,
+  "has_handler": false,
+  "has_weights": false,
+  "author": "Kristian Baer / Northtek",
+  "created": "2026-05-24T22:34:56Z",
+  "invocations": 0,
+  "trigger_patterns": [
+    "\\d.*[+\\-*/=()]|[+\\-*/=()].*\\d|\\bcompute\\b|\\bevaluate\\b"
+  ]
+}

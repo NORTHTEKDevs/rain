@@ -1,0 +1,16 @@
+{
+  "name": "statistics",
+  "description": "Descriptive statistics: mean, median, stdev, variance, min, max, sum, mode.",
+  "version": "0.1.0",
+  "domain_text": "mean average median stdev standard deviation variance min max sum total mode range statistics summary descriptive",
+  "dim": 10000,
+  "has_handler": false,
+  "has_weights": false,
+  "author": "Kristian Baer / Northtek",
+  "created": "2026-05-24T23:25:36Z",
+  "invocations": 0,
+  "trigger_patterns": [
+    "\\b(mean|median|stdev|variance|average|sum|stats|summary)\\b.*\\d",
+    "\\b(min|max|mode|range)\\b.*\\d.*,.*\\d"
+  ]
+}

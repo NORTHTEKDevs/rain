@@ -1,0 +1,19 @@
+{
+  "name": "calendar_lookup",
+  "description": "Timezone math, leap-year checks, quarter lookups, common-date facts.",
+  "version": "0.1.0",
+  "domain_text": "time timezone utc offset city leap year days quarter calendar when hours minutes",
+  "dim": 10000,
+  "has_handler": false,
+  "has_weights": false,
+  "author": "Kristian Baer / Northtek",
+  "created": "2026-05-24T23:25:36Z",
+  "invocations": 0,
+  "trigger_patterns": [
+    "\\butc\\s+offset\\b",
+    "\\bleap year\\b",
+    "\\bquarter\\b.*\\d{4}",
+    "\\bhow many days in\\b",
+    "\\btime.*in\\s+\\w+.*when"
+  ]
+}

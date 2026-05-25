@@ -6,9 +6,9 @@ requires = ["maturin>=1.7,<2.0"]
 build-backend = "maturin"
 
 [project]
-name = "rain"
-version = "0.0.0"
-description = "RAIN — Resonant Active Inference Network (CONFIDENTIAL)"
+name = "rain-net"
+version = "0.1.0"
+description = "RAIN-Net — composable hypervector-substrate generative AI architecture"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { file = "LICENSE" }
@@ -64,6 +64,13 @@ eval = [
 
 [project.scripts]
 rain = "rain.__main__:main"
+rain-chat = "rain.cli.entrypoints:chat"
+rain-demo = "rain.cli.entrypoints:demo"
+rain-bench = "rain.cli.entrypoints:bench"
+rain-distill = "rain.cli.entrypoints:distill"
+rain-multimodal = "rain.cli.entrypoints:multimodal"
+rain-report = "rain.cli.entrypoints:report"
+rain-serve = "rain.cli.entrypoints:serve"
 
 [project.urls]
 homepage = "https://github.com/NORTHTEKDevs/rain"

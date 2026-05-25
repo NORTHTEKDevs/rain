@@ -1,0 +1,19 @@
+{
+  "name": "aviation_compliance",
+  "description": "FAA Airworthiness Directive lookup + applicability check for AK bush ops.",
+  "version": "0.1.0",
+  "domain_text": "aircraft airworthiness directive AD applicable applies cessna piper beechcraft boeing inspection mandatory FAA part 91 part 135 engine model aircraft N-number tail number bush pilot maintenance",
+  "dim": 10000,
+  "has_handler": false,
+  "has_weights": false,
+  "author": "Kristian Baer / Northtek",
+  "created": "2026-05-24T23:31:49Z",
+  "invocations": 0,
+  "trigger_patterns": [
+    "\\b(AD|airworthiness directive)\\b",
+    "\\b(cessna|piper|beechcraft|boeing|airbus|cirrus|mooney)\\b",
+    "\\b(C172|C182|PA-?28|PA-?32)\\b",
+    "\\bN\\d{2,5}[A-Z]?\\b",
+    "\\bFAA\\b"
+  ]
+}

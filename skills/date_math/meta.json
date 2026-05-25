@@ -1,0 +1,18 @@
+{
+  "name": "date_math",
+  "description": "Date arithmetic. Handles 'X days from Y', 'days between A and B', weekday lookup.",
+  "version": "0.1.0",
+  "domain_text": "date dates day days week weeks month months year years between from after before today plus minus when calendar weekday",
+  "dim": 10000,
+  "has_handler": false,
+  "has_weights": false,
+  "author": "Kristian Baer / Northtek",
+  "created": "2026-05-24T22:56:25Z",
+  "invocations": 0,
+  "trigger_patterns": [
+    "\\b\\d{4}-\\d{1,2}-\\d{1,2}\\b",
+    "\\b\\d+\\s*(day|week|month|year)s?\\b",
+    "\\bbetween\\b.*\\band\\b",
+    "\\b(today|yesterday|tomorrow)\\b"
+  ]
+}

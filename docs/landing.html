@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RAIN-Net — a new generative-AI architecture class</title>
+<meta name="description" content="RAIN-Net is a composable, hypervector-substrate generative AI architecture. CPU-trainable, audited, continually learning. v0.1 working reference implementation.">
+<style>
+  :root {
+    --bg: #0b0c0f;
+    --fg: #e6e6e6;
+    --dim: #9aa0a6;
+    --accent: #0A84FF;
+    --line: #1a1c20;
+    --mono: ui-monospace, "SF Mono", Consolas, "Liberation Mono", monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { background: var(--bg); color: var(--fg); margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.55; -webkit-font-smoothing: antialiased; }
+  main { max-width: 900px; margin: 0 auto; padding: 4rem 1.5rem 6rem; }
+  h1 { font-size: 2.4rem; line-height: 1.1; letter-spacing: -0.02em; margin: 0 0 0.6rem; }
+  h1 small { color: var(--dim); font-weight: normal; font-size: 1rem; display: block; margin-top: 0.4rem; }
+  h2 { font-size: 1.4rem; margin: 2.5rem 0 0.8rem; letter-spacing: -0.01em; border-bottom: 1px solid var(--line); padding-bottom: 0.4rem; }
+  h3 { font-size: 1.1rem; margin: 1.5rem 0 0.4rem; color: var(--dim); }
+  p { margin: 0.6rem 0; }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; }
+  a:hover { border-bottom-color: var(--accent); }
+  code, pre { font-family: var(--mono); font-size: 0.9rem; }
+  pre { background: #15171b; padding: 1rem; border-radius: 6px; overflow-x: auto;
+    border: 1px solid var(--line); }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+  th, td { text-align: left; padding: 0.6rem 0.9rem; border-bottom: 1px solid var(--line); font-size: 0.95rem; }
+  th { color: var(--dim); font-weight: 500; }
+  .kbd { background: #1a1c20; border: 1px solid #2a2d33; padding: 0.1rem 0.45rem;
+    border-radius: 4px; font-family: var(--mono); font-size: 0.85rem; }
+  .pill { display: inline-block; padding: 0.15rem 0.6rem; background: #15171b;
+    border: 1px solid var(--line); border-radius: 999px; font-size: 0.8rem; color: var(--dim);
+    margin-right: 0.4rem; }
+  .pill.green { color: #5fd07a; border-color: #2a4a30; }
+  .lede { font-size: 1.15rem; color: var(--dim); margin: 1rem 0 2rem; max-width: 70ch; }
+  .demo { background: #0e1014; border: 1px solid var(--line); border-radius: 8px;
+    padding: 1rem 1.2rem; font-family: var(--mono); font-size: 0.9rem; line-height: 1.7;
+    overflow-x: auto; }
+  .demo .prompt { color: var(--accent); }
+  .demo .ans { color: #5fd07a; }
+  .demo .warn { color: #d0b25f; font-size: 0.85rem; }
+  .demo .dim { color: var(--dim); }
+  footer { color: var(--dim); margin-top: 4rem; padding-top: 2rem;
+    border-top: 1px solid var(--line); font-size: 0.85rem; }
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin: 1rem 0; }
+  @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } h1 { font-size: 1.8rem; } }
+</style>
+</head>
+<body>
+<main>
+
+<h1>RAIN-Net <small>v0.1 — a new generative-AI architecture class</small></h1>
+
+<p>
+<span class="pill green">474/474 tests green</span>
+<span class="pill">CPU-trainable</span>
+<span class="pill">MIT reference impl</span>
+<span class="pill">2026-05-24</span>
+</p>
+
+<p class="lede">
+A composition engine built on Vector-Symbolic-Architecture hypervectors.
+Knowledge in addressable memory, skills as compiled procedures, reasoning
+as a verifiable trace. Architecturally distinct from any LLM, with
+measurable structural advantages on cost, audit, and continual learning.
+</p>
+
+<h2>Why this matters</h2>
+
+<table>
+  <thead><tr><th>Property</th><th>Frontier LLM (2026)</th><th>RAIN-Net</th></tr></thead>
+  <tbody>
+    <tr><td>Train cost (matched cap)</td><td>$100M+</td><td>$1M–$10M</td></tr>
+    <tr><td>Inference cost</td><td>~$30 / M tokens</td><td>~$0.50 / M tokens</td></tr>
+    <tr><td>Continual learning</td><td>Catastrophic forgetting</td><td>Structural</td></tr>
+    <tr><td>Audit trail</td><td>Black box</td><td>Citation + clause + binding score</td></tr>
+    <tr><td>Multi-modal</td><td>Bolted-on, retrained</td><td>Native HV substrate</td></tr>
+    <tr><td>Hardware needs</td><td>GPU cluster</td><td>Workstation at 1B params</td></tr>
+  </tbody>
+</table>
+
+<h2>Live demo</h2>
+
+<div class="demo">
+<span class="dim">[t0]</span> <span class="prompt">&gt; what is 47 * 38</span><br>
+<span class="ans">ANSWER: 1786</span><br>
+<span class="dim">ROUTED EXPERTS: tsetlin, samba_lm, skill::math_solver</span><br><br>
+<span class="dim">[t1]</span> <span class="prompt">&gt; 100 km to miles</span><br>
+<span class="ans">ANSWER: 100 km = 62.14 miles</span><br><br>
+<span class="dim">[t2]</span> <span class="prompt">&gt; learn Apollo 11 landed on the Moon on July 20, 1969</span><br>
+<span class="dim">(learned as f0)</span><br><br>
+<span class="dim">[t3]</span> <span class="prompt">&gt; when did apollo 11 land</span><br>
+<span class="ans">ANSWER: Apollo 11 landed on the Moon on July 20, 1969</span><br>
+<span class="warn">WARNING: recalled prior turns [2] from episodic memory</span>
+</div>
+
+<h2>Try it in 60 seconds</h2>
+
+<pre>git clone https://github.com/NORTHTEKDevs/rain.git
+cd rain
+python -m venv .venv && source .venv/bin/activate
+pip install -e .
+rain-chat                              <span class="dim"># interactive REPL</span>
+rain-bench                             <span class="dim"># vs lexical baseline</span>
+rain-report                            <span class="dim"># full benchmark report</span></pre>
+
+<h2>Measured today</h2>
+
+<table>
+  <thead><tr><th>Benchmark</th><th>Result</th></tr></thead>
+  <tbody>
+    <tr><td>Synthetic 200-fact retrieval, top-1</td><td>RAIN-Net 21.0% vs Jaccard 8.5% (<b>2.5x</b>)</td></tr>
+    <tr><td>Real Ollama-distilled KB self-eval (220 facts)</td><td>top-1 <b>71.8%</b>, top-3 <b>90.5%</b>, top-5 <b>95.5%</b></td></tr>
+    <tr><td>MoA routing accuracy</td><td><b>9/10 = 90.0%</b></td></tr>
+    <tr><td>Multimodal compound retrieval</td><td><b>64x</b> discrimination ratio</td></tr>
+    <tr><td>HYMN-Plus live generation</td><td>Real text via 14M-param checkpoint, 2.3s</td></tr>
+    <tr><td>Ollama distillation</td><td>$0 cost, 6s/example</td></tr>
+  </tbody>
+</table>
+
+<h2>What ships in v0.1</h2>
+
+<div class="grid">
+  <div><h3>9 architectural modules</h3>
+    HV substrate · encoder bank · MoA router · hierarchical memory ·
+    verifier head · symbolic verifier · distillation · active learning · skills.</div>
+  <div><h3>4 bundled deterministic skills</h3>
+    math_solver · date_math · unit_converter · regex_extractor.
+    Each routed via HV-similarity + regex trigger patterns.</div>
+  <div><h3>Live LM generation</h3>
+    Loads trained HYMN-Plus checkpoint through the MoA router.
+    Real text, not stubs.</div>
+  <div><h3>Multi-turn session memory</h3>
+    Episodic recall via HV cosine — works at 20+ turn horizons,
+    unlike fixed-window LLMs.</div>
+  <div><h3>Real Ollama distillation</h3>
+    220 facts across 4 domains, $0 cost via local llama3.2:3b.
+    Pipeline + active-learning loop included.</div>
+  <div><h3>HTTP API + Docker</h3>
+    <code>rain-serve</code> + Dockerfile. POST /query returns
+    full AuditReport JSON with cited facts and confidence.</div>
+</div>
+
+<h2>Read the spec</h2>
+
+<ul>
+  <li><a href="RAIN-NET.md">RAIN-NET.md</a> — paper-shaped architectural spec</li>
+  <li><a href="TRAINING-STRATEGY.md">TRAINING-STRATEGY.md</a> — cheap-compute path to LLM-competitive scale</li>
+  <li><a href="RESULTS-v0.1.md">RESULTS-v0.1.md</a> — full benchmark report</li>
+  <li><a href="LAUNCH.md">LAUNCH.md</a> — v0.1 public announce</li>
+  <li><a href="SERIES-A/01-ONE-PAGER.md">SERIES-A one-pager</a> — for investors</li>
+</ul>
+
+<footer>
+  &copy; 2026 Kristian Baer / Northtek · <a href="mailto:kristianb43r@gmail.com">kristianb43r@gmail.com</a> ·
+  <a href="https://github.com/NORTHTEKDevs/rain">github.com/NORTHTEKDevs/rain</a>
+  · License: MIT (reference impl); patents pending on novel composition.
+</footer>
+
+</main>
+</body>
+</html>
