@@ -57,3 +57,34 @@ class CompositionalReasoner:
                 best_sim = sim
                 best_token = tok
         return best_token
+
+    def compose_sum(self, slot_values: dict[str, str]) -> np.ndarray:
+        """Like compose() but returns the UNSIGNED real superposition of binds.
+
+        Required for resonant (explaining-away) readout, which needs the linear
+        superposition rather than the sign-quantised bundle.
+        """
+        if not slot_values:
+            raise ValueError("at least one slot required")
+        acc = np.zeros(self.codebook.dim, dtype=np.float64)
+        for slot, value in slot_values.items():
+            if slot not in self.roles:
+                raise ValueError(f"unknown slot: {slot}")
+            acc += bind(self.roles[slot], self.codebook.vector(value)).astype(np.float64)
+        return acc
+
+    def extract_all(self, composite_sum: np.ndarray, slots: list[str],
+                    candidates: list[str], max_iters: int = 25) -> dict[str, str]:
+        """Jointly decode ALL slots via resonant explaining-away.
+
+        Decodes every slot at once, re-reading each after subtracting the others'
+        reconstructions. Recovers materially more slots at a given dimension than
+        per-slot extract() once cross-talk dominates (Hyperion Finding 5). Operates
+        on the unsigned superposition from compose_sum().
+        """
+        from rain.core.resonator import resonant_extract  # noqa: PLC0415
+
+        roles = np.stack([self.roles[s] for s in slots])
+        cb = np.stack([self.codebook.vector(c) for c in candidates])
+        idx = resonant_extract(composite_sum, roles, cb, max_iters=max_iters)
+        return {s: candidates[idx[i]] for i, s in enumerate(slots)}
