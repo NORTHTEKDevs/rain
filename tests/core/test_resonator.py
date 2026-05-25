@@ -36,6 +36,24 @@ def test_resonator_factorizes_unknown_product():
     assert ok / T >= 0.9
 
 
+def test_restarts_improve_factorization_at_capacity():
+    """Near the factor-capacity edge (F=4), random restarts + best-reconstruction
+    selection escape limit cycles and roughly double single-pass success."""
+    rng = np.random.default_rng(5)
+    D, M, F, T = 4096, 10, 4, 40
+    cbs = [_hvs(rng, M, D) for _ in range(F)]
+    single = multi = 0
+    for _ in range(T):
+        true = [int(rng.integers(M)) for _ in range(F)]
+        prod = np.ones(D, dtype=np.int16)
+        for f in range(F):
+            prod = (prod * cbs[f][true[f]]).astype(np.int16)
+        single += (resonator_decode(prod, cbs, restarts=1) == true)
+        multi += (resonator_decode(prod, cbs, restarts=6) == true)
+    assert multi > single        # restarts help at the capacity edge
+    assert multi / T >= 0.45     # reach a usable rate where single-shot is ~0.28
+
+
 def test_resonant_extract_beats_greedy_under_crosstalk():
     """At D=256, S=32 role->value bindings, greedy per-slot decode collapses while
     resonant explaining-away recovers all slots."""
