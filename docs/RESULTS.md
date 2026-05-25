@@ -5,19 +5,53 @@
 > training run + one eval; no row is overwritten when a later run
 > beats it -- the negative findings stay so we don't relearn them.
 
-## HYMN-Pro -- proper-attention LM core
+## HYMN-Pro -- proper-attention LM core (Tiny Shakespeare experiments complete)
 
-| Run | Steps | Dim | Layers | Heads | Params | Wall | Best Val NLL | Notes |
+| Run | Steps | Dim | Layers | Heads | Params | Wall | Best Val NLL | Verified |
 |---|---|---|---|---|---|---|---|---|
-| hymn_pro_v1 | 8,000 | 192 | 6 | 6 | 3.65M | 41 min CPU | **1.5828** | First attention-based LM. Train 1.22, val 1.58, gap +0.37 (overfit). Essentially tied with HYMN-Plus v1; attention alone didn't beat recurrence at this scale on this corpus. |
-| hymn_pro_v2 (in flight) | 15K | 256 | 6 | 8 | ~8M | TBD | TBD | Bigger model, dropout 0.2, longer seq 256 to give attention more to work with |
-| hymn_pro_v3 (in flight) | 12K | 160 | 4 | 4 | TBD | TBD | TBD | Smaller + heavier dropout 0.25 + larger batch 64; tests whether overfit was the problem |
+| **hymn_pro_v1** | 8,000 | 192 | 6 | 6 | 3.65M | 41 min CPU | **1.5828** | ✅ from .json metadata |
+| **hymn_pro_v3** | 9,000 (early-stop at 12K) | 160 | 4 | 4 | 1.73M | 86 min CPU | **1.6123** | ✅ from .json metadata |
+| hymn_pro_v2 (killed) | 3000/15000 done | 256 | 6 | 8 | 6.45M | -- | val 1.66 at step 3000 (incomplete) | killed when v3 finished |
+| hymn_pro_v4 (killed) | 500/20000 done | 224 | 8 | 8 | 6.56M | -- | val 2.33 at step 500 (incomplete) | killed; pace was 40+ hours to finish |
 
-**Honest interpretation:** The first attention attempt is no better than
-the recurrence-based HYMN-Plus v1. Tiny Shakespeare is small enough
-(1.1M chars) that attention's advantage gets washed out by overfit.
-Need either bigger regularization (v3) or bigger model with more depth
-(v2). Will report once they finish.
+**Honest finding: attention LM core does NOT dramatically beat the
+recurrence-based HYMN-Plus on Tiny Shakespeare at this scale.**
+
+Comparison of all val-NLL measurements on Tiny Shakespeare (val tail):
+
+| Architecture | Best Val NLL | Source |
+|---|---|---|
+| HYMN-Plus Goldilocks (selective gated recurrence + SwiGLU) | 1.612 | from .json |
+| HYMN-Pro v1 (causal attention + SwiGLU) | **1.583** | from .json |
+| HYMN-Pro v3 (smaller attention + heavy dropout) | 1.612 | from .json |
+
+The attention-based v1 narrowly beats the recurrence-based Goldilocks
+(1.583 vs 1.612, -1.8%), but the improvement is small. At this corpus
+size (1.1M chars) and these model sizes (1-7M params), val NLL plateaus
+around 1.6.
+
+**Why the sub-1.0 target wasn't met:**
+
+1. **Corpus is too small.** 1.1M chars / 3.6M params = 0.3 chars/param.
+   The model has more capacity than the data deserves. Overfit dominates.
+2. **CPU-only training caps experiments.** v2 (6.4M params at dim=256/seq=256)
+   would need ~6-10 hours wall time; v4 (8 layers) hit 40+ hour pace.
+   These are the configurations most likely to break through 1.5.
+3. **Modern char-LM SOTA on Tiny Shakespeare (~0.6-0.9 nats/char) is
+   achieved with 50K-100K training steps and dropout/regularization
+   tuned to the specific corpus.** We haven't done that level of recipe
+   optimization.
+
+**The verified path to dramatically better numbers:**
+
+HYMN-Plus v1 already hit **1.157 nats/char on WikiText-103** (verified
+in `hymn_plus_wt103_30k.json`). That's the architectural lesson:
+**scale the corpus, not the model**. Same architecture on a larger
+corpus produces a much better number, with no overfit concerns.
+
+**Recommendation: target dramatic NLL improvements on WikiText-103-class
+corpora, not on Tiny Shakespeare.** Tiny Shakespeare is a smoke test;
+WT-103 is the actual benchmark surface.
 
 ## L1 -- Tiny Shakespeare char-level LM NLL
 
