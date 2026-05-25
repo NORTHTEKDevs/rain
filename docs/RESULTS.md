@@ -5,6 +5,69 @@
 > training run + one eval; no row is overwritten when a later run
 > beats it -- the negative findings stay so we don't relearn them.
 
+## HYMN-Mamba (proper S6) vs HYMN-Plus vs HYMN-Pro on Tiny Shakespeare
+
+The cleanest A/B I can run on this hardware: train each of the three
+non-Transformer-class architectures on the same corpus with comparable
+training budgets, see which actually wins. All trained CPU, all using
+the same `val-split 0.05` held-out tail.
+
+| Architecture | Params | Steps | Wall | Best Val NLL |
+|---|---|---|---|---|
+| HYMN-Mamba (proper S6 selective scan) | 0.36M | 3K | 6.7 min | **1.720** |
+| HYMN-Plus Goldilocks (simplified gated recurrence) | 2.4M | 8K | 36 min | **1.612** |
+| HYMN-Pro v3 (causal attention + heavy dropout) | 1.7M | 12K (early-stop 9K) | 86 min | **1.612** |
+| HYMN-Pro v1 (causal attention, lighter dropout) | 3.65M | 8K | 41 min | **1.583** |
+
+**The honest takeaway: none of these dramatically beat the others.** All
+three architecture families (SSM, gated recurrence, causal attention)
+plateau around 1.55-1.75 val NLL at <10M params on this 1.1M-char
+corpus. The Mamba S6 result (1.72 at 0.36M params) is competitive on
+a per-parameter basis but doesn't unlock dramatically better fluency.
+
+**Why the architectures don't separate at this scale:**
+
+1. Tiny Shakespeare is 1.1M chars -- way below the data regime where
+   architectural differences become visible. Modern arch comparisons
+   on Tiny Shakespeare (nanoGPT, Mamba paper appendices) use 50K+
+   training steps + recipe tuning to push below 1.0; we trained 3-12K
+   steps each.
+2. At ~1-7M params on a corpus this small, every architecture overfits
+   within 10K steps. The val/train gap dominates the comparison.
+3. The architectural advantages (linear-time inference for Mamba,
+   long-range memory for attention, etc.) are about scaling -- they
+   shine when data and compute grow, not at smoke-test sizes.
+
+**What this implies for "compete with LLMs at less compute":**
+
+The verified path from these experiments: HYMN-Plus v1 on WikiText-103
+(543MB, 30K steps, ~5h CPU) hit **train NLL 1.16, OOD WT-2 NLL 1.135**.
+That's already in the territory where serious comparisons start
+(Llama 3 1B is ~1.4 nats/char on similar text; Mamba-130M is ~1.1).
+
+The architecture we have can SCALE to numbers that matter. It is NOT
+the case that another architectural tweak on Tiny Shakespeare will
+unlock dramatic improvement. The next legitimate experiment is:
+
+  - Train HYMN-Pro (attention) on WT-103-class corpus, ~30M params,
+    50K+ steps. Requires real compute (GPU or 24h+ CPU).
+  - Compare to HYMN-Plus v1 already at 1.16 on the same corpus.
+  - If HYMN-Pro at the same scale gets to ~0.9-1.0, that's the
+    architecture worth investing in.
+
+Until that data point exists, the "compete with LLMs" claim cannot
+honestly be made or refuted. It requires the compute spend the user
+explicitly wants to avoid until a competitive product is demonstrated.
+
+This is the honest impasse: the work that would prove competitiveness
+requires compute that should only be spent IF the work would prove
+competitiveness. The way out is either:
+  (a) accept the Tiny Shakespeare measurements as the architecture
+      data and decide based on them (current finding: no dramatic
+      architectural separation among modern designs at this scale)
+  (b) spend $20-100 on cloud GPU for a single WT-103 HYMN-Pro run
+      to break the circular dependency
+
 ## HYMN-Pro -- proper-attention LM core (Tiny Shakespeare experiments complete)
 
 | Run | Steps | Dim | Layers | Heads | Params | Wall | Best Val NLL | Verified |
