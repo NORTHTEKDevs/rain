@@ -280,9 +280,9 @@ Open `docs/SERIES-A/02-PITCH-DECK.md` to the GTM slide.
 > Series B trigger: $10M ARR + Tier-4 paper + 7B-trained model with
 > benchmark wins.
 >
-> Downside protection: vertical revenue still real at Tier-3, patent
-> IP independently valuable, Northtek brand provides revenue
-> diversification. The bet is asymmetric.
+> Downside protection: vertical revenue still real at Tier-3, the
+> data/skill moat independently valuable, Northtek brand provides
+> revenue diversification. The bet is asymmetric.
 >
 > Looking for a lead investor with a post-LLM thesis and 5-10y horizon."
 

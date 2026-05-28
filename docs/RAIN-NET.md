@@ -2,9 +2,7 @@
 
 > Working draft. Authors: Kristian Baer (Northtek / NORTHTEKDevs).
 > Status: architectural spec + reference v0.1 implementation. Not yet
-> validated at scale. Patent claims pending on the unifying composition,
-> the heterogeneous-expert mixture, the active-distillation loop, and the
-> HV-addressable hierarchical memory.
+> validated at scale. No patent claims are made or pending.
 
 ## Abstract
 
@@ -352,15 +350,10 @@ All shipped in v0.1 of this work, all tested, all run on workstation.
 - Microsoft 2024, *Memory Layers at Scale*.
 - Hinton et al. 2015, *Distilling the Knowledge in a Neural Network*.
 
-## 11. License and patents
+## 11. License
 
-Reference v0.1 implementation released MIT.
-Patent claims pending on:
-1. The HV-substrate unification across heterogeneous architectural experts.
-2. The active-distillation loop with verifier-gated teacher fallback.
-3. The four-level HV-addressable hierarchical memory.
-4. The composition of symbolic verifier + binding-coherence audit on
-   neural outputs for regulated-domain compliance use.
+See the repository `LICENSE` file for terms. No patent claims are made
+or pending on this work.
 
 ---
 

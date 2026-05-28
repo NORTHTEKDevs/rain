@@ -45,10 +45,7 @@ match:
 
 ## Defensibility
 
-1. **Patent claims pending** on the HV-substrate unification, the
-   heterogeneous-expert mixture, the active-distillation loop, and the
-   4-level addressable hierarchical memory.
-2. **First-mover composition advantage**: even if competitors copy the
+1. **First-mover composition advantage**: even if competitors copy the
    architecture, the KB + skill library + verifier weights take years to
    build. Network effect.
 3. **Vertical wedge revenue**: Tier-3 deployments in regulated domains
@@ -109,7 +106,7 @@ validation is what this raise funds.
 If the architecture works at scale, RAIN-Net is the first non-LLM
 general generative AI that competes at frontier capability — a
 category-defining outcome. If it does not scale, the vertical
-revenue from Tier-3 deployments and the patent IP retain real value.
+revenue from Tier-3 deployments and the data/skill moat retain real value.
 Downside is not zero; it's "specialist AI company with $5-15M ARR."
 
 ---

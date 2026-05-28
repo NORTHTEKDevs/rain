@@ -150,10 +150,8 @@ structural advantages, ready to scale.
 
 ## License + ask
 
-**License**: MIT (reference implementation).
-**Patents pending**: HV-substrate unification, heterogeneous-expert
-mixture, active-distillation loop, four-level addressable hierarchical
-memory.
+**License**: see the repository `LICENSE` file. No patent claims are
+made or pending on this work.
 
 If you're an investor, researcher, or builder interested in a non-LLM
 generative-AI direction with measurable cost + capability advantages:

@@ -675,3 +675,44 @@ SHIFTS_CONTINUED:
     - Implement persistent verifier head training across sessions
     - Build proper SDM (Kanerva) at 64K-bit address scale
     - Open-source launch announcement (HN + Twitter)
+  ---
+  step: 88
+  date: 2026-05-27T00:00:00Z
+  engineer: claude
+  status: closed
+  summary: |
+    PROJECT CONCLUSION + HONEST PIVOT. After the honest baseline
+    benchmark showed RAIN-Net is a RAG-plus-skills system with no
+    architectural moat (retrieval quality came from an off-the-shelf
+    sentence-transformer, not the HV substrate), the project concludes
+    as RAIN-Net and pivots to RAIN-CG (compositional generalization) --
+    the one evidence-backed path to genuinely beating Transformers,
+    seeded by Hyperion's verified 100%-on-SCAN pure-VSA result.
+    Also: scrubbed all patent-pending overclaim language per user
+    request.
+  files:
+    - docs/PIVOT.md (new -- the honest compositional-generalization scope)
+    - docs/CONCLUSION.md (new -- project conclusion + salvage list)
+    - docs/RAIN-NET.md (patent claims removed)
+    - docs/LAUNCH.md (patent claims removed)
+    - docs/landing.html (patent + MIT overclaim removed)
+    - docs/SERIES-A/01-ONE-PAGER.md (patent defensibility item removed)
+    - docs/SERIES-A/02-PITCH-DECK.md (IP/patent table ref removed)
+    - docs/SERIES-A/03-FINANCIAL-MODEL.md (patent line items reworded)
+    - docs/SERIES-A/04-DEMO-SCRIPT.md (patent downside-protection reworded)
+    - docs/plans/2026-05-24-gap1b-1c-real-data-llm-baseline.md (patent-gated note reworded)
+  evidence:
+    patent_scrub: grep "patent.?pending|patents pending|patent claims" -> only
+      negations + forensic-log historical entries remain
+    github_releases: v0.1 + v0.2 release bodies verified clean of patent/MIT claims
+    pivot_anchor: Hyperion pure_vsa 100% SCAN (27141/27141, 0 params) is the
+      verified seed for RAIN-CG
+  honest_verdict:
+    rain_net_is: competent RAG-plus-skills system, clean, 539 tests green
+    rain_net_is_not: a novel architecture that beats LLMs at less compute
+    real_moat: none as RAG; the moat lives in the VSA compositional kernel (pivot)
+  flagged_for_owner:
+    - LICENSE is proprietary (NOASSERTION) but several docs said "MIT".
+      Did NOT silently change license terms -- owner's legal call.
+  next_project: RAIN-CG per docs/PIVOT.md (fuse Hyperion VSA kernel + RAIN-Net
+    system layer; build Transformer-vs-VSA compositional benchmark suite)

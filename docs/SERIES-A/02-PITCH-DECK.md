@@ -251,4 +251,4 @@ architectures. Comfortable with research-stage risk + 5-10y horizon
 ---
 
 (Appendix slides: detailed architecture diagram, benchmark plan,
-financial model, comparable-company analysis, IP/patent table.)
+financial model, comparable-company analysis.)

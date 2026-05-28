@@ -39,7 +39,7 @@ content-independent.
 - Keep honest negatives; report partial/failed results plainly.
 - Do NOT claim "beats LLMs" without the actual LLM baseline number on the same held-out split, in-session.
 - Scope honesty in writeups; novelty = "synthesis for RAIN", never "first".
-- Patent-gated (RAIN pending claims), INTERNAL — do not publish.
+- INTERNAL working notes — no patent claims; see LICENSE for terms.
 - Update the milestone doc + memory as you go.
 
 ## First step

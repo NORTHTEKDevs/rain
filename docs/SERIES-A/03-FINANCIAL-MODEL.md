@@ -19,7 +19,7 @@
 | **Cloud compute** | $1.5M | 20% | Tier 2-4 training cycles |
 | **Cloud inference** | $0.3M | 4% | Vertical customer pilots |
 | **Vertical sales** | $0.5M | 7% | 1 sales lead + 1 SDR + travel + events |
-| **Legal / IP / patents** | $0.4M | 5% | 4 patent filings + counsel + corp setup |
+| **Legal / corp setup** | $0.4M | 5% | counsel + entity + contracts |
 | **Office / equipment** | $0.2M | 3% | Workstation upgrades, lab gear |
 | **Research / paper** | $0.3M | 4% | Conference travel, paper publication fees |
 | **Marketing / brand** | $0.2M | 3% | Open-source launch, content, devrel |
@@ -114,7 +114,7 @@ To raise a Series B at $50M+ pre-money in month 24:
 If RAIN-Net does NOT scale to Tier-4 as projected:
 
 - Vertical revenue still real at Tier-3 scale ($1M-$3M ARR achievable)
-- Patent IP has independent licensing value
+- The KB + skill library + verifier weights have independent value
 - Northtek umbrella brand (Vertical OS, NORTHTEKDevs products) provides
   revenue diversification
 - Team is hireable at competitive AI lab valuations (no zero-out)
