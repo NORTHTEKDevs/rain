@@ -1,3 +1,7 @@
+> **Historical document (pre-pivot).** Projections and scaling plans in
+> this file predate the 2026-05-27 project conclusion and pivot. For the
+> current honest state see `docs/CONCLUSION.md` and `raincg/RESULTS.md`.
+
 # RAIN-Net Training Strategy: Cheap-Compute Path to Competitive Capability
 
 > The thesis: RAIN-Net's architecture lets us train a competitive

@@ -122,4 +122,4 @@ python scripts/honest_baseline_bench.py              # vs production
 
 ## Contact
 
-Kristian Baer — `kristianb43r@gmail.com` — [github.com/NORTHTEKDevs](https://github.com/NORTHTEKDevs)
+Kristian Baer — `info@northtek.io` — [github.com/NORTHTEKDevs](https://github.com/NORTHTEKDevs)

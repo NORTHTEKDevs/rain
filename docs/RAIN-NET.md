@@ -1,3 +1,7 @@
+> **Historical document (pre-pivot).** Projections and scaling plans in
+> this file predate the 2026-05-27 project conclusion and pivot. For the
+> current honest state see `docs/CONCLUSION.md` and `raincg/RESULTS.md`.
+
 # RAIN-Net: A Composable Hypervector-Substrate Architecture for General Generative AI
 
 > Working draft. Authors: Kristian Baer (Northtek / NORTHTEKDevs).

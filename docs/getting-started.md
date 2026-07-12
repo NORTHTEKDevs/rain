@@ -5,21 +5,22 @@
 RAIN is a new class of generative AI -- not an LLM, not a state-space model,
 not a transformer. It's one Active Inference loop over a Vector Symbolic
 substrate, with no global backprop at runtime. The architecture demonstrates
-four capabilities transformers structurally cannot have: continual learning
+capabilities that are hard for gradient-trained models: continual learning
 without forgetting, calibrated uncertainty with epistemic classification
-(know / think / guess / unknown), compositional generalization that matches
-or beats GPT-4 on the SCAN benchmarks, and structural Theory of Mind that
-maintains separate beliefs per agent.
+(know / think / guess / unknown), exact compositional generalization
+(measured head-to-head against transformer and LLM baselines in
+`raincg/RESULTS.md`), and structural Theory of Mind that maintains
+separate beliefs per agent.
 
 ## Install
 
 ```bash
 git clone https://github.com/NORTHTEKDevs/rain.git
 cd rain
-pip install -e ".[dev,bootstrap]"
+pip install -e ".[raincg,dev]"   # add [bootstrap] for the learned-encoder/training extras
 # This builds the Rust kernel via maturin (~30s first time).
 pytest -q -m "not slow"
-# Expected: 133 passed
+# Expected: 538 passed, 1 deselected (plus raincg: pytest raincg/tests -q)
 ```
 
 Requirements:

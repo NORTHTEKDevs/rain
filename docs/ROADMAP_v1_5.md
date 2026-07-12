@@ -1,3 +1,7 @@
+> **Historical document (pre-pivot).** Projections and scaling plans in
+> this file predate the 2026-05-27 project conclusion and pivot. For the
+> current honest state see `docs/CONCLUSION.md` and `raincg/RESULTS.md`.
+
 # RAIN v1.5 -- Architecture Roadmap
 
 > Where RAIN goes now that HYMN-Plus works. Updated 2026-05-23, day 2 of

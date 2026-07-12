@@ -16,7 +16,7 @@
 | Benchmark | Exact-composition system | Same-split baselines (measured here, direct few-shot) |
 |---|---|---|
 | SCAN `addprim_jump` (7,706 held-out) | **100%** — 65-param output-only REINFORCE tagger + exact executor; also 100% supervised | gpt-5.5: **86%** · claude-sonnet-5: **72%** · qwen2.5:14b: **12%** · llama3.2:3b: **0%** · from-scratch transformer (609k params): **0%** |
-| COGS gen (21,000) | **99.75%** — symbolic template metalearner fit on the train split only (2s CPU, zero gradient descent); a 122-param output-only REINFORCE variant matches it | gpt-5.5: **46%** · claude-sonnet-5: **36%** · llama3.2:3b: **0%** |
+| COGS gen (21,000) | **99.75%** — symbolic template metalearner fit on the train split only (~4s CPU, zero gradient descent); a 122-param output-only REINFORCE variant matches it | gpt-5.5: **46%** · claude-sonnet-5: **36%** · llama3.2:3b: **0%** |
 | PCFG SET (paired, tgt≤40, n=1000) | **100%** — pure VSA transduction, 0 params, 0.4s fit | transformer (15.7M params, 108 min CPU, capped budget): **0.5%** |
 
 Full tables with 95% CIs, parameter counts, compute, API-error disclosure,
@@ -65,7 +65,7 @@ python -m pytest tests/ -q             # RAIN-Net system suite (539 tests)
 
 python -m raincg.bench.suite           # list all benchmark stages
 python -m raincg.bench.suite --stages cogs_template_symbolic --force   # COGS 99.75% in ~3s
-python -m raincg.bench.suite --stages scan_hybrid_outputonly --force   # SCAN 100% in ~3min
+python -m raincg.bench.suite --stages scan_hybrid_outputonly --force   # SCAN 100% in ~2.5min
 python -m raincg.bench.results_table --out raincg/RESULTS.md           # regenerate the scoreboard
 ```
 

@@ -1,3 +1,7 @@
+> **Historical document (pre-pivot).** Projections and scaling plans in
+> this file predate the 2026-05-27 project conclusion and pivot. For the
+> current honest state see `docs/CONCLUSION.md` and `raincg/RESULTS.md`.
+
 # RAIN-Net v0.1 — A new generative-AI architecture class
 
 > Status: working reference implementation. CPU-trainable on a
@@ -155,5 +159,5 @@ If you're a researcher or builder interested in a non-LLM
 generative-AI direction with measurable cost + capability advantages,
 get in touch.
 
-**Contact**: Kristian Baer · kristianb43r@gmail.com ·
+**Contact**: Kristian Baer · info@northtek.io ·
 [github.com/NORTHTEKDevs](https://github.com/NORTHTEKDevs)

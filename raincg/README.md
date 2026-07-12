@@ -8,7 +8,7 @@ hosts the Phase 2 VSA-native generator work.
 
 Environment fixed (torch reinstalled after venv rebuild to Python 3.14,
 torch 2.13.0+cpu on py3.14.2). Fresh re-run: `pytest raincg/tests -q`
-51/51 + `tests/test_scan_hyperion.py` 3/3 tests green. Overnight vanilla,
+62 passed, 1 skipped (run: pytest raincg/tests -q)
 non-augmented, non-equivariant from-scratch transformer baseline confirmed
 dead-before-epoch-1 (published transformer successes on this task class rely
 on equivariance/augmentation/LLM-prompting, none of which this baseline has);
