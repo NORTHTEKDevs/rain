@@ -56,7 +56,7 @@ Three findings, each with its artifact:
 ```bash
 git clone https://github.com/NORTHTEKDevs/rain.git && cd rain
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
-pip install -e . 
+pip install -e ".[raincg,dev]"   # raincg = torch for the benchmark; dev = pytest
 
 python scripts/download_data.py        # SCAN + COGS + PCFG from their public upstreams (row-count verified)
 
