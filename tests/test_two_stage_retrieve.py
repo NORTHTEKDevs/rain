@@ -2,6 +2,11 @@
 
 import pytest
 
+pytest.importorskip(
+    "sentence_transformers",
+    reason="two-stage retrieval uses the learned-encoder path; install the 'bootstrap' extra",
+)
+
 from rain.core.rain_net import RainNet, RainNetConfig
 from rain.core.two_stage_retrieve import TwoStageRetriever
 
