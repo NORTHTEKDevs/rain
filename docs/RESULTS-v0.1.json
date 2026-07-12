@@ -1,0 +1,178 @@
+{
+  "synthetic_retrieval": {
+    "n_facts": 200,
+    "random": {
+      "top1": 0.005,
+      "top3": 0.02,
+      "top5": 0.03
+    },
+    "jaccard": {
+      "top1": 0.085,
+      "top3": 0.235,
+      "top5": 0.355
+    },
+    "rain_net": {
+      "top1": 0.21,
+      "top3": 0.485,
+      "top5": 0.61
+    }
+  },
+  "distilled_kb_self_eval": {
+    "total_facts": 220,
+    "domain_counts": {
+      "ollama_v0": 20,
+      "v0_code": 50,
+      "v0_general": 50,
+      "v0_math": 50,
+      "v0_regulated": 50
+    },
+    "total_queries": 220,
+    "top1": 0.7181818181818181,
+    "top3": 0.9045454545454545,
+    "top5": 0.9545454545454546
+  },
+  "verifier_head": {
+    "n_pairs": 200,
+    "n_eval": 40,
+    "before_accuracy": 0.3,
+    "after_accuracy": 1.0,
+    "before_gap": -0.0035449998773401607,
+    "after_gap": 0.4996609440073371,
+    "n_updates": 960
+  },
+  "multimodal_compound": {
+    "winner": "apollo_11",
+    "winner_score": 0.5012000203132629,
+    "runner_up_score": 0.007799999788403511,
+    "discrimination_ratio": 64.256414603807,
+    "all_scores": [
+      [
+        "apollo_11",
+        0.5012000203132629
+      ],
+      [
+        "iss",
+        0.007799999788403511
+      ],
+      [
+        "hubble",
+        -0.0015999999595806003
+      ],
+      [
+        "apollo_12",
+        -0.004399999976158142
+      ],
+      [
+        "mars",
+        -0.005799999926239252
+      ]
+    ]
+  },
+  "routing_accuracy": {
+    "n": 10,
+    "hits": 9,
+    "accuracy": 0.9,
+    "top_k": 2,
+    "detail": [
+      {
+        "query": "tell me a story about apollo",
+        "expected": "samba_lm",
+        "got": [
+          "samba_lm",
+          "tsetlin"
+        ],
+        "hit": true
+      },
+      {
+        "query": "compute 5 + 3 + 2 quickly",
+        "expected": "sym_regression",
+        "got": [
+          "tsetlin",
+          "samba_lm"
+        ],
+        "hit": false
+      },
+      {
+        "query": "what did we discuss earlier in this conversation",
+        "expected": "pure_attn",
+        "got": [
+          "pure_attn",
+          "tsetlin"
+        ],
+        "hit": true
+      },
+      {
+        "query": "describe this image of a cat",
+        "expected": "diffusion",
+        "got": [
+          "samba_lm",
+          "diffusion"
+        ],
+        "hit": true
+      },
+      {
+        "query": "what is the social graph between nodes A B C",
+        "expected": "gnn",
+        "got": [
+          "gnn",
+          "tsetlin"
+        ],
+        "hit": true
+      },
+      {
+        "query": "predict the trajectory of the projectile",
+        "expected": "jepa_wm",
+        "got": [
+          "jepa_wm",
+          "pure_attn"
+        ],
+        "hit": true
+      },
+      {
+        "query": "is X true given that Y implies X",
+        "expected": "tsetlin",
+        "got": [
+          "tsetlin",
+          "samba_lm"
+        ],
+        "hit": true
+      },
+      {
+        "query": "do you remember the event from yesterday",
+        "expected": "sdm",
+        "got": [
+          "sdm",
+          "pure_attn"
+        ],
+        "hit": true
+      },
+      {
+        "query": "explain photosynthesis in 3 sentences",
+        "expected": "samba_lm",
+        "got": [
+          "samba_lm",
+          "pure_attn"
+        ],
+        "hit": true
+      },
+      {
+        "query": "evaluate the integral of x squared",
+        "expected": "sym_regression",
+        "got": [
+          "sym_regression",
+          "samba_lm"
+        ],
+        "hit": true
+      }
+    ]
+  },
+  "hymn_live_generation": {
+    "available": true,
+    "checkpoint": "data\\checkpoints\\hymn_plus_v1_5k.npz",
+    "elapsed_seconds": 1.69,
+    "generated_chars": 64,
+    "generated_sample": "I will can speak and the base--\n\nANGELO:\nAnd, I will so much in ",
+    "answer_hv_shape": "(10000,)",
+    "expert_loaded": true
+  }
+}

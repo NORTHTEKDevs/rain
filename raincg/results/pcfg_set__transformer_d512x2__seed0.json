@@ -1,0 +1,33 @@
+{
+  "bench": "pcfg_set",
+  "system": "transformer_d512x2",
+  "split": "test_tgt_le_40",
+  "n": 1000,
+  "correct": 5,
+  "accuracy": 0.005,
+  "ci95": [
+    0.00213750399576525,
+    0.011651125604761366
+  ],
+  "params": 15683095,
+  "train_s": 6459.3712352,
+  "eval_s": 57.69271500001196,
+  "seed": 0,
+  "config": {
+    "d_model": 512,
+    "nhead": 4,
+    "num_layers": 2,
+    "ff": 2048,
+    "epochs": 10,
+    "max_minutes": 100.0,
+    "max_tgt_len": 40,
+    "test_limit": 1000,
+    "train_limit": null,
+    "quick": false,
+    "resume": true,
+    "ckpt": "raincg/results/pcfg_transformer_d512x2.pt"
+  },
+  "timestamp": "2026-07-11T13:14:51.945477+00:00",
+  "evidence_tier": "measured-fresh",
+  "notes": ""
+}

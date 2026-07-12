@@ -1,0 +1,15 @@
+{
+  "name": "regex_extractor",
+  "description": "Extract structured tokens from text: emails, URLs, phone numbers, dates.",
+  "version": "0.1.0",
+  "domain_text": "extract find get pull parse emails urls links phone numbers dates regex pattern match",
+  "dim": 10000,
+  "has_handler": false,
+  "has_weights": false,
+  "author": "Kristian Baer / Northtek",
+  "created": "2026-05-24T22:56:25Z",
+  "invocations": 0,
+  "trigger_patterns": [
+    "\\b(extract|find|get|pull|parse)\\b.*\\b(email|url|phone|date|link|number)s?\\b"
+  ]
+}

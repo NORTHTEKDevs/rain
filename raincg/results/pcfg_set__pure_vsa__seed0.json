@@ -1,0 +1,25 @@
+{
+  "bench": "pcfg_set",
+  "system": "pure_vsa",
+  "split": "test_tgt_le_40",
+  "n": 1000,
+  "correct": 1000,
+  "accuracy": 1.0,
+  "ci95": [
+    0.9961731014136096,
+    1.0
+  ],
+  "params": 0,
+  "train_s": 0.4300595999811776,
+  "eval_s": 17.577762899978552,
+  "seed": 0,
+  "config": {
+    "vsa_d": 8192,
+    "max_tgt_len": 40,
+    "test_limit": 1000,
+    "quick": false
+  },
+  "timestamp": "2026-07-11T11:26:13.450845+00:00",
+  "evidence_tier": "measured-fresh",
+  "notes": ""
+}

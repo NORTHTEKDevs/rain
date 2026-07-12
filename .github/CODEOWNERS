@@ -1,0 +1,14 @@
+# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
+
+# Default owners for everything in the repo
+* @NORTHTEKDevs
+
+# Specific high-IP-value areas — always require maintainer review
+/docs/architecture/  @NORTHTEKDevs
+/docs/design/        @NORTHTEKDevs
+/rain/core/          @NORTHTEKDevs
+/rain/spine.py       @NORTHTEKDevs
+/rain/bridge.py      @NORTHTEKDevs
+/rain-rs/            @NORTHTEKDevs
+/LICENSE             @NORTHTEKDevs
+/SECURITY.md         @NORTHTEKDevs

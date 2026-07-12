@@ -1,0 +1,134 @@
+# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
+
+[build-system]
+requires = ["maturin>=1.7,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "rain-net"
+version = "0.1.0"
+description = "RAIN-Net — composable hypervector-substrate generative AI architecture"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Kristian Baer", email = "info@northtek.io" },
+]
+keywords = ["vsa", "compositional-generalization", "research"]
+classifiers = [
+    "Development Status :: 1 - Planning",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Rust",
+    "Private :: Do Not Upload",
+]
+dependencies = [
+    "numpy>=1.26,<3.0",
+    "scipy>=1.13,<2.0",
+    "tiktoken>=0.8,<1.0",
+    "sentencepiece>=0.2,<1.0",
+    "sqlalchemy>=2.0,<3.0",
+    "aiohttp>=3.10,<4.0",
+    "pydantic>=2.9,<3.0",
+    "typer>=0.12,<1.0",
+    "rich>=13.0,<14.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3,<9.0",
+    "pytest-cov>=5.0,<6.0",
+    "pytest-benchmark>=4.0,<5.0",
+    "pytest-asyncio>=0.24,<1.0",
+    "ruff>=0.7,<1.0",
+    "black>=24.0,<25.0",
+    "mypy>=1.13,<2.0",
+    "maturin>=1.7,<2.0",
+    "hypothesis>=6.115,<7.0",
+]
+raincg = [
+    "torch>=2.5,<3.0",
+]
+bootstrap = [
+    "torch>=2.5,<3.0",
+    "transformers>=4.48,<5.0",
+    "datasets>=3.0,<4.0",
+    "sentence-transformers>=3.0,<4.0",
+]
+eval = [
+    "lm-eval>=0.4,<1.0",
+]
+
+[project.scripts]
+rain = "rain.__main__:main"
+rain-chat = "rain.cli.entrypoints:chat"
+rain-demo = "rain.cli.entrypoints:demo"
+rain-bench = "rain.cli.entrypoints:bench"
+rain-distill = "rain.cli.entrypoints:distill"
+rain-multimodal = "rain.cli.entrypoints:multimodal"
+rain-report = "rain.cli.entrypoints:report"
+rain-serve = "rain.cli.entrypoints:serve"
+
+[project.urls]
+homepage = "https://github.com/NORTHTEKDevs/rain"
+
+[tool.maturin]
+module-name = "rain._rust"
+manifest-path = "rain-rs/Cargo.toml"
+features = ["python", "pyo3/extension-module"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "C4", "T20", "SIM"]
+# This is an ML / scientific codebase. We deliberately use math-convention
+# names (W1/W2 weight matrices, U/V/S SVD factors, D dim, K window) and
+# numpy random isn't for cryptography. Relax the corresponding rules so
+# the lint catches real problems instead of stylistic noise.
+ignore = [
+    "E501",   # line too long; we wrap by convention not by rule
+    "E701", "E702",  # multiple statements on one line -- used in compact ML code
+    "S101",   # assert use is fine in tests + invariant guards
+    "T201",   # print() is fine in CLI scripts
+    "B007",   # unused loop variable (often intentional in numpy iter)
+    "B905",   # zip() without strict -- we don't always want it
+    "F841",   # unused local var (we leave them as breadcrumbs sometimes)
+    "SIM108", # ternary-vs-if-else stylistic
+    "SIM102", # nested if collapsing -- nested form is often clearer
+    "SIM105", # contextlib.suppress vs try/except -- both fine
+    "E741",   # ambiguous var name; S/R/O are subject/relation/object semantic
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["ARG", "N", "B017", "S", "T20"]   # tests can use camelCase, ignore security/print rules
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "--tb=short --strict-markers -ra"
+markers = [
+    "slow: deselect with '-m \"not slow\"'",
+    "tier1: novelty surface benchmark",
+    "tier2: LLM-parity benchmark",
+    "tier3: architectural soundness check",
+]

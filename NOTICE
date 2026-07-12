@@ -1,0 +1,8 @@
+RAIN
+Copyright 2026 Kristian Baer / FrostByte LLC (Northtek)
+
+This product includes software developed as part of the RAIN research project.
+Vendored third-party research code is attributed in third_party/ and carries its original licenses.
+
+Portions of the routing math in `rain/routing/` were adapted from an internal
+research project ("SOFAR") not otherwise distributed in this repository.

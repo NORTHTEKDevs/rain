@@ -1,0 +1,17 @@
+{
+  "name": "url_extract",
+  "description": "Extract URLs from text, decompose into scheme/host/path/query.",
+  "version": "0.1.0",
+  "domain_text": "url urls link links http https domain host path scheme protocol query parameter",
+  "dim": 10000,
+  "has_handler": false,
+  "has_weights": false,
+  "author": "Kristian Baer / Northtek",
+  "created": "2026-05-24T23:25:36Z",
+  "invocations": 0,
+  "trigger_patterns": [
+    "https?://",
+    "\\burl\\b",
+    "\\bdomain\\b.*\\bof\\b"
+  ]
+}

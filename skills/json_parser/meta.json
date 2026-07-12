@@ -1,0 +1,17 @@
+{
+  "name": "json_parser",
+  "description": "Extract values from JSON blocks via path/field references.",
+  "version": "0.1.0",
+  "domain_text": "json parse object key field value path get nested array dict dictionary",
+  "dim": 10000,
+  "has_handler": false,
+  "has_weights": false,
+  "author": "Kristian Baer / Northtek",
+  "created": "2026-05-24T23:25:36Z",
+  "invocations": 0,
+  "trigger_patterns": [
+    "\\{.*\\\".*\\\".*:.*\\}",
+    "\\[.*,.*\\]",
+    "\\bjson\\b"
+  ]
+}

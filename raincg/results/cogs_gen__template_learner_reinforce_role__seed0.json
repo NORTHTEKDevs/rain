@@ -1,0 +1,81 @@
+{
+  "bench": "cogs_gen",
+  "system": "template_learner_reinforce_role",
+  "split": "gen",
+  "n": 21000,
+  "correct": 20948,
+  "params": 122,
+  "train_s": 1.6394141999771819,
+  "eval_s": 1.1697264999966137,
+  "seed": 0,
+  "config": {
+    "steps": 300,
+    "batch": 64,
+    "lr": 0.05,
+    "reinforce_train_pool_n": 790,
+    "verb_types": 61,
+    "reward_source": "TRAIN predictions only (790 bare-intransitive 'ProperNoun VerbPast .' sentences); gen split never used for reward or gradient, only for the eval below",
+    "gold_label_scan_oracle_reference": {
+      "note": "learn_intrans_role's supervised cheat, NOT used for reward; kept only as an upper-bound reference (raincg/results/cogs_gen__template_learner_symbolic__seed0.json = 20948/21000)",
+      "table_agreement_with_reinforce_table": 1.0
+    },
+    "per_category_ablation_sensitive": {
+      "only_seen_as_transitive_subj_as_unacc_subj": {
+        "correct": 994,
+        "total": 1000,
+        "acc": 0.994,
+        "ablated_baseline_ref": 0.044,
+        "ablated_baseline_ref_source": "raincg/cogs_intrans_role_ablation_20260711.json"
+      },
+      "cp_recursion": {
+        "correct": 1000,
+        "total": 1000,
+        "acc": 1.0,
+        "ablated_baseline_ref": 0.689,
+        "ablated_baseline_ref_source": "raincg/cogs_intrans_role_ablation_20260711.json"
+      }
+    },
+    "negative_controls": {
+      "shuffled_target": {
+        "gen_correct": 19747,
+        "gen_n": 21000,
+        "gen_acc": 0.9403333333333334,
+        "table_agreement_with_oracle": 0.7049180327868853,
+        "only_seen_as_transitive_subj_as_unacc_subj": {
+          "correct": 139,
+          "total": 1000,
+          "acc": 0.139
+        },
+        "cp_recursion": {
+          "correct": 726,
+          "total": 1000,
+          "acc": 0.726
+        }
+      },
+      "label_flip": {
+        "gen_correct": 17402,
+        "gen_n": 21000,
+        "gen_acc": 0.8286666666666667,
+        "table_agreement_with_oracle": 0.0,
+        "only_seen_as_transitive_subj_as_unacc_subj": {
+          "correct": 44,
+          "total": 1000,
+          "acc": 0.044
+        },
+        "cp_recursion": {
+          "correct": 629,
+          "total": 1000,
+          "acc": 0.629
+        }
+      }
+    }
+  },
+  "notes": "output-only REINFORCE per-verb-type (agent/theme) table trained against the exact recursive-parser executor (emit_intransitive_output), reward = exact match on TRAIN predictions only, no gold role-label ever read; replaces learn_intrans_role's gold-label-scan. Composition (NP-chain/clause parsing, all position-keyed role assignment) is exact and unchanged -- see raincg/COGS-ATTACK-DESIGN.md.",
+  "accuracy": 0.9975238095238095,
+  "ci95": [
+    0.9967545397221413,
+    0.9981110852404844
+  ],
+  "timestamp": "2026-07-11T11:35:18.345153+00:00",
+  "evidence_tier": "measured-fresh"
+}

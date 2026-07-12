@@ -1,0 +1,25 @@
+{
+  "bench": "scan_addprim_jump",
+  "system": "llm_qwen2.5:14b",
+  "split": "test_heldout_jump",
+  "n": 50,
+  "correct": 6,
+  "params": 0,
+  "train_s": 0.0,
+  "eval_s": 189.45939803123474,
+  "seed": 0,
+  "config": {
+    "model": "qwen2.5:14b",
+    "n": 50,
+    "shots": 16,
+    "test_limit": 50
+  },
+  "notes": "local pretrained LLM (Ollama), few-shot prompting, real held-out addprim_jump",
+  "accuracy": 0.12,
+  "ci95": [
+    0.056175237106246466,
+    0.23805078886623582
+  ],
+  "timestamp": "2026-07-11T10:52:55.654115+00:00",
+  "evidence_tier": "measured-fresh"
+}
