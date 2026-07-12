@@ -1,8 +1,5 @@
 # RAIN -- Getting Started
 
-> **CONFIDENTIAL -- CONFIDENTIAL.** This repo is private. Do not share
-> snippets externally without coordination.
-
 ## What RAIN is in one paragraph
 
 RAIN is a new class of generative AI -- not an LLM, not a state-space model,
@@ -155,14 +152,15 @@ This walks through teaching + asking + each Tier-1 surface live.
 
 ## Source repos this is built from
 
-70% of the code is ported from prior NORTHTEKDevs research projects:
-- **RCK** (`~/projects/active/rck`) -- VSA primitives, sharded KB, cognitive layer, EFE decoder
-- **Hyperion** (`~/projects/active/hyperion`) -- HYMN MLP update rule, vsa_core primitives
-- **SOFAR** (`~/projects/active/sofar`) -- SVD beam-steering (transplanted from transformer residual streams to VSA state)
-- **Cognitive Kernel Polyglot** (`~/projects/active/cognitive-kernel-polyglot`) -- operational substrate (referenced for NSGA-II + crystal schema)
-- **Evolve** (`~/projects/active/evolve`) -- champion/challenger Bayesian beta-binomial gate (referenced)
-
-Provenance hashes in `VENDORED.md`.
+A meaningful share of the code is ported and adapted from prior NORTHTEKDevs
+research projects:
+- **RCK** (public, MIT, [github.com/NORTHTEKDevs/rck](https://github.com/NORTHTEKDevs/rck))
+  -- VSA primitives, sharded KB, cognitive layer, EFE decoder
+- **Hyperion** -- HYMN MLP update rule, vsa_core primitives (the `pure_vsa`
+  slice is vendored into this repo under `third_party/hyperion`)
+- Routing math (SVD beam-steering transplanted from transformer residual
+  streams to VSA state) and the evolutionary champion/challenger gate are
+  adapted from sibling internal research projects.
 
 ## What's not yet built
 
@@ -175,15 +173,5 @@ Provenance hashes in `VENDORED.md`.
 ## Pointer to the design
 
 Read in order:
-1. `docs/plans/2026-05-22-rain-design.md` -- master design
-2. `docs/architecture/fep-unified-objective.md` -- math derivation
-3. `docs/architecture/component-map.md` -- module sourcing
-4. `docs/architecture/benchmark-suite.md` -- acceptance contract
-5. `docs/design/sofar-on-vsa-transplant.md` and `docs/design/multi-signal-efe-decoder.md` -- novel routing + decoder math
-6. `docs/plans/2026-05-22-rain-implementation-plan.md` -- bite-sized tasks
-
-## Disclosure rules
-
-No public commits, no external benchmark posts, no code in pitch decks.
-Demo videos + benchmark numbers + the one-sentence claim are the acceptable
-externalizable artifacts.
+1. `docs/architecture/fep-unified-objective.md` -- math derivation
+2. `docs/architecture/benchmark-suite.md` -- acceptance contract

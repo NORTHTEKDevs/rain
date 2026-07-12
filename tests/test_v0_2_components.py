@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Tests for the v0.2 novel additions: reflexion loop + causal graph."""
 
 import numpy as np

@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Reflexion loop: iterative self-critique using the verifier head.
 
 Inspired by Shinn et al. 2023, "Reflexion: Language Agents with Verbal

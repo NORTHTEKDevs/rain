@@ -1,7 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
-# Original-source: third_party/rck/tsetlin.py -- adapted from RCK 4K FHRR to
-# bipolar 10K-dim and simplified for v0 RAIN.
 """Vectorised Tsetlin Machine for bipolar hypervector features.
 
 Each clause is a vector of inclusion bits: clause_inclusion[c, f] in {0, 1}

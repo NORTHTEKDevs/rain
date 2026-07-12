@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Active distillation loop: the model trains itself during use.
 
 The architectural commitment of RAIN-Net is that the base model is

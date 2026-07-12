@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Inspect a KB seed JSONL: subject + relation distribution + spot facts.
 
 Useful for debugging KB quality before kicking off a Phase-2 RLAIF run,

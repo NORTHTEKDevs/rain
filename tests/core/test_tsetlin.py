@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Tests for the bipolar Tsetlin Machine port."""
 
 import numpy as np

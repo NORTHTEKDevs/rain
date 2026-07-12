@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Integration tests for the ConsciousAgent orchestrator."""
 
 from rain.agent import ConsciousAgent

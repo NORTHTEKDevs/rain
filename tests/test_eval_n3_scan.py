@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """N3 SCAN benchmark sanity test."""
 
 from evals.tier1_novelty.scan import run_benchmark

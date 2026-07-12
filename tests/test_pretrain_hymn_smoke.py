@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Smoke test for HYMN bootstrap pre-training: loss decreases over 10 steps on toy corpus."""
 
 import numpy as np

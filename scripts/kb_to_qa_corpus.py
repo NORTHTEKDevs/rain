@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Render a KB seed JSONL into a char-level Q/A training corpus.
 
 Closes the gap between 'HYMN trained on Shakespeare' (good at iambic

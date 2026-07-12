@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Preference fine-tuning for HYMN-Plus v2 using the local Ollama judge.
 
 DPO (Direct Preference Optimization) without an explicit reward model.

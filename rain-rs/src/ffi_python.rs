@@ -1,6 +1,3 @@
-// CONFIDENTIAL
-// (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
-
 //! PyO3 bindings for the rain-rs hot kernels.
 
 use numpy::{IntoPyArray, PyArray1, PyArray2, PyReadonlyArray1};

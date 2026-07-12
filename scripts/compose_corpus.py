@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Concatenate several training corpora with optional oversampling weights.
 
 Use case: blend WikiText-103 (broad factual prose) + KB-derived Q/A pairs

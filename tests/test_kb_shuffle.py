@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Tests for the v3 KB-shuffle training primitive."""
 
 import numpy as np

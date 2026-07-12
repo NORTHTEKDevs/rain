@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Generate KB seed triples by distilling from a local Ollama model.
 
 Track 2 of the broke-mode training plan. Uses one of the local Ollama

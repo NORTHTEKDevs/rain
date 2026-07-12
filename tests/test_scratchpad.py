@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Tests for the ScratchpadReasoner chain-of-thought primitive."""
 
 from rain.agent import ConsciousAgent

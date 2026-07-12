@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Architectural validation experiment for HYMN-Plus v2.
 
 The claim: integrating retrieved facts at every block IMPROVES generation

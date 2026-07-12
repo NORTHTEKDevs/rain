@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """json_parser: extract values from JSON via simple path notation.
 
 Patterns:

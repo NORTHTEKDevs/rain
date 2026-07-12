@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Load all distillation .jsonl files in a directory into a single
 RainNet KB. Then optionally launch an interactive REPL or run a
 self-eval over the queries.

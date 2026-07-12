@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Verifier head: scores candidate outputs for test-time-compute sampling.
 
 The o1 / o3 result is that test-time compute (TTC) -- sampling N candidates

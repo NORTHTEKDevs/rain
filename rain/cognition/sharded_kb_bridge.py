@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Bridge between RAIN's ShardedKB (the persistent fact memory) and
 HymnPlusV2's inline KB-Attention buffer (the model's per-block memory).
 

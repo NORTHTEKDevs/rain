@@ -1,9 +1,7 @@
 # FEP-Unified Objective for RAIN
 
-**Companion to:** `docs/plans/2026-05-22-rain-design.md` (§ 4)
-**Status:** Draft derivation. Filled in fully during the writing-plans
-implementation phase. Reviewers: do not cite as final until peer-reviewed
-externally under NDA.
+**Status:** Draft derivation, filled in fully during the implementation
+phase. Do not cite as final until peer-reviewed externally.
 
 ---
 

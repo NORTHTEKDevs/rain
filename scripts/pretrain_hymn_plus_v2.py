@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Training driver for HYMN-Plus v2 (BPE + KB-Attention).
 
 Trains a BPE tokenizer on the corpus (or loads a saved one), encodes

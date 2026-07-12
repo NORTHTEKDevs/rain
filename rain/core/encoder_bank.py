@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Encoder bank: every modality -> the same hypervector space.
 
 The architectural commitment of RAIN-Net is that text, images, audio,

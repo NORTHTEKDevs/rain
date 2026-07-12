@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Train the HVVerifierHead on judge-labeled candidate scoring.
 
 The verifier head's job is to score candidate answer HVs and pick the

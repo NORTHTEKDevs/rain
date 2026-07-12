@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Two-stage retrieval: fast dense shortlist -> HV-substrate rerank.
 
 v0.2 honest benchmark showed RAIN-Net retrieval matches production

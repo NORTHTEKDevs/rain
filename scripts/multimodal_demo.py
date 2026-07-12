@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Multimodal demo: text + image + numeric in the same HV space.
 
 Demonstrates the architectural commitment of RAIN-Net: all modalities

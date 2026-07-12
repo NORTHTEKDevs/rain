@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Multi-vertical swarm demo — the v0.2 horizontal-scale pitch made tangible.
 
 Spins up 3 specialist RainNet instances inside one RainNetSwarm:

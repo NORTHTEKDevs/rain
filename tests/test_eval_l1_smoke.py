@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Smoke test for the L1 Tiny Shakespeare evaluator. Verifies the scaffold
 runs end-to-end on a small randomly-init checkpoint. Expected: val_loss is
 ABOVE threshold (random init doesn't pass), so pass=False -- that is correct

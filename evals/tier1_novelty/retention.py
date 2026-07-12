@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """N1 continual-learning retention benchmark (A -> B -> A).
 
 Tier-1 novelty surface. Measures whether the model retains task-A facts

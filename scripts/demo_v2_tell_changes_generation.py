@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """End-to-end demo of HYMN-Plus v2's architectural moat:
 
   1. Load a trained v2 checkpoint

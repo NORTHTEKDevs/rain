@@ -1,6 +1,3 @@
-// CONFIDENTIAL
-// (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
-
 //! WASM FFI bindings for rain-rs hot kernels.
 //!
 //! Stub scaffold. Full WASM bindings land when browser inference is needed.

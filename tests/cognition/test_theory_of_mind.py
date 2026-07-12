@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Tests for first- and second-order Theory of Mind."""
 
 from rain.cognition.theory_of_mind import TheoryOfMind

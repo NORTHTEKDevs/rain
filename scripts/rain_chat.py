@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """RAIN v0 chat REPL -- KB-grounded answer + HYMN sampling + judge feedback.
 
 Wires together every working piece of the v0 broke-mode stack into one

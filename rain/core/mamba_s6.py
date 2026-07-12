@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Proper Mamba S6 selective state-space block.
 
 What our previous SelectiveGatedRecurrence (in hymn_plus_v2.py) was:

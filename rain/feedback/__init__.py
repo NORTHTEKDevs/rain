@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """RAIN feedback substrate.
 
 Wraps external judges (local Ollama models in the v0 broke-mode plan, an

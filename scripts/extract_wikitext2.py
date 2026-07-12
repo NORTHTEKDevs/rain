@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Decode the WikiText-2 parquet corpus into a plain UTF-8 .txt file.
 
 The existing pretrain drivers read a flat text file, so this is the one-shot

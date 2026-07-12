@@ -1,6 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
-
 import pytest
 
 from rain.spine import _RUST_AVAILABLE

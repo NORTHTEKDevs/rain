@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """RAIN-Net: the full composition.
 
 This is the public API. Everything else (HV substrate, encoder bank, MoA

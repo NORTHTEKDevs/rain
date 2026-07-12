@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Tests for HYMN-Samba (Mamba S6 + Sliding-Window-Attention hybrid)."""
 
 import pytest

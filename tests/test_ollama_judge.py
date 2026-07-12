@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Parsing tests for the Ollama judge primitive.
 
 The judge call itself hits the local Ollama daemon and is slow; these tests

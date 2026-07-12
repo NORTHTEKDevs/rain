@@ -1,4 +1,3 @@
-// CONFIDENTIAL
 // (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 
 //! VSA bench scaffold — populated during implementation phase.

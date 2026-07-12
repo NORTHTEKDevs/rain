@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Unit tests for the Phase-2 feedback runner.
 
 Exercise the pure-Python helpers (no live Ollama call). The OllamaJudge

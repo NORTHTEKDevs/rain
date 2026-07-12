@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Regression tests for the warm-start codebook persistence fix.
 
 Reproduces the bug: training with a warm-started codebook + saving

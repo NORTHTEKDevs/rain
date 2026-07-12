@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Ingest FAA Airworthiness Directives into a RAIN-Net semantic KB.
 
 Two modes:

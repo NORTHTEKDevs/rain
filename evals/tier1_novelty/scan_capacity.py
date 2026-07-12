@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """N3-capacity: how many slots survive readout — greedy vs resonant.
 
 The N3 SCAN eval (scan.py) exercises 3-5 slots, where per-slot greedy extract()

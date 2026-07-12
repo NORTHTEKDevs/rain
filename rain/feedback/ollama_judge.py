@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Use a local Ollama model as a free judge for RAIN answers.
 
 Track 3 of the broke-mode training plan (docs/plans/2026-05-22-broke-mode-training.md).

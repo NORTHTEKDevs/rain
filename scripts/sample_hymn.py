@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Sample characters from a trained HYMN checkpoint.
 
 Autoregressive char-level generation: ingest a prompt via the HYMN

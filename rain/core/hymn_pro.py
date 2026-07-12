@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """HYMN-Pro: a properly-built char/BPE LM for RAIN.
 
 What this is: a modern compact Transformer LM using the proven recipe

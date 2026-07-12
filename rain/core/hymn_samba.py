@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """HYMN-Samba: alternating Mamba S6 + Sliding-Window Causal Attention.
 
 Based on Samba (Microsoft Research, ICLR 2025, arXiv:2406.07522):

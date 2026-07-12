@@ -1,6 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
-
 from rain.core.knowledge_base import ShardedKB
 from scripts.seed_kb import seed_from_jsonl
 

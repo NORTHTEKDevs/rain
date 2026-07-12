@@ -1,6 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
-# Original-source: third_party/rck/compose.py — adapted from RCK FHRR.
 """CompositionalReasoner: slot-based composition over orthogonal feature axes.
 
 Each feature axis (e.g., 'color', 'shape', 'quantity', 'size', 'material')

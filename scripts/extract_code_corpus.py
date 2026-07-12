@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Build a code-aware Q/A training corpus for RAIN.
 
 Pulls multiple code-Q/A datasets via Hugging Face datasets:

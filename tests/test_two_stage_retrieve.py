@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Tests for two-stage retrieval (fast dense shortlist -> HV rerank)."""
 
 import pytest

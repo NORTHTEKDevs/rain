@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Tests for ConsciousAgent's enable_continual=True path.
 
 Drives the Phase-2 local-rule learners (LSM RLS, FEP rank-1, Tsetlin

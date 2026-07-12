@@ -1,0 +1,155 @@
+{
+  "date": "2026-07-11",
+  "purpose": "ablation isolating the ONE genuinely-learned (currently gold-label-scanned) decision in the current best COGS gen solver (COGSTemplateLearner + cogs_recursive.py)",
+  "full_solver_gen_overall_acc_ref": "raincg/cogs_gen_truth_fresh_20260711.json (0.9975)",
+  "ablated_intrans_role_forced_empty_default_agent": {
+    "per_category": {
+      "active_to_passive": {
+        "correct": 1000,
+        "total": 1000,
+        "acc": 1.0
+      },
+      "cp_recursion": {
+        "correct": 689,
+        "total": 1000,
+        "acc": 0.689
+      },
+      "do_dative_to_pp_dative": {
+        "correct": 999,
+        "total": 1000,
+        "acc": 0.999
+      },
+      "obj_omitted_transitive_to_transitive": {
+        "correct": 997,
+        "total": 1000,
+        "acc": 0.997
+      },
+      "obj_pp_to_subj_pp": {
+        "correct": 916,
+        "total": 1000,
+        "acc": 0.916
+      },
+      "obj_to_subj_common": {
+        "correct": 1000,
+        "total": 1000,
+        "acc": 1.0
+      },
+      "obj_to_subj_proper": {
+        "correct": 999,
+        "total": 1000,
+        "acc": 0.999
+      },
+      "only_seen_as_transitive_subj_as_unacc_subj": {
+        "correct": 44,
+        "total": 1000,
+        "acc": 0.044
+      },
+      "only_seen_as_unacc_subj_as_obj_omitted_transitive_subj": {
+        "correct": 990,
+        "total": 1000,
+        "acc": 0.99
+      },
+      "only_seen_as_unacc_subj_as_unerg_subj": {
+        "correct": 990,
+        "total": 1000,
+        "acc": 0.99
+      },
+      "passive_to_active": {
+        "correct": 997,
+        "total": 1000,
+        "acc": 0.997
+      },
+      "pp_dative_to_do_dative": {
+        "correct": 999,
+        "total": 1000,
+        "acc": 0.999
+      },
+      "pp_recursion": {
+        "correct": 1000,
+        "total": 1000,
+        "acc": 1.0
+      },
+      "prim_to_inf_arg": {
+        "correct": 1000,
+        "total": 1000,
+        "acc": 1.0
+      },
+      "prim_to_obj_common": {
+        "correct": 996,
+        "total": 1000,
+        "acc": 0.996
+      },
+      "prim_to_obj_proper": {
+        "correct": 1000,
+        "total": 1000,
+        "acc": 1.0
+      },
+      "prim_to_subj_common": {
+        "correct": 997,
+        "total": 1000,
+        "acc": 0.997
+      },
+      "prim_to_subj_proper": {
+        "correct": 997,
+        "total": 1000,
+        "acc": 0.997
+      },
+      "subj_to_obj_common": {
+        "correct": 996,
+        "total": 1000,
+        "acc": 0.996
+      },
+      "subj_to_obj_proper": {
+        "correct": 1000,
+        "total": 1000,
+        "acc": 1.0
+      },
+      "unacc_to_transitive": {
+        "correct": 997,
+        "total": 1000,
+        "acc": 0.997
+      }
+    },
+    "overall_correct": 19603,
+    "overall_total": 21000,
+    "overall_acc": 0.9334761904761905
+  },
+  "intrans_role_table_size": 61,
+  "intrans_role_class_balance": {
+    "theme": 21,
+    "agent": 40
+  },
+  "target_category_only_seen_as_transitive_subj_as_unacc_subj": {
+    "n_cases": 1000,
+    "distinct_embedded_verb_types": 20,
+    "verb_counts": {
+      "grow": 33,
+      "burn": 79,
+      "change": 32,
+      "roll": 273,
+      "split": 26,
+      "collapse": 27,
+      "freeze": 139,
+      "disintegrate": 25,
+      "slide": 41,
+      "enlarge": 21,
+      "shorten": 58,
+      "redden": 23,
+      "improve": 19,
+      "snap": 27,
+      "break": 20,
+      "crumple": 33,
+      "float": 49,
+      "double": 28,
+      "decompose": 27,
+      "inflate": 20
+    },
+    "verbs_covered_by_intrans_role_table": 20
+  },
+  "reinforce_training_pool_bare_intransitive_train": {
+    "n_examples": 790,
+    "distinct_verb_types": 61,
+    "examples_per_verb_avg": 12.950819672131148,
+    "label_inconsistent_verbs": {}
+  }
+}

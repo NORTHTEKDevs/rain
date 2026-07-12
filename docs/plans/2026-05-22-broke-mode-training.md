@@ -42,8 +42,8 @@ renting anything.
 
 ## Software baseline (installed 2026-05-22)
 
-- `torch==2.4.1+cpu` plus `torch-directml==0.2.5.dev240914` in
-  `~/projects/active/rain/.venv`.
+- `torch==2.4.1+cpu` plus `torch-directml==0.2.5.dev240914` in the
+  repo's local `.venv`.
 - Ollama with 8 local models, including:
   - `huihui_ai/qwen3-coder-abliterated:30b` (18 GB, code + reasoning)
   - `alibilge/Huihui-Devstral-Small-2-24B-Instruct-2512-abliterated:q4_k_m`

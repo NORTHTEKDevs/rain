@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """statistics: descriptive stats over a list of numbers in the query.
 
 Patterns:

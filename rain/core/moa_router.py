@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Mixture-of-Architectures (MoA) router.
 
 This is the novel piece of RAIN-Net's composition. Standard

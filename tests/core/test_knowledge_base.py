@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Tests for sharded HRR knowledge base."""
 
 from rain.core.knowledge_base import ShardedKB

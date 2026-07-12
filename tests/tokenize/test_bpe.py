@@ -1,6 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
-
 from rain.tokenize.bpe import BPETokenizer
 
 

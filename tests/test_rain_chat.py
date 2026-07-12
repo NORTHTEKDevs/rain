@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Tests for the rain_chat REPL parsing/dispatch logic.
 
 The live REPL needs a ConsciousAgent and optional HYMN sampler + Ollama

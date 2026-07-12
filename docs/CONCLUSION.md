@@ -72,10 +72,7 @@ compositional kernel, not the base LM.
 - Repo: github.com/NORTHTEKDevs/rain
 - Tags: rain-net-v0.1, rain-net-v0.2
 - Tests: 539/539 green
-- Patent-pending language: removed (no patent claims made or pending)
-- License: see LICENSE file (note: LICENSE is proprietary; several docs
-  previously said "MIT" — that contradiction is flagged for the owner
-  to resolve, not silently changed here)
+- License: Apache-2.0 (see LICENSE file)
 
 Project status: **concluded as RAIN-Net; continues as the RAIN-CG pivot
 per docs/PIVOT.md.**

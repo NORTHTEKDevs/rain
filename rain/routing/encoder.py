@@ -1,7 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
-# Original-source: third_party/sofar/encoder.py — transplanted from FFT
-# spectral partition to Walsh-Hadamard partition for bipolar sign-space.
 """Frequency-banded encoder for RAIN's VSA state.
 
 Decomposes a bipolar 10K-dim hypervector into LOW / MID / HIGH band

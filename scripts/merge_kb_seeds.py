@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Merge multiple KB seed JSONLs, dedupe on (subject, relation, object),
 optionally augment via WikiText-2 noun-phrase extraction.
 

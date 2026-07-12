@@ -253,7 +253,7 @@ The lever was **sequence-carry (RNN-style teacher-forced) training** + matched e
 ### Fixed
 - M-NEW-1: Removed `continue-on-error: true` from CI install-deps step; maturin/Rust build failures now hard-fail the job.
 - M-NEW-2: Renamed `compute_val_loss` -> `compute_hv_mse_loss` in `evals/tier2_llm_parity/tiny_shakespeare.py`; updated module docstring to reflect MSE-on-HV semantics and Phase 2.3 NLL handoff.
-- L-NEW-1: Header-audit CI step now exits 1 on missing confidential header (was warning-only, exits 0).
+- L-NEW-1: Header-audit CI step now exits 1 on missing required file header (was warning-only, exits 0).
 - L-NEW-2: Documented why wasm-build step stays soft-failing (`ffi_wasm.rs` stub; known gap until Phase 2.3+).
 - L-NEW-3: Added Tier-2 benchmark driver line to `rain/__main__.py` help output.
 - H1: Created `rain-rs/src/ffi_wasm.rs` stub (was declared in `lib.rs` but file was missing).

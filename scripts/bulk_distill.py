@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Bulk Ollama distillation runner.
 
 Iterates through every domain in _CURRICULUM_TOPICS, asks the teacher

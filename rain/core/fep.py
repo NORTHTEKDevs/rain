@@ -1,7 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
-# Original-source: third_party/rck/fep.py -- adapted from RCK 4K FHRR to
-# bipolar 10K-dim, simplified for v0 RAIN.
 """Free Energy Principle generative-model parameter.
 
 Low-rank A = U @ V.T predicts s_{t+1} from s_t. Rank-1 update via

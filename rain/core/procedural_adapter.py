@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Procedural-memory adapter format: on-disk compiled skills for RAIN-Net.
 
 In the RAIN-Net architecture, "skills" are compiled procedures stored

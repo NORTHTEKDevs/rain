@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Tests for the HYMN-Plus v2 sampler adapter -- including the
 killer feature: tell() -> set_kb_from_facts() -> generation reflects
 new knowledge without retraining."""

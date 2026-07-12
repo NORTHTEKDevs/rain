@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Evaluate a HYMN-Plus checkpoint on a held-out corpus.
 
 Reports NLL (nats/char), perplexity, uniform-baseline ratio, and bits/char.

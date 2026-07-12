@@ -1,7 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
-# Original-source: third_party/rck/conscious_agent.py — adapted to use RAIN's
-# bipolar 10K modules.
 """ConsciousAgent — top-level orchestrator.
 
 Composes Codebook + ShardedKB + DialogueContext + Introspector + SelfModel +

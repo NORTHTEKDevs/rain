@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Symbolic verifier: produces an audit trail for every RAIN-Net answer.
 
 The output to the user is not just "answer X" -- it is:

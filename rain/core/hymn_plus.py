@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """HYMN-Plus: a working non-Transformer generative architecture for RAIN.
 
 Architecture (per block):

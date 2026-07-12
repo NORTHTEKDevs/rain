@@ -1,6 +1,5 @@
 # RAIN Benchmark Suite — Tier 1 / 2 / 3
 
-**Companion to:** `docs/plans/2026-05-22-rain-design.md` (§ 5)
 **Status:** v0 acceptance contract. PRs claiming Tier-1 surface completion
 re-run the relevant benchmark; PRs touching Tier-3-relevant code re-run
 all of Tier 3.
@@ -171,7 +170,7 @@ the RAIN benchmark dialogue set.
 
 Entry: `evals/tier3_soundness/continual_stability.py`
 
-### A5 — Polyglot dispatch correctness
+### A5 — Multi-runtime dispatch correctness
 
 WASM, native Rust, native Go, and TypeScript runtimes produce bit-identical
 outputs on identical input (modulo float ε = 1e-9).

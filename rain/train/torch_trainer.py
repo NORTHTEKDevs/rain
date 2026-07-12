@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """PyTorch HYMN trainer with optional DirectML acceleration.
 
 Mirrors the forward semantics of `scripts.pretrain_hymn.HymnSurrogate` so a

@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Test for the N3-capacity eval: resonant readout vastly outscales greedy."""
 
 from __future__ import annotations

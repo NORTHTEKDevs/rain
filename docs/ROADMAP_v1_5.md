@@ -111,7 +111,7 @@ Demo flow:
 
 Once M1-M4 land:
 
-- Open-source the architecture itself (rain.core.hymn_plus is already MIT-compat structure)
+- Open-source the architecture itself (rain.core.hymn_plus is already Apache-2.0-compat structure)
 - Write the paper / blog post: "HYMN-Plus: a non-Transformer LM with
   KB grounding and continual learning, built for the workstation"
 - Submit to a workshop (ICLR Workshop on Tiny Language Models,

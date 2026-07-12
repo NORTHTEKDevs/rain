@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Seed a ShardedKB from a JSONL facts file.
 
 Each line must be a JSON object carrying a subject, relation, object triple.

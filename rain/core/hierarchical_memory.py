@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Hierarchical memory: four addressable memory levels for RAIN-Net.
 
 LLMs structurally have two kinds of memory: the activation state during

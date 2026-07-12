@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Honest competitive benchmark: RAIN-Net retrieval vs production
 sentence-transformer + cosine vs naive Jaccard, on the SAME corpus.
 

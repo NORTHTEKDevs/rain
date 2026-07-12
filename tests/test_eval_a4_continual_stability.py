@@ -1,6 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
-
 import pytest
 
 from evals.tier3_soundness.continual_stability import run_benchmark

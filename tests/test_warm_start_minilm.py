@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Tests for the MiniLM warm-start path.
 
 sentence-transformers is an optional heavy dep -- skip when missing so CI

@@ -286,7 +286,8 @@ That's the actual discovery worth a follow-up writeup.
 ## Reproduction (when you're awake)
 
 ```bash
-cd ~/projects/active/hyperion
+# from the root of the original Hyperion research project (not vendored
+# in full here -- only pure_vsa/ and vsa_core/ ship with this repo)
 python -m pytest tests/test_cogs_template_learner.py -v   # 7 tests, ~10s
 python -m pytest tests/test_arc1d.py -v                   # 3 tests, ~3s
 python -m pytest tests/test_pcfg.py tests/test_scan_parserless.py tests/test_cogs.py tests/test_hyperion_api.py -v   # the rest

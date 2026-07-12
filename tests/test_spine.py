@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Tests for rain.spine.HymnModel (Python wrapper over rain-rs HYMN)."""
 
 import numpy as np

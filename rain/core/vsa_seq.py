@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """VSA-native sequence engine (VSA-Seq).
 
 A non-Transformer, non-MLP-RNN generative architecture. The recurrence

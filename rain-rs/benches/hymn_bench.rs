@@ -1,4 +1,3 @@
-// CONFIDENTIAL
 // (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 
 use criterion::{Criterion, black_box, criterion_group, criterion_main};

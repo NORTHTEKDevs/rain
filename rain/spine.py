@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """HYMN sequence engine — Python wrapper over the rain-rs Rust hot path.
 
 The Rust core lives at rain-rs/src/hymn.rs; this module is the thin Python

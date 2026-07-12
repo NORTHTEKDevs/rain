@@ -1,0 +1,57 @@
+{
+  "bench": "cogs_gen",
+  "system": "template_learner_symbolic",
+  "split": "gen",
+  "n": 21000,
+  "correct": 20948,
+  "params": 0,
+  "train_s": 3.547000000020489,
+  "eval_s": 0.35999999998603016,
+  "seed": 0,
+  "config": {
+    "full_n": 21000,
+    "full_correct": 20948,
+    "train_rows": 24155,
+    "solver": "COGSTemplateLearner",
+    "symbolic_table_entries": {
+      "templates": 1372,
+      "past_to_inf": 141,
+      "intrans_role": 61,
+      "ditrans_verbs": 22,
+      "verb_conditioned_lookup": 187,
+      "total": 1783
+    },
+    "negative_control_shuffled_targets": "2/21000",
+    "per_category": {
+      "active_to_passive": "1000/1000",
+      "cp_recursion": "1000/1000",
+      "do_dative_to_pp_dative": "999/1000",
+      "obj_omitted_transitive_to_transitive": "997/1000",
+      "obj_pp_to_subj_pp": "1000/1000",
+      "obj_to_subj_common": "1000/1000",
+      "obj_to_subj_proper": "999/1000",
+      "only_seen_as_transitive_subj_as_unacc_subj": "994/1000",
+      "only_seen_as_unacc_subj_as_obj_omitted_transitive_subj": "990/1000",
+      "only_seen_as_unacc_subj_as_unerg_subj": "990/1000",
+      "passive_to_active": "997/1000",
+      "pp_dative_to_do_dative": "999/1000",
+      "pp_recursion": "1000/1000",
+      "prim_to_inf_arg": "1000/1000",
+      "prim_to_obj_common": "996/1000",
+      "prim_to_obj_proper": "1000/1000",
+      "prim_to_subj_common": "997/1000",
+      "prim_to_subj_proper": "997/1000",
+      "subj_to_obj_common": "996/1000",
+      "subj_to_obj_proper": "1000/1000",
+      "unacc_to_transitive": "997/1000"
+    }
+  },
+  "notes": "symbolic template metalearner, fit on COGS train split ONLY, zero gradient descent (params=0 = zero gradient-trained floats; structural knowledge lives in symbolic lookup tables, see config.symbolic_table_entries for the entry counts); shuffled-gold negative control confirms the accuracy is not a scoring artifact; per-category breakdown in config.per_category; task-specific inductive bias (COGS role ontology + construction signatures) -- do not compare to neural SOTA without this caveat.",
+  "accuracy": 0.9975238095238095,
+  "ci95": [
+    0.9967545397221413,
+    0.9981110852404844
+  ],
+  "timestamp": "2026-07-12T04:59:26.635578+00:00",
+  "evidence_tier": "measured-fresh"
+}

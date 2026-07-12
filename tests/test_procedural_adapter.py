@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Tests for procedural_adapter: skill load/save/invoke/registry."""
 
 import tempfile

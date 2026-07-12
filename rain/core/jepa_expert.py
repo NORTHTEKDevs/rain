@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """JEPA-style world-model expert (replaces the last stub expert).
 
 Inspired by Yann LeCun's Joint-Embedding Predictive Architecture (JEPA,

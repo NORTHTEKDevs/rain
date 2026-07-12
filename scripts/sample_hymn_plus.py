@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Sample text from a trained HYMN-Plus checkpoint.
 
 Usage:

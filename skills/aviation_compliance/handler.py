@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """aviation_compliance: AD applicability + airworthiness lookups.
 
 A vertical-wedge skill for the AK bush-pilot use case. Queries it

@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """N4 Theory of Mind benchmark.
 
 Tier-1 novelty surface. Sally-Anne false-belief task + 10 variants + 5

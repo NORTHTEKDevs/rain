@@ -1,0 +1,27 @@
+{
+  "bench": "scan_addprim_jump",
+  "system": "llm_anthropic/claude-sonnet-5",
+  "split": "test_heldout_jump",
+  "n": 100,
+  "correct": 72,
+  "params": 0,
+  "train_s": 0.0,
+  "eval_s": 413.4649977684021,
+  "seed": 0,
+  "config": {
+    "backend": "openrouter",
+    "model": "anthropic/claude-sonnet-5",
+    "n": 100,
+    "shots": 16,
+    "test_limit": 100,
+    "errors": 0
+  },
+  "notes": "frontier API model via OpenRouter, direct few-shot mapping (same prompt as local rows), no decomposition/least-to-most prompting - see cited rows for that technique",
+  "accuracy": 0.72,
+  "ci95": [
+    0.6251178763865428,
+    0.7986044083240162
+  ],
+  "timestamp": "2026-07-11T21:11:33.120156+00:00",
+  "evidence_tier": "measured-fresh"
+}

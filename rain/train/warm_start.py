@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Warm-start the codebook from pretrained embeddings via sign projection.
 
 Phase 1.1 of the training protocol. Not an LLM substrate at inference -

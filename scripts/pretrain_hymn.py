@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """HYMN bootstrap pre-training driver.
 
 Phase 1.3 of the training protocol. This is the ONLY place backprop appears

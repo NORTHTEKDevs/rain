@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Feature-based char-level codebook warm-start.
 
 The design plan calls for warm-starting the HYMN codebook from

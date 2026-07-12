@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """A1 — EFE decoder source-mix sanity benchmark.
 
 100-prompt probe across a small synthetic environment. Each of the 7

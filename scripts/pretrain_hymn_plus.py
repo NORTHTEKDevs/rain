@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Training driver for HYMN-Plus.
 
 Same recipe as pretrain_hymn_torch (NLL loss, AdamW + warmup + cosine,

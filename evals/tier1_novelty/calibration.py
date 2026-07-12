@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """N2 calibration benchmark (Expected Calibration Error).
 
 Tier-1 novelty surface. ECE measures the gap between predicted confidence

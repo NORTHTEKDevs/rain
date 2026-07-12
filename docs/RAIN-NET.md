@@ -2,7 +2,7 @@
 
 > Working draft. Authors: Kristian Baer (Northtek / NORTHTEKDevs).
 > Status: architectural spec + reference v0.1 implementation. Not yet
-> validated at scale. No patent claims are made or pending.
+> validated at scale.
 
 ## Abstract
 
@@ -26,7 +26,7 @@ We show that this composition produces, structurally:
 (5) inference cost reductions of similar magnitude via routed
     heterogeneous experts.
 
-The reference v0.1 implementation (open source, MIT) ships with all nine
+The reference v0.1 implementation (open source, Apache-2.0) ships with all nine
 modules, a distillation pipeline targeting Ollama/Claude as teachers,
 and an end-to-end demo. It is trainable on a single workstation at
 300M parameters, and projected (not yet validated) to scale to
@@ -352,8 +352,7 @@ All shipped in v0.1 of this work, all tested, all run on workstation.
 
 ## 11. License
 
-See the repository `LICENSE` file for terms. No patent claims are made
-or pending on this work.
+Apache-2.0. See the repository `LICENSE` file for terms.
 
 ---
 

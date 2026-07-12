@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """HYMN pre-training driver, PyTorch + DirectML edition.
 
 Mirrors `scripts/pretrain_hymn.py` but trains on the iGPU (when DirectML

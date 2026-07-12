@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 #
 # Download the public training corpora used by RAIN's Phase-1 pretrain
 # and Tier-2 LLM-parity benchmarks. All files land under data/corpora/

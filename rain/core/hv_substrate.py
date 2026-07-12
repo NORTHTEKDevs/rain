@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """HV substrate: the canonical Vector-Symbolic-Architecture primitives
 that every RAIN-Net module imports.
 

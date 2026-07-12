@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """BPE tokenizer via SentencePiece. Default vocab 32K, configurable."""
 
 from __future__ import annotations

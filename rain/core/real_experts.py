@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Real expert implementations for the MoA router.
 
 The default expert bank in moa_router.py uses deterministic stubs so the

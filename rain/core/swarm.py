@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Multi-agent VSA-routed swarm of specialist RainNets.
 
 Each swarm member is a full RainNet instance specialized to one domain

@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Tests for the read-side cognitive signals exposed on Answer."""
 
 from rain.agent import ConsciousAgent

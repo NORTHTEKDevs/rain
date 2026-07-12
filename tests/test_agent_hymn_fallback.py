@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Tests for the HYMN sampler fallback wired into ConsciousAgent.ask."""
 
 from rain.agent import ConsciousAgent

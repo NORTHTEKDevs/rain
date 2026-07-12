@@ -1,0 +1,27 @@
+{
+  "bench": "scan_addprim_jump",
+  "system": "llm_openai/gpt-5.5",
+  "split": "test_heldout_jump",
+  "n": 100,
+  "correct": 86,
+  "params": 0,
+  "train_s": 0.0,
+  "eval_s": 486.2925319671631,
+  "seed": 0,
+  "config": {
+    "backend": "openrouter",
+    "model": "openai/gpt-5.5",
+    "n": 100,
+    "shots": 16,
+    "test_limit": 100,
+    "errors": 0
+  },
+  "notes": "frontier API model via OpenRouter, direct few-shot mapping (same prompt as local rows), no decomposition/least-to-most prompting - see cited rows for that technique",
+  "accuracy": 0.86,
+  "ci95": [
+    0.7786263961619276,
+    0.9147373424553509
+  ],
+  "timestamp": "2026-07-11T21:48:55.954332+00:00",
+  "evidence_tier": "measured-fresh"
+}

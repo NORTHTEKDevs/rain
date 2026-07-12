@@ -1,18 +1,15 @@
 # Contributing to RAIN
 
-**This repository is currently solo-development under closed access.** This
-document sets expectations for future authorized collaborators and serves as
-the canonical reference for code, commit, and review standards.
+This document sets expectations for contributors and serves as the canonical
+reference for code, commit, and review standards.
 
 ## Before you write any code
 
-1. Read `docs/plans/2026-05-22-rain-design.md` end-to-end. The architecture is
+1. Read `docs/RAIN-NET.md` and `docs/PIVOT.md` end-to-end. The architecture is
    tightly coupled; partial reads cause incoherent contributions.
-2. Read `docs/architecture/component-map.md` to see which existing module is
-   being adapted vs which is new.
-3. Every source file you touch must keep the `CONFIDENTIAL` header.
-4. Confirm you have signed a confidentiality agreement and have been added to
-   the NORTHTEKDevs/rain repository explicitly.
+2. Read `docs/architecture/fep-unified-objective.md` and
+   `docs/architecture/benchmark-suite.md` to see how existing modules map to
+   the objective and the acceptance benchmarks.
 
 ## Code standards
 
@@ -21,8 +18,6 @@ the canonical reference for code, commit, and review standards.
 - **Rust:** clippy + rustfmt clean, MSRV 1.85, no `unsafe` outside the FFI
   layer, every public symbol documented.
 - **TypeScript:** prettier + eslint, strict mode, no `any` in non-test code.
-- **Headers:** every source file starts with the copyright + confidential
-  notice. See `scripts/check_headers.py` (added later).
 
 ## Branching
 
@@ -35,22 +30,18 @@ the canonical reference for code, commit, and review standards.
 
 - Imperative mood. "Add X" not "Added X".
 - Body explains WHY when not obvious.
-- Reference the section of the design doc that this commit advances when
-  applicable: e.g. `Refs: docs/plans/2026-05-22-rain-design.md §3.5`.
-- No `Co-authored-by:` lines for AI assistants in the public-facing commit
-  history. Internal review notes belong in the PR description, not the commit.
+- Reference the section of the relevant architecture doc that this commit
+  advances when applicable: e.g. `Refs: docs/architecture/fep-unified-objective.md §3`.
 
 ## Pull request checklist
 
-- [ ] Tests added for new logic. Pre-existing 121-test RCK suite + 42-test
-      SOFAR suite + integration tests must still pass.
-- [ ] Tier-3 architectural-soundness checks (A1-A5 in the design doc) still
-      green after the change.
+- [ ] Tests added for new logic. Pre-existing test suites must still pass.
+- [ ] Tier-3 architectural-soundness checks (A1-A5 in
+      `docs/architecture/benchmark-suite.md`) still green after the change.
 - [ ] If the change touches a Tier-1 capability surface, the corresponding
       novelty benchmark (N1-N5) must be re-run and posted in the PR.
 - [ ] No new `any` types (TypeScript), no `unsafe` outside FFI (Rust), no
       `Any` returns in public Python APIs.
-- [ ] Headers preserved on every touched file.
 - [ ] No `.env`, secrets, credentials, or unrelated personal tooling committed.
 - [ ] CHANGELOG entry under `## [Unreleased]`.
 
@@ -64,17 +55,16 @@ the canonical reference for code, commit, and review standards.
 
 ## Code review
 
-- All non-trivial PRs reviewed by code-reviewer agent + human reviewer.
-- Production-certifier required before any `v0.x` tag.
-- Live-flow-tester required before any UI-facing or end-to-end claim.
+- All non-trivial PRs reviewed by a maintainer.
+- Live end-to-end testing required before any UI-facing or end-to-end claim.
 
 ## Disagreements
 
 If you and the reviewer disagree on direction:
 1. Document the disagreement in the PR.
-2. Reference the section of the design doc that should resolve it.
-3. If the design doc is silent, escalate to the maintainer for a design-doc
-   amendment via a separate PR.
+2. Reference the section of the relevant architecture doc that should resolve it.
+3. If the architecture docs are silent, escalate to the maintainer for a
+   documented amendment via a separate PR.
 4. Do not merge contested PRs without explicit maintainer approval.
 
 ## Contact

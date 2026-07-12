@@ -93,6 +93,15 @@ data/checkpoints/
 data/kb_seed/
 logs/
 
+# RAIN-CG benchmark dataset payloads (fetch via data/*/download_and_prep.py
+# or scripts/download_data.py -- the downloader scripts themselves are
+# tracked, only the fetched raw text is not).
+data/scan/*/*.txt
+data/cogs/raw/
+data/pcfg/*.src
+data/pcfg/*.tgt
+raincg/results/logs/
+
 # Model artifacts (too large for git, use LFS or external storage)
 *.bin
 *.safetensors

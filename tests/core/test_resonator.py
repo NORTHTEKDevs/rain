@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Tests for rain.core.resonator (ported from Hyperion Findings 1-5, MAP-VSA).
 
 Covers: (1) resonator factorization of an unknown product; (2) resonant

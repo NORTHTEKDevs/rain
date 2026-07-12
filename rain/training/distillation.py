@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Teacher-LLM distillation: train RAIN-Net by asking a smarter model.
 
 The cost story of RAIN-Net rests on this module. Instead of pretraining

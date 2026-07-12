@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Aviation compliance demo — the RAIN-Net vertical wedge made tangible.
 
 Scenario: AK bush pilot wants to verify AD compliance on a flight

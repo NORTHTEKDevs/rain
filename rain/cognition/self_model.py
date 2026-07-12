@@ -1,6 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
-# Original-source: third_party/rck/self_model.py -- adapted from RCK 4K FHRR to bipolar 10K.
 """Structural self-model: a small KB of facts about RAIN itself."""
 
 from __future__ import annotations

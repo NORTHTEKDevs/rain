@@ -1,0 +1,27 @@
+{
+  "bench": "scan_addprim_jump",
+  "system": "transformer_d128x3",
+  "split": "test_heldout_jump",
+  "n": 100,
+  "correct": 0,
+  "params": 609176,
+  "train_s": 160.7637570000079,
+  "eval_s": 0.0,
+  "seed": 0,
+  "config": {
+    "steps": 3000,
+    "batch": 64,
+    "d": 128,
+    "layers": 3,
+    "lr": 0.0003,
+    "n_eval": 100
+  },
+  "notes": "from-scratch decoder-only transformer on REAL addprim_jump held-out split",
+  "accuracy": 0.0,
+  "ci95": [
+    0.0,
+    0.03699480747600191
+  ],
+  "timestamp": "2026-07-11T10:29:25.591069+00:00",
+  "evidence_tier": "measured-fresh"
+}

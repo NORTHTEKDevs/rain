@@ -1,0 +1,25 @@
+{
+  "bench": "scan_addprim_jump",
+  "system": "grammar_induction_reinforce",
+  "split": "test_heldout_jump",
+  "n": 2000,
+  "correct": 834,
+  "params": 148,
+  "train_s": 251.93649439999717,
+  "eval_s": 0.0,
+  "seed": 0,
+  "config": {
+    "steps": 3000,
+    "batch": 96,
+    "n_eval": 2000,
+    "lr": 0.05
+  },
+  "notes": "grammar-rule (lexicon/templates/counts/order) induced via REINFORCE from output alone; parse skeleton given, executor learned",
+  "accuracy": 0.417,
+  "ci95": [
+    0.3955698248854595,
+    0.4387484166362256
+  ],
+  "timestamp": "2026-07-11T10:48:56.202914+00:00",
+  "evidence_tier": "measured-fresh"
+}

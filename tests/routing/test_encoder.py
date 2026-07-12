@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Tests for the SOFAR-on-VSA Walsh-Hadamard band encoder."""
 
 import numpy as np

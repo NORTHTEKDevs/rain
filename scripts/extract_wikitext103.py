@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Decode WikiText-103 parquet shards to a flat .txt corpus.
 
 Used by Phase-1 v0.5 pretrain. Same pattern as scripts/extract_wikitext2.py

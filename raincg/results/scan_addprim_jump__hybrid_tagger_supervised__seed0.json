@@ -1,0 +1,28 @@
+{
+  "bench": "scan_addprim_jump",
+  "system": "hybrid_tagger_supervised",
+  "split": "test_heldout_jump",
+  "n": 7706,
+  "correct": 7706,
+  "params": 9541,
+  "train_s": 37.34997279997333,
+  "eval_s": 0.0,
+  "seed": 0,
+  "config": {
+    "steps": 1500,
+    "batch": 128,
+    "n_eval": 7706,
+    "per_token": true,
+    "context_dependent_train_EM": 1.0,
+    "context_dependent_test_EM": 0.48196210744874124,
+    "context_dependent_params": 68933
+  },
+  "notes": "hybrid: supervised per-token tagger (content-independent) + exact symbolic executor; evaluated on the full 7706-example test split (not a subsample); train_s/eval_s may be inflated by a concurrent PCFG transformer training job sharing this machine's CPU",
+  "accuracy": 1.0,
+  "ci95": [
+    0.999501727765717,
+    1.0
+  ],
+  "timestamp": "2026-07-11T12:24:06.643435+00:00",
+  "evidence_tier": "measured-fresh"
+}

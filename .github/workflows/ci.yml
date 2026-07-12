@@ -1,4 +1,3 @@
-# CONFIDENTIAL
 # (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 
 name: CI
@@ -82,23 +81,3 @@ jobs:
           # this step will need a corresponding test pass; keep soft for now
           # but tracked as a known gap until Phase 2.3+.
           wasm-pack build --target nodejs --release --features wasm || echo "wasm build scaffold -- known gap until Phase 2.3+"
-
-  header-audit:
-    name: Confidential header audit
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Check headers
-        run: |
-          MISSING=0
-          for f in $(find rain rain-rs/src -type f \( -name "*.py" -o -name "*.rs" \) 2>/dev/null); do
-            if ! head -3 "$f" | grep -q "CONFIDENTIAL"; then
-              echo "MISSING HEADER: $f"
-              MISSING=$((MISSING + 1))
-            fi
-          done
-          if [ "$MISSING" -gt 0 ]; then
-            echo "::error::$MISSING source files missing the confidential header"
-            exit 1
-          fi

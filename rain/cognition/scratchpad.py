@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Reasoning scratchpad -- explicit chain-of-thought for HYMN-Plus v2.
 
 LLMs do CoT implicitly by generating tokens that prompt themselves toward

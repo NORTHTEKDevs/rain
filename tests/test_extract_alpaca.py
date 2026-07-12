@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Tests for the Alpaca extractor's formatting helper.
 
 The HF dataset download path is exercised by the CLI smoke run, not by

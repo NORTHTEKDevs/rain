@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Causal graph reasoning over the KB.
 
 Pearl-style causal inference layer on top of RAIN-Net's semantic memory.

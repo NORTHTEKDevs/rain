@@ -1,7 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
-# Original-source: third_party/cognitive-kernel-polyglot/src/core/evolution.{rs,ts}
-#                  + third_party/evolve/crates/evolve-core/src/* — Python port.
 """NSGA-II Pareto evolution + Bayesian beta-binomial champion/challenger.
 
 Each variant has an N-dim fitness vector (e.g. [accuracy, calibration, FLOPs])

@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """RAIN-Net interactive demo: REPL that exercises the full pipeline.
 
 Usage:

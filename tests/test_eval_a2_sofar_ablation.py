@@ -1,6 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
-
 import numpy as np
 
 from evals.tier3_soundness.sofar_ablation import (

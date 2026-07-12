@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """A2 -- SOFAR-on-VSA ablation benchmark.
 
 Tier-3 architectural soundness. Measures whether routing the bipolar VSA

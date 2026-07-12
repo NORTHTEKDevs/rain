@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Tests for the REAL expert implementations in rain.core.real_experts."""
 
 import numpy as np

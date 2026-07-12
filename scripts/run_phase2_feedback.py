@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Phase-2 continual-feedback loop: seed KB, ask, judge, calibrate.
 
 Closes the Track-3 (LLM-as-judge) wiring at scale: load an Ollama-seeded

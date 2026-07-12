@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Real end-to-end Ollama distillation run.
 
 Generates a curriculum of queries, asks the local Ollama teacher for

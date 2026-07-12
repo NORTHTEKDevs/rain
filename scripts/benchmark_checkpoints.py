@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Apples-to-apples A/B benchmark of two HYMN-Plus checkpoints on the same
 held-out corpus.
 

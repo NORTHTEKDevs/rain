@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """N5 Grounded Transparency benchmark.
 
 Tier-1 novelty surface. Seeds a 100-fact KB across 5 domains, asks 100

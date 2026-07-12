@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """calendar_lookup: timezone math + common-date lookups.
 
 Patterns:

@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Schema + parsing tests for the Ollama-driven KB seed script.
 
 These tests do NOT call the Ollama daemon -- they exercise the pure-Python

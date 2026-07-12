@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Pull tatsu-lab/alpaca and render to char-level Q/A training corpus.
 
 The Alpaca dataset is a 52K instruction/response dataset distilled from

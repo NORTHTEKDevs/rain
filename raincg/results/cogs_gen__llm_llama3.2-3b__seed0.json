@@ -1,0 +1,47 @@
+{
+  "bench": "cogs_gen",
+  "system": "llm_llama3.2:3b",
+  "split": "gen",
+  "n": 100,
+  "correct": 0,
+  "params": 0,
+  "train_s": 0.0,
+  "eval_s": 289.066677570343,
+  "seed": 0,
+  "config": {
+    "model": "llama3.2:3b",
+    "n": 100,
+    "shots": 12,
+    "test_limit": 100,
+    "by_condition": {
+      "only_seen_as_unacc_subj_as_unerg_subj": 0.0,
+      "obj_to_subj_proper": 0.0,
+      "prim_to_inf_arg": 0.0,
+      "subj_to_obj_proper": 0.0,
+      "do_dative_to_pp_dative": 0.0,
+      "subj_to_obj_common": 0.0,
+      "cp_recursion": 0.0,
+      "obj_to_subj_common": 0.0,
+      "only_seen_as_transitive_subj_as_unacc_subj": 0.0,
+      "only_seen_as_unacc_subj_as_obj_omitted_transitive_subj": 0.0,
+      "active_to_passive": 0.0,
+      "prim_to_subj_proper": 0.0,
+      "obj_omitted_transitive_to_transitive": 0.0,
+      "prim_to_obj_common": 0.0,
+      "unacc_to_transitive": 0.0,
+      "pp_recursion": 0.0,
+      "obj_pp_to_subj_pp": 0.0,
+      "prim_to_subj_common": 0.0,
+      "pp_dative_to_do_dative": 0.0,
+      "passive_to_active": 0.0
+    }
+  },
+  "notes": "local pretrained LLM (Ollama), few-shot prompting, real COGS gen split",
+  "accuracy": 0.0,
+  "ci95": [
+    0.0,
+    0.03699480747600191
+  ],
+  "timestamp": "2026-07-11T10:44:13.879834+00:00",
+  "evidence_tier": "measured-fresh"
+}

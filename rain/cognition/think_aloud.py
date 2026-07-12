@@ -1,6 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
-# Original-source: third_party/rck/think_aloud.py — adapted from RCK FHRR.
 """Chain-of-thought narration: emit the reasoning trace before the answer."""
 
 from __future__ import annotations

@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """RAIN with Ollama-seeded KB AND Ollama judge -- broke-mode Tracks 2+3 live.
 
 Walks through the full no-paid-RLHF feedback loop:

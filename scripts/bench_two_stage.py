@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Two-stage retrieval benchmark: speed + quality vs single-stage RAIN-Net."""
 
 from __future__ import annotations

@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Benchmark RAIN-Net retrieval vs baselines on a synthetic QA set.
 
 We want a measurable claim for the Series A pitch: "RAIN-Net retrieves

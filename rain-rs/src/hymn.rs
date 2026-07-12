@@ -1,6 +1,3 @@
-// CONFIDENTIAL
-// (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
-
 //! HYMN MLP forward — v0 minimal port of Hyperion's HYMN/FERN architecture.
 
 use rand::SeedableRng;

@@ -1,4 +1,3 @@
-// CONFIDENTIAL
 // (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 
 use rain_rs::hymn::{HymnConfig, HymnModel};

@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Multi-modal fact-hypervector encoders for the v2 KB-Attention buffer.
 
 The v2 architecture treats the KB as a (N_facts, D) tensor of fact-hypervectors.

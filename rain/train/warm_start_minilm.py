@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """MiniLM warm-start for the codebook.
 
 Phase 1.1 (the strong version). Loads sentence-transformers

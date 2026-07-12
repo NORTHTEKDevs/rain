@@ -1,7 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
-# Ported from Hyperion design/RESONATOR-FINDINGS.md (Findings 1-5), adapted to
-# RAIN's MAP-VSA convention (bipolar, elementwise bind, unbind == bind).
 """Resonator network + resonant explaining-away decode for RAIN.
 
 Two capabilities RAIN's bind/unbind substrate lacked:

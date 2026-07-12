@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """End-to-end integration test: real HYMN-Plus checkpoint -> ConsciousAgent ->
 ask flow with KB hit + KB miss paths.
 

@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Run L1 (Tiny Shakespeare) across every HYMN checkpoint in a directory.
 
 Picks the right metric per checkpoint via the sidecar's loss_type +

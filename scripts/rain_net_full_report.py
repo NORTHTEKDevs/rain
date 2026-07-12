@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Run every RAIN-Net v0.1 benchmark in one shot and write a single
 report. Investor-deck-ready output.
 

@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Sweep temperature x top-k for a HYMN-Plus checkpoint; pick the setting
 with the best (low verbatim-overlap, high distinct-3gram) trade-off.
 

@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Adapter that wraps a trained HYMN-Plus checkpoint as the fluency engine
 for ConsciousAgent.
 

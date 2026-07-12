@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Multi-turn conversation session for RAIN-Net.
 
 LLMs have a fixed context window. After it fills, old turns fall out and

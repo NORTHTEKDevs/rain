@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """HTTP server exposing ConsciousAgent over JSON endpoints.
 
 Deployment-shape for the v0 RAIN stack. Wraps the chat REPL primitives

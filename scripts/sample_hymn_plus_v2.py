@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Sample text from a HYMN-Plus v2 checkpoint, optionally swapping in a
 fresh KB at inference time.
 

@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """RAIN-Net chat v2: investor-demo-grade interactive REPL.
 
 Shows in one screen what makes RAIN-Net different from an LLM:

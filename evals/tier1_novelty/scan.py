@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """N3 SCAN-style compositional generalization benchmark.
 
 Tier-1 novelty surface: compositional generalization. Uses RAIN's

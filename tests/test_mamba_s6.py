@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Tests for the proper Mamba S6 block + HYMN-Mamba assembly."""
 
 import pytest

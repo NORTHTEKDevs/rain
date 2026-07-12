@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Tests for the 4 extended bundled skills (json, calendar, stats, url)."""
 
 import pytest

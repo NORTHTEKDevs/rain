@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Tests for HYMN-Plus v2 (KB-attention architecture)."""
 
 import pytest

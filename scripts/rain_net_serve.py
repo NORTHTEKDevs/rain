@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Simple HTTP server exposing RAIN-Net over POST /query.
 
 Single-file stdlib http.server -- no extra deps. Returns AuditReport

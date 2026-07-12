@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Math solver procedural skill: safe arithmetic evaluation.
 
 Loaded by rain.core.procedural_adapter.ProceduralAdapter.load() when a

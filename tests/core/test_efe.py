@@ -1,6 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
-
 import numpy as np
 
 from rain.core.efe import DEFAULT_WEIGHTS, EpistemicClass, MultiSignalEFEDecoder, _rank_normalize

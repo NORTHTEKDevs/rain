@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Filter a KB seed JSONL through a local Ollama judge.
 
 The Phase-2 RLAIF run on the unfiltered llama3.2:3b-distilled seed

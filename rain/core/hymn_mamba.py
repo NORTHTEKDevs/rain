@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """HYMN-Mamba: HYMN-Plus stack with PROPER Mamba S6 instead of our simple
 selective gated recurrence.
 

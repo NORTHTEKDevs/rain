@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """A5 -- Python-vs-Rust HYMN forward correctness benchmark.
 
 Asserts that the Rust HYMN forward and a Python reference produce bit-

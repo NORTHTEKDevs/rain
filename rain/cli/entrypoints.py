@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Thin entry-point wrappers for pip-installed CLI commands.
 
 Each function corresponds to a `[project.scripts]` entry in pyproject.toml.

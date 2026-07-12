@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 from rain.cognition.compose_answer import describe
 from rain.core.knowledge_base import ShardedKB
 

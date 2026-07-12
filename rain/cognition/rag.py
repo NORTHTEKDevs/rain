@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Minimal RAG: query KB -> prepend retrieved facts -> sample HYMN.
 
 The "blend HYMN + KB at generation time" is the Phase-6 design target

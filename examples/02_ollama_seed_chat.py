@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """RAIN with Ollama-distilled KB -- the broke-mode end-to-end demo.
 
 This is the visible payoff of Track 2 of the broke-mode training plan

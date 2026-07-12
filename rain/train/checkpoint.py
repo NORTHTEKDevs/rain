@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """HYMN checkpoint format -- save + load + frozen-flag enforcement.
 
 The checkpoint pair is (.npz, .json sidecar):

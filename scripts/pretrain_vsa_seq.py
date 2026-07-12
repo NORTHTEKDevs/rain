@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Training driver for the VSA-Seq engine.
 
 Mirrors `scripts/pretrain_hymn_torch.py` so the A/B with HYMN is

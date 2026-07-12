@@ -1,7 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
-# Original-source: third_party/rck/fep.py (Expected Free Energy decoder portion)
-#                  — extended from 4-source to 7-source for v0 RAIN.
 """Multi-signal Expected Free Energy decoder.
 
 Fuses 7 candidate sources into a single next-token distribution:

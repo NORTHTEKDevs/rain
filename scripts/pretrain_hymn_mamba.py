@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Training driver for HYMN-Mamba (HYMN-Plus stack with proper Mamba S6 block).
 
 A/B comparison spec: use the SAME --dim, --n-layers, --steps, --lr,

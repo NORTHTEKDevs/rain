@@ -117,7 +117,6 @@ score, verifier confidence, routed experts, optional clause trace.
 - **Architectural spec** (paper-shaped): [`docs/RAIN-NET.md`](RAIN-NET.md)
 - **Training strategy** (cheap-compute path): [`docs/TRAINING-STRATEGY.md`](TRAINING-STRATEGY.md)
 - **Full benchmark report**: [`docs/RESULTS-v0.1.md`](RESULTS-v0.1.md)
-- **Demo script**: [`docs/SERIES-A/04-DEMO-SCRIPT.md`](SERIES-A/04-DEMO-SCRIPT.md)
 
 The training-strategy doc lays out the path to LLM-competitive
 capability at 10-100x less compute, via teacher distillation + active
@@ -150,12 +149,10 @@ structural advantages, ready to scale.
 
 ## License + ask
 
-**License**: see the repository `LICENSE` file. No patent claims are
-made or pending on this work.
+**License**: Apache-2.0, see the repository `LICENSE` file.
 
-If you're an investor, researcher, or builder interested in a non-LLM
-generative-AI direction with measurable cost + capability advantages:
-read [`docs/SERIES-A/01-ONE-PAGER.md`](SERIES-A/01-ONE-PAGER.md) and
+If you're a researcher or builder interested in a non-LLM
+generative-AI direction with measurable cost + capability advantages,
 get in touch.
 
 **Contact**: Kristian Baer · kristianb43r@gmail.com ·

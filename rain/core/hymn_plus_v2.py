@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """HYMN-Plus v2: the architectural moat.
 
 What v1 was: a working non-Transformer LM (selective gated recurrence +

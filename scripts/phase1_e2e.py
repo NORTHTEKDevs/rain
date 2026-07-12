@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Phase-1 end-to-end driver -- the 'press the button' v0.5 entry point.
 
 Composes the bootstrap orchestrator + the trained-recipe HYMN pretrain

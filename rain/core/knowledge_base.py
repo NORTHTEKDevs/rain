@@ -1,6 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
-# Original-source: third_party/rck/knowledge_base.py -- adapted from FHRR 4K to bipolar 10K
 """Sharded HRR knowledge base over bipolar primitives.
 
 Shard routing: blake2b(subject || "||" || relation) mod num_shards.

@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Tests for RAIN-Net v0.1: HV substrate, encoder bank, MoA router,
 hierarchical memory, verifier head, symbolic verifier, and the full
 RainNet composition.

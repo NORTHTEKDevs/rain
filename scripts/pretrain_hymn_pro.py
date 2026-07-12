@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """Training driver for HYMN-Pro (causal-attention LM).
 
 Default recipe (Tiny Shakespeare, char-level, CPU):

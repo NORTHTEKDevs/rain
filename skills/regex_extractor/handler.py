@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """regex_extractor: pull structured tokens from unstructured text.
 
 Handles patterns like:

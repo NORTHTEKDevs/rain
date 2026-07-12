@@ -1,5 +1,3 @@
-# CONFIDENTIAL
-# (c) 2026 Kristian Baer / NORTHTEKDevs / Northtek.io
 """A4 -- Local-rule continual stability benchmark.
 
 Runs N turns of synthetic teaching + asking on ConsciousAgent + the local-
