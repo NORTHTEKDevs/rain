@@ -35,7 +35,7 @@ bytemuck = { version = "1.19", features = ["derive"] }
 # Math
 ndarray = { version = "0.16", features = ["serde"] }
 nalgebra = "0.33"
-rand = "0.8"
+rand = "0.10"
 rand_chacha = "0.3"
 rand_distr = "0.4"
 
